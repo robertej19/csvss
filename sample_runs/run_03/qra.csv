@@ -1,0 +1,2 @@
+question_id,question,reasoning,final
+1,What is 2 + 2?,"[{""type"": ""plan"", ""summary"": ""Plan step 1"", ""data"": {""note"": ""dummy payload for plan""}}, {""type"": ""search"", ""summary"": ""Search step 2"", ""data"": {""note"": ""dummy payload for search""}}, {""type"": ""generate"", ""summary"": ""Generate step 3"", ""data"": {""note"": ""dummy payload for generate""}}]",2 + 2 = 4.

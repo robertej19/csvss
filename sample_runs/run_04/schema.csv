@@ -1,0 +1,16 @@
+section,key,value,type,label,bg,fg,border,component
+meta,schema_version,1,,,,,,
+meta,run_name,Run (R/G/B/V) plan→search→evaluate→search→evaluate→synthesize,,,,,,
+meta,reasoning_format,json,,,,,,
+meta,default_bg,#888888,,,,,,
+meta,default_fg,#ffffff,,,,,,
+meta,default_border,#666666,,,,,,
+meta,default_component,json,,,,,,
+columns,question_id,question_id,,,,,,
+columns,question,question,,,,,,
+columns,reasoning,reasoning,,,,,,
+columns,final,final,,,,,,
+type_style,,,plan,Plan,#e74c3c,#ffffff,#b33a2f,markdown
+type_style,,,search,Search,#3498db,#ffffff,#2b79ad,tool_search
+type_style,,,evaluate,Evaluate,#9b59b6,#ffffff,#7b3f97,eval
+type_style,,,synthesize,Synthesize,#2ecc71,#0b2a12,#1f9a52,markdown

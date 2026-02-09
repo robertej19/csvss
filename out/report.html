@@ -1,0 +1,1362 @@
+<!doctype html>
+    <html lang="en">
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>Run Comparator (No JS)</title>
+      <style>:root{
+      --bg: #0b0d12;
+      --text:#e9ecf1;
+      --muted:#aab3c0;
+      --border:#25304b;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 14px;
+      --pad: 14px;
+
+      --leftHi: rgba(231, 76, 60, .18);   /* red highlight */
+      --leftHiB: rgba(231, 76, 60, .40);
+      --rightHi: rgba(52, 152, 219, .18); /* blue highlight */
+      --rightHiB: rgba(52, 152, 219, .40);
+
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    html,body{height:100%;}
+    body{
+      margin:0;
+      background:
+        radial-gradient(1200px 700px at 20% 10%, #1b2340 0%, rgba(27,35,64,0) 55%),
+        radial-gradient(900px 600px at 85% 35%, #2a1240 0%, rgba(42,18,64,0) 55%),
+        var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+    }
+
+    input[type="radio"]{ position:absolute; left:-9999px; }
+
+    .wrap{max-width:1400px; margin:24px auto; padding: 0 16px;}
+    .title{font-size:22px; font-weight:750; margin:0 0 6px;}
+    .subtitle{color:var(--muted); margin:0 0 14px; font-size:14px;}
+
+    .card{
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+    }
+
+    .topbar{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+      padding: 12px 14px;
+      border-bottom:1px solid var(--border);
+      background: rgba(255,255,255,.02);
+      flex-wrap:wrap;
+    }
+
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.02);
+      color: var(--muted);
+      font-size: 13px;
+      white-space:nowrap;
+    }
+    .chip strong{color: var(--text); font-weight:650;}
+
+    .toggles{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .toggleGroup{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .groupLabel{
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing:.10em;
+      text-transform: uppercase;
+      margin-right: 2px;
+    }
+    .rtab{
+      cursor:pointer;
+      user-select:none;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.02);
+      color: var(--muted);
+      font-size: 13px;
+      max-width: 320px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+    .rtab code{font-family: var(--mono); font-size: 12px; color: var(--muted);}
+
+    .layout{
+      display:grid;
+      grid-template-columns: 33% 33.5% 33.5%;
+      min-height: 70vh;
+    }
+
+    .sidebar{
+      border-right: 1px solid var(--border);
+      background: rgba(255,255,255,.015);
+    }
+    .sidebarHeader{
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .sidebarHeader .h2{
+      font-size: 12px;
+      letter-spacing:.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .qList{
+      padding: 10px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      max-height: calc(70vh - 50px);
+      overflow:auto;
+    }
+    .qItem{
+      cursor:pointer;
+      user-select:none;
+      padding: 10px 10px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.02);
+      color: var(--muted);
+      font-size: 13px;
+      line-height:1.25;
+    }
+    .qItem .qid{ font-family: var(--mono); color: var(--text); font-weight:700; }
+    .qItem .qtxt{ display:block; margin-top: 6px; color: var(--muted); }
+
+    .main{
+      grid-column: 2 / 4;
+      padding: 14px;
+    }
+
+    .compareGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      align-items:start;
+    }
+    .colHeader{
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: rgba(255,255,255,.02);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom: 10px;
+    }
+    .colHeader .name{
+      font-weight:750;
+      font-size: 13px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+    .colHeader .badge{
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      white-space:nowrap;
+    }
+    .colHeader.left { border-color: var(--leftHiB); background: var(--leftHi); }
+    .colHeader.right{ border-color: var(--rightHiB); background: var(--rightHi); }
+
+    .qview{ display:none; }
+    .leftPane .runpanel,
+    .rightPane .runpanel{ display:none; }
+
+    .panel{
+      background: rgba(255,255,255,.02);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: var(--pad);
+    }
+    .panel-section + .panel-section{ margin-top: 12px; }
+    .h{
+      font-size: 12px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .question{font-size: 16px; font-weight: 700; line-height: 1.35;}
+    .final{
+      background: rgba(78,161,255,.10);
+      border: 1px solid rgba(78,161,255,.30);
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 15px;
+      line-height: 1.45;
+    }
+
+    .steps{display:flex; flex-direction:column; gap:10px;}
+    .step{
+      background: rgba(255,255,255,.02);
+      border: 1px solid color-mix(in srgb, var(--border), #000 10%);
+      border-left: 6px solid var(--border);
+      border-radius: 12px;
+      overflow:hidden;
+      box-shadow: 0 6px 18px rgba(0,0,0,.20);
+    }
+    .step-head{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding: 10px 12px;
+      background: var(--bg);
+      color: var(--fg);
+      border-bottom: 1px solid rgba(255,255,255,.10);
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-family: var(--mono);
+      background: rgba(0,0,0,.18);
+      border: 1px solid rgba(255,255,255,.20);
+    }
+    .step-title{font-weight:800;}
+    .step-body{
+      padding: 10px 12px;
+      color: var(--text);
+      background: rgba(255,255,255,.02);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .step-summary{
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    .step-data{
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255,255,255,.08);
+    }
+    .step-data pre,
+    .step-data code{
+      font-family: var(--mono);
+      font-size: 12px;
+      margin: 0;
+      padding: 0;
+    }
+    .step-data.json{
+      background: rgba(0,0,0,.20);
+      border-radius: 8px;
+      padding: 10px;
+      overflow-x: auto;
+    }
+    .step-data.json code{
+      color: var(--text);
+      white-space: pre;
+    }
+    .step-data.markdown{
+      background: rgba(0,0,0,.15);
+      border-radius: 8px;
+      padding: 10px;
+    }
+    .step-data.markdown pre{
+      margin: 0;
+      color: var(--text);
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    .step-data.tool-search,
+    .step-data.eval{
+      background: rgba(0,0,0,.15);
+      border-radius: 8px;
+      padding: 10px;
+    }
+    .data-label{
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--muted);
+      margin-top: 8px;
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+    .data-label:first-child{
+      margin-top: 0;
+    }
+    .data-value{
+      color: var(--text);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .data-value pre{
+      margin: 4px 0 0 0;
+      padding: 8px;
+      background: rgba(0,0,0,.20);
+      border-radius: 6px;
+      overflow-x: auto;
+      font-family: var(--mono);
+      font-size: 11px;
+      white-space: pre;
+    }
+
+    .missing{
+      background: rgba(231,76,60,.10);
+      border: 1px solid rgba(231,76,60,.30);
+      border-radius: var(--radius);
+      padding: 14px;
+    }
+    .missing-title{font-weight:800; margin-bottom: 6px;}
+    .missing-body{color: var(--muted); font-size: 13px; line-height: 1.4;}
+    .missing-body code{font-family: var(--mono);}
+
+    /* Helpful on smaller screens */
+    @media (max-width: 1100px){
+      .layout{ grid-template-columns: 40% 60%; }
+      .main{ grid-column: 2 / 3; }
+      .compareGrid{ grid-template-columns: 1fr; }
+    }
+
+/* --- generated selectors (no JS) --- */
+#qsel-1:checked ~ .card .main #qview-1{display:block;}
+#qsel-1:checked ~ .card .sidebar .qList label[for='qsel-1']{background: rgba(78,161,255,.12); border-color: rgba(78,161,255,.30); color: var(--text);}
+#qsel-2:checked ~ .card .main #qview-2{display:block;}
+#qsel-2:checked ~ .card .sidebar .qList label[for='qsel-2']{background: rgba(78,161,255,.12); border-color: rgba(78,161,255,.30); color: var(--text);}
+#left-run_01:checked ~ .card .topbar .toggleGroup.left label[for='left-run_01']{background: var(--leftHi); border-color: var(--leftHiB); color: var(--text);}
+#right-run_01:checked ~ .card .topbar .toggleGroup.right label[for='right-run_01']{background: var(--rightHi); border-color: var(--rightHiB); color: var(--text);}
+#left-run_02:checked ~ .card .topbar .toggleGroup.left label[for='left-run_02']{background: var(--leftHi); border-color: var(--leftHiB); color: var(--text);}
+#right-run_02:checked ~ .card .topbar .toggleGroup.right label[for='right-run_02']{background: var(--rightHi); border-color: var(--rightHiB); color: var(--text);}
+#left-run_03:checked ~ .card .topbar .toggleGroup.left label[for='left-run_03']{background: var(--leftHi); border-color: var(--leftHiB); color: var(--text);}
+#right-run_03:checked ~ .card .topbar .toggleGroup.right label[for='right-run_03']{background: var(--rightHi); border-color: var(--rightHiB); color: var(--text);}
+#left-run_04:checked ~ .card .topbar .toggleGroup.left label[for='left-run_04']{background: var(--leftHi); border-color: var(--leftHiB); color: var(--text);}
+#right-run_04:checked ~ .card .topbar .toggleGroup.right label[for='right-run_04']{background: var(--rightHi); border-color: var(--rightHiB); color: var(--text);}
+#left-run_01:checked ~ .card .main #qview-1 .leftPane .run-run_01{display:block;}
+#right-run_01:checked ~ .card .main #qview-1 .rightPane .run-run_01{display:block;}
+#left-run_02:checked ~ .card .main #qview-1 .leftPane .run-run_02{display:block;}
+#right-run_02:checked ~ .card .main #qview-1 .rightPane .run-run_02{display:block;}
+#left-run_03:checked ~ .card .main #qview-1 .leftPane .run-run_03{display:block;}
+#right-run_03:checked ~ .card .main #qview-1 .rightPane .run-run_03{display:block;}
+#left-run_04:checked ~ .card .main #qview-1 .leftPane .run-run_04{display:block;}
+#right-run_04:checked ~ .card .main #qview-1 .rightPane .run-run_04{display:block;}
+#left-run_01:checked ~ .card .main #qview-2 .leftPane .run-run_01{display:block;}
+#right-run_01:checked ~ .card .main #qview-2 .rightPane .run-run_01{display:block;}
+#left-run_02:checked ~ .card .main #qview-2 .leftPane .run-run_02{display:block;}
+#right-run_02:checked ~ .card .main #qview-2 .rightPane .run-run_02{display:block;}
+#left-run_03:checked ~ .card .main #qview-2 .leftPane .run-run_03{display:block;}
+#right-run_03:checked ~ .card .main #qview-2 .rightPane .run-run_03{display:block;}
+#left-run_04:checked ~ .card .main #qview-2 .leftPane .run-run_04{display:block;}
+#right-run_04:checked ~ .card .main #qview-2 .rightPane .run-run_04{display:block;}</style>
+    </head>
+    <body>
+      <div class="wrap">
+        <h1 class="title">Run Comparator (No JavaScript)</h1>
+        <p class="subtitle">Pick a question on the left. Choose the two runs to compare on the top bar (Left=red, Right=blue).</p>
+
+        <input type='radio' name='qsel' id='qsel-1' checked>
+<input type='radio' name='qsel' id='qsel-2' >
+        <input type='radio' name='leftsel' id='left-run_01' checked>
+<input type='radio' name='leftsel' id='left-run_02' >
+<input type='radio' name='leftsel' id='left-run_03' >
+<input type='radio' name='leftsel' id='left-run_04' >
+        <input type='radio' name='rightsel' id='right-run_01' >
+<input type='radio' name='rightsel' id='right-run_02' checked>
+<input type='radio' name='rightsel' id='right-run_03' >
+<input type='radio' name='rightsel' id='right-run_04' >
+
+        <div class="card">
+          <div class="topbar">
+            <div class="chip"><strong>Runs:</strong> 4 &nbsp; <strong>Questions:</strong> 2</div>
+
+            <div class="toggles">
+              <div class="toggleGroup left">
+                <span class="groupLabel">Left</span>
+                <label class='rtab' for='left-run_01'>Run (R/W/B) plan→search→generate <code>run_01</code></label>
+<label class='rtab' for='left-run_02'>Run (R/G/B/V) plan→search→evaluate→search→evaluate→synthesize <code>run_02</code></label>
+<label class='rtab' for='left-run_03'>Run (R/W/B) plan→search→generate <code>run_03</code></label>
+<label class='rtab' for='left-run_04'>Run (R/G/B/V) plan→search→evaluate→search→evaluate→synthesize <code>run_04</code></label>
+              </div>
+              <div class="toggleGroup right">
+                <span class="groupLabel">Right</span>
+                <label class='rtab' for='right-run_01'>Run (R/W/B) plan→search→generate <code>run_01</code></label>
+<label class='rtab' for='right-run_02'>Run (R/G/B/V) plan→search→evaluate→search→evaluate→synthesize <code>run_02</code></label>
+<label class='rtab' for='right-run_03'>Run (R/W/B) plan→search→generate <code>run_03</code></label>
+<label class='rtab' for='right-run_04'>Run (R/G/B/V) plan→search→evaluate→search→evaluate→synthesize <code>run_04</code></label>
+              </div>
+            </div>
+          </div>
+
+          <div class="layout">
+            <aside class="sidebar">
+              <div class="sidebarHeader">
+                <div class="h2">Questions</div>
+                <div class="chip"><strong>QIDs</strong></div>
+              </div>
+              <div class="qList">
+                <label class="qItem" for="qsel-1">
+              <span class="qid">QID 1</span>
+              <span class="qtxt">What is 2 + 2?</span>
+            </label><label class="qItem" for="qsel-2">
+              <span class="qid">QID 2</span>
+              <span class="qtxt">Name a prime number greater than 10.</span>
+            </label>
+              </div>
+            </aside>
+
+            <main class="main">
+              <section class="qview" id="qview-1">
+              <div class="compareGrid">
+                <div>
+                  <div class="colHeader left">
+                    <div class="name">Left (red)</div>
+                    <div class="badge">selected via top bar</div>
+                  </div>
+                  <div class="leftPane">
+                    <div class='runpanel run-run_01'><div class="panel">
+      <div class="panel-section">
+        <div class="h">Question</div>
+        <div class="question">What is 2 + 2?</div>
+      </div>
+
+      <div class="panel-section">
+        <div class="h">Reasoning trace</div>
+        <div class="steps">
+          <div class="step" style="--bg:#e74c3c; --fg:#ffffff; --border:#b33a2f;">
+              <div class="step-head">
+                <span class="pill">Plan</span>
+                <span class="step-title">Step 1</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Plan step 1</div>
+                <div class="step-data markdown"><pre>{
+  &quot;note&quot;: &quot;dummy payload for plan&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#f7f7f7; --fg:#111111; --border:#aaaaaa;">
+              <div class="step-head">
+                <span class="pill">Search</span>
+                <span class="step-title">Step 2</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Search step 2</div>
+                <div class="step-data tool-search"><pre>{
+  &quot;note&quot;: &quot;dummy payload for search&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#1f5fff; --fg:#ffffff; --border:#163fbf;">
+              <div class="step-head">
+                <span class="pill">Generate</span>
+                <span class="step-title">Step 3</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Generate step 3</div>
+                <div class="step-data markdown"><pre>{
+  &quot;note&quot;: &quot;dummy payload for generate&quot;
+}</pre></div>
+              </div>
+            </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="h">Final answer</div>
+        <div class="final">2 + 2 = 4.</div>
+      </div>
+    </div></div><div class='runpanel run-run_02'><div class="panel">
+      <div class="panel-section">
+        <div class="h">Question</div>
+        <div class="question">What is 2 + 2?</div>
+      </div>
+
+      <div class="panel-section">
+        <div class="h">Reasoning trace</div>
+        <div class="steps">
+          <div class="step" style="--bg:#e74c3c; --fg:#ffffff; --border:#b33a2f;">
+              <div class="step-head">
+                <span class="pill">Plan</span>
+                <span class="step-title">Step 1</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Plan step 1</div>
+                <div class="step-data markdown"><pre>{
+  &quot;note&quot;: &quot;dummy payload for plan&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#3498db; --fg:#ffffff; --border:#2b79ad;">
+              <div class="step-head">
+                <span class="pill">Search</span>
+                <span class="step-title">Step 2</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Search step 2</div>
+                <div class="step-data tool-search"><pre>{
+  &quot;note&quot;: &quot;dummy payload for search&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#9b59b6; --fg:#ffffff; --border:#7b3f97;">
+              <div class="step-head">
+                <span class="pill">Evaluate</span>
+                <span class="step-title">Step 3</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Evaluate step 3</div>
+                <div class="step-data eval"><pre>{
+  &quot;note&quot;: &quot;dummy payload for evaluate&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#3498db; --fg:#ffffff; --border:#2b79ad;">
+              <div class="step-head">
+                <span class="pill">Search</span>
+                <span class="step-title">Step 4</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Search step 4</div>
+                <div class="step-data tool-search"><pre>{
+  &quot;note&quot;: &quot;dummy payload for search&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#9b59b6; --fg:#ffffff; --border:#7b3f97;">
+              <div class="step-head">
+                <span class="pill">Evaluate</span>
+                <span class="step-title">Step 5</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Evaluate step 5</div>
+                <div class="step-data eval"><pre>{
+  &quot;note&quot;: &quot;dummy payload for evaluate&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#2ecc71; --fg:#0b2a12; --border:#1f9a52;">
+              <div class="step-head">
+                <span class="pill">Synthesize</span>
+                <span class="step-title">Step 6</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Synthesize step 6</div>
+                <div class="step-data markdown"><pre>{
+  &quot;note&quot;: &quot;dummy payload for synthesize&quot;
+}</pre></div>
+              </div>
+            </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="h">Final answer</div>
+        <div class="final">2 + 2 = 4.</div>
+      </div>
+    </div></div><div class='runpanel run-run_03'><div class="panel">
+      <div class="panel-section">
+        <div class="h">Question</div>
+        <div class="question">What is 2 + 2?</div>
+      </div>
+
+      <div class="panel-section">
+        <div class="h">Reasoning trace</div>
+        <div class="steps">
+          <div class="step" style="--bg:#e74c3c; --fg:#ffffff; --border:#b33a2f;">
+              <div class="step-head">
+                <span class="pill">Plan</span>
+                <span class="step-title">Step 1</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Plan step 1</div>
+                <div class="step-data markdown"><pre>{
+  &quot;note&quot;: &quot;dummy payload for plan&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#f7f7f7; --fg:#111111; --border:#aaaaaa;">
+              <div class="step-head">
+                <span class="pill">Search</span>
+                <span class="step-title">Step 2</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Search step 2</div>
+                <div class="step-data tool-search"><pre>{
+  &quot;note&quot;: &quot;dummy payload for search&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#1f5fff; --fg:#ffffff; --border:#163fbf;">
+              <div class="step-head">
+                <span class="pill">Generate</span>
+                <span class="step-title">Step 3</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Generate step 3</div>
+                <div class="step-data markdown"><pre>{
+  &quot;note&quot;: &quot;dummy payload for generate&quot;
+}</pre></div>
+              </div>
+            </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="h">Final answer</div>
+        <div class="final">2 + 2 = 4.</div>
+      </div>
+    </div></div><div class='runpanel run-run_04'><div class="panel">
+      <div class="panel-section">
+        <div class="h">Question</div>
+        <div class="question">What is 2 + 2?</div>
+      </div>
+
+      <div class="panel-section">
+        <div class="h">Reasoning trace</div>
+        <div class="steps">
+          <div class="step" style="--bg:#e74c3c; --fg:#ffffff; --border:#b33a2f;">
+              <div class="step-head">
+                <span class="pill">Plan</span>
+                <span class="step-title">Step 1</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Plan step 1</div>
+                <div class="step-data markdown"><pre>{
+  &quot;note&quot;: &quot;dummy payload for plan&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#3498db; --fg:#ffffff; --border:#2b79ad;">
+              <div class="step-head">
+                <span class="pill">Search</span>
+                <span class="step-title">Step 2</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Search step 2</div>
+                <div class="step-data tool-search"><pre>{
+  &quot;note&quot;: &quot;dummy payload for search&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#9b59b6; --fg:#ffffff; --border:#7b3f97;">
+              <div class="step-head">
+                <span class="pill">Evaluate</span>
+                <span class="step-title">Step 3</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Evaluate step 3</div>
+                <div class="step-data eval"><pre>{
+  &quot;note&quot;: &quot;dummy payload for evaluate&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#3498db; --fg:#ffffff; --border:#2b79ad;">
+              <div class="step-head">
+                <span class="pill">Search</span>
+                <span class="step-title">Step 4</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Search step 4</div>
+                <div class="step-data tool-search"><pre>{
+  &quot;note&quot;: &quot;dummy payload for search&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#9b59b6; --fg:#ffffff; --border:#7b3f97;">
+              <div class="step-head">
+                <span class="pill">Evaluate</span>
+                <span class="step-title">Step 5</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Evaluate step 5</div>
+                <div class="step-data eval"><pre>{
+  &quot;note&quot;: &quot;dummy payload for evaluate&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#2ecc71; --fg:#0b2a12; --border:#1f9a52;">
+              <div class="step-head">
+                <span class="pill">Synthesize</span>
+                <span class="step-title">Step 6</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Synthesize step 6</div>
+                <div class="step-data markdown"><pre>{
+  &quot;note&quot;: &quot;dummy payload for synthesize&quot;
+}</pre></div>
+              </div>
+            </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="h">Final answer</div>
+        <div class="final">2 + 2 = 4.</div>
+      </div>
+    </div></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="colHeader right">
+                    <div class="name">Right (blue)</div>
+                    <div class="badge">selected via top bar</div>
+                  </div>
+                  <div class="rightPane">
+                    <div class='runpanel run-run_01'><div class="panel">
+      <div class="panel-section">
+        <div class="h">Question</div>
+        <div class="question">What is 2 + 2?</div>
+      </div>
+
+      <div class="panel-section">
+        <div class="h">Reasoning trace</div>
+        <div class="steps">
+          <div class="step" style="--bg:#e74c3c; --fg:#ffffff; --border:#b33a2f;">
+              <div class="step-head">
+                <span class="pill">Plan</span>
+                <span class="step-title">Step 1</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Plan step 1</div>
+                <div class="step-data markdown"><pre>{
+  &quot;note&quot;: &quot;dummy payload for plan&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#f7f7f7; --fg:#111111; --border:#aaaaaa;">
+              <div class="step-head">
+                <span class="pill">Search</span>
+                <span class="step-title">Step 2</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Search step 2</div>
+                <div class="step-data tool-search"><pre>{
+  &quot;note&quot;: &quot;dummy payload for search&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#1f5fff; --fg:#ffffff; --border:#163fbf;">
+              <div class="step-head">
+                <span class="pill">Generate</span>
+                <span class="step-title">Step 3</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Generate step 3</div>
+                <div class="step-data markdown"><pre>{
+  &quot;note&quot;: &quot;dummy payload for generate&quot;
+}</pre></div>
+              </div>
+            </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="h">Final answer</div>
+        <div class="final">2 + 2 = 4.</div>
+      </div>
+    </div></div><div class='runpanel run-run_02'><div class="panel">
+      <div class="panel-section">
+        <div class="h">Question</div>
+        <div class="question">What is 2 + 2?</div>
+      </div>
+
+      <div class="panel-section">
+        <div class="h">Reasoning trace</div>
+        <div class="steps">
+          <div class="step" style="--bg:#e74c3c; --fg:#ffffff; --border:#b33a2f;">
+              <div class="step-head">
+                <span class="pill">Plan</span>
+                <span class="step-title">Step 1</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Plan step 1</div>
+                <div class="step-data markdown"><pre>{
+  &quot;note&quot;: &quot;dummy payload for plan&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#3498db; --fg:#ffffff; --border:#2b79ad;">
+              <div class="step-head">
+                <span class="pill">Search</span>
+                <span class="step-title">Step 2</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Search step 2</div>
+                <div class="step-data tool-search"><pre>{
+  &quot;note&quot;: &quot;dummy payload for search&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#9b59b6; --fg:#ffffff; --border:#7b3f97;">
+              <div class="step-head">
+                <span class="pill">Evaluate</span>
+                <span class="step-title">Step 3</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Evaluate step 3</div>
+                <div class="step-data eval"><pre>{
+  &quot;note&quot;: &quot;dummy payload for evaluate&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#3498db; --fg:#ffffff; --border:#2b79ad;">
+              <div class="step-head">
+                <span class="pill">Search</span>
+                <span class="step-title">Step 4</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Search step 4</div>
+                <div class="step-data tool-search"><pre>{
+  &quot;note&quot;: &quot;dummy payload for search&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#9b59b6; --fg:#ffffff; --border:#7b3f97;">
+              <div class="step-head">
+                <span class="pill">Evaluate</span>
+                <span class="step-title">Step 5</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Evaluate step 5</div>
+                <div class="step-data eval"><pre>{
+  &quot;note&quot;: &quot;dummy payload for evaluate&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#2ecc71; --fg:#0b2a12; --border:#1f9a52;">
+              <div class="step-head">
+                <span class="pill">Synthesize</span>
+                <span class="step-title">Step 6</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Synthesize step 6</div>
+                <div class="step-data markdown"><pre>{
+  &quot;note&quot;: &quot;dummy payload for synthesize&quot;
+}</pre></div>
+              </div>
+            </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="h">Final answer</div>
+        <div class="final">2 + 2 = 4.</div>
+      </div>
+    </div></div><div class='runpanel run-run_03'><div class="panel">
+      <div class="panel-section">
+        <div class="h">Question</div>
+        <div class="question">What is 2 + 2?</div>
+      </div>
+
+      <div class="panel-section">
+        <div class="h">Reasoning trace</div>
+        <div class="steps">
+          <div class="step" style="--bg:#e74c3c; --fg:#ffffff; --border:#b33a2f;">
+              <div class="step-head">
+                <span class="pill">Plan</span>
+                <span class="step-title">Step 1</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Plan step 1</div>
+                <div class="step-data markdown"><pre>{
+  &quot;note&quot;: &quot;dummy payload for plan&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#f7f7f7; --fg:#111111; --border:#aaaaaa;">
+              <div class="step-head">
+                <span class="pill">Search</span>
+                <span class="step-title">Step 2</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Search step 2</div>
+                <div class="step-data tool-search"><pre>{
+  &quot;note&quot;: &quot;dummy payload for search&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#1f5fff; --fg:#ffffff; --border:#163fbf;">
+              <div class="step-head">
+                <span class="pill">Generate</span>
+                <span class="step-title">Step 3</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Generate step 3</div>
+                <div class="step-data markdown"><pre>{
+  &quot;note&quot;: &quot;dummy payload for generate&quot;
+}</pre></div>
+              </div>
+            </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="h">Final answer</div>
+        <div class="final">2 + 2 = 4.</div>
+      </div>
+    </div></div><div class='runpanel run-run_04'><div class="panel">
+      <div class="panel-section">
+        <div class="h">Question</div>
+        <div class="question">What is 2 + 2?</div>
+      </div>
+
+      <div class="panel-section">
+        <div class="h">Reasoning trace</div>
+        <div class="steps">
+          <div class="step" style="--bg:#e74c3c; --fg:#ffffff; --border:#b33a2f;">
+              <div class="step-head">
+                <span class="pill">Plan</span>
+                <span class="step-title">Step 1</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Plan step 1</div>
+                <div class="step-data markdown"><pre>{
+  &quot;note&quot;: &quot;dummy payload for plan&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#3498db; --fg:#ffffff; --border:#2b79ad;">
+              <div class="step-head">
+                <span class="pill">Search</span>
+                <span class="step-title">Step 2</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Search step 2</div>
+                <div class="step-data tool-search"><pre>{
+  &quot;note&quot;: &quot;dummy payload for search&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#9b59b6; --fg:#ffffff; --border:#7b3f97;">
+              <div class="step-head">
+                <span class="pill">Evaluate</span>
+                <span class="step-title">Step 3</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Evaluate step 3</div>
+                <div class="step-data eval"><pre>{
+  &quot;note&quot;: &quot;dummy payload for evaluate&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#3498db; --fg:#ffffff; --border:#2b79ad;">
+              <div class="step-head">
+                <span class="pill">Search</span>
+                <span class="step-title">Step 4</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Search step 4</div>
+                <div class="step-data tool-search"><pre>{
+  &quot;note&quot;: &quot;dummy payload for search&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#9b59b6; --fg:#ffffff; --border:#7b3f97;">
+              <div class="step-head">
+                <span class="pill">Evaluate</span>
+                <span class="step-title">Step 5</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Evaluate step 5</div>
+                <div class="step-data eval"><pre>{
+  &quot;note&quot;: &quot;dummy payload for evaluate&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#2ecc71; --fg:#0b2a12; --border:#1f9a52;">
+              <div class="step-head">
+                <span class="pill">Synthesize</span>
+                <span class="step-title">Step 6</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Synthesize step 6</div>
+                <div class="step-data markdown"><pre>{
+  &quot;note&quot;: &quot;dummy payload for synthesize&quot;
+}</pre></div>
+              </div>
+            </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="h">Final answer</div>
+        <div class="final">2 + 2 = 4.</div>
+      </div>
+    </div></div>
+                  </div>
+                </div>
+              </div>
+            </section><section class="qview" id="qview-2">
+              <div class="compareGrid">
+                <div>
+                  <div class="colHeader left">
+                    <div class="name">Left (red)</div>
+                    <div class="badge">selected via top bar</div>
+                  </div>
+                  <div class="leftPane">
+                    <div class='runpanel run-run_01'><div class="missing">
+          <div class="missing-title">Missing</div>
+          <div class="missing-body">No row for this question_id in <code>run_01/qra.csv</code>.</div>
+        </div></div><div class='runpanel run-run_02'><div class="panel">
+      <div class="panel-section">
+        <div class="h">Question</div>
+        <div class="question">Name a prime number greater than 10.</div>
+      </div>
+
+      <div class="panel-section">
+        <div class="h">Reasoning trace</div>
+        <div class="steps">
+          <div class="step" style="--bg:#e74c3c; --fg:#ffffff; --border:#b33a2f;">
+              <div class="step-head">
+                <span class="pill">Plan</span>
+                <span class="step-title">Step 1</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Plan step 1</div>
+                <div class="step-data markdown"><pre>{
+  &quot;note&quot;: &quot;dummy payload for plan&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#3498db; --fg:#ffffff; --border:#2b79ad;">
+              <div class="step-head">
+                <span class="pill">Search</span>
+                <span class="step-title">Step 2</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Search step 2</div>
+                <div class="step-data tool-search"><pre>{
+  &quot;note&quot;: &quot;dummy payload for search&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#9b59b6; --fg:#ffffff; --border:#7b3f97;">
+              <div class="step-head">
+                <span class="pill">Evaluate</span>
+                <span class="step-title">Step 3</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Evaluate step 3</div>
+                <div class="step-data eval"><pre>{
+  &quot;note&quot;: &quot;dummy payload for evaluate&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#3498db; --fg:#ffffff; --border:#2b79ad;">
+              <div class="step-head">
+                <span class="pill">Search</span>
+                <span class="step-title">Step 4</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Search step 4</div>
+                <div class="step-data tool-search"><pre>{
+  &quot;note&quot;: &quot;dummy payload for search&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#9b59b6; --fg:#ffffff; --border:#7b3f97;">
+              <div class="step-head">
+                <span class="pill">Evaluate</span>
+                <span class="step-title">Step 5</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Evaluate step 5</div>
+                <div class="step-data eval"><pre>{
+  &quot;note&quot;: &quot;dummy payload for evaluate&quot;
+}</pre></div>
+              </div>
+            </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="h">Final answer</div>
+        <div class="final">11 is a prime number greater than 10.</div>
+      </div>
+    </div></div><div class='runpanel run-run_03'><div class="missing">
+          <div class="missing-title">Missing</div>
+          <div class="missing-body">No row for this question_id in <code>run_03/qra.csv</code>.</div>
+        </div></div><div class='runpanel run-run_04'><div class="panel">
+      <div class="panel-section">
+        <div class="h">Question</div>
+        <div class="question">Name a prime number greater than 10.</div>
+      </div>
+
+      <div class="panel-section">
+        <div class="h">Reasoning trace</div>
+        <div class="steps">
+          <div class="step" style="--bg:#e74c3c; --fg:#ffffff; --border:#b33a2f;">
+              <div class="step-head">
+                <span class="pill">Plan</span>
+                <span class="step-title">Step 1</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Plan step 1</div>
+                <div class="step-data markdown"><pre>{
+  &quot;note&quot;: &quot;dummy payload for plan&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#3498db; --fg:#ffffff; --border:#2b79ad;">
+              <div class="step-head">
+                <span class="pill">Search</span>
+                <span class="step-title">Step 2</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Search step 2</div>
+                <div class="step-data tool-search"><pre>{
+  &quot;note&quot;: &quot;dummy payload for search&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#9b59b6; --fg:#ffffff; --border:#7b3f97;">
+              <div class="step-head">
+                <span class="pill">Evaluate</span>
+                <span class="step-title">Step 3</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Evaluate step 3</div>
+                <div class="step-data eval"><pre>{
+  &quot;note&quot;: &quot;dummy payload for evaluate&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#3498db; --fg:#ffffff; --border:#2b79ad;">
+              <div class="step-head">
+                <span class="pill">Search</span>
+                <span class="step-title">Step 4</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Search step 4</div>
+                <div class="step-data tool-search"><pre>{
+  &quot;note&quot;: &quot;dummy payload for search&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#9b59b6; --fg:#ffffff; --border:#7b3f97;">
+              <div class="step-head">
+                <span class="pill">Evaluate</span>
+                <span class="step-title">Step 5</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Evaluate step 5</div>
+                <div class="step-data eval"><pre>{
+  &quot;note&quot;: &quot;dummy payload for evaluate&quot;
+}</pre></div>
+              </div>
+            </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="h">Final answer</div>
+        <div class="final">11 is a prime number greater than 10.</div>
+      </div>
+    </div></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="colHeader right">
+                    <div class="name">Right (blue)</div>
+                    <div class="badge">selected via top bar</div>
+                  </div>
+                  <div class="rightPane">
+                    <div class='runpanel run-run_01'><div class="missing">
+          <div class="missing-title">Missing</div>
+          <div class="missing-body">No row for this question_id in <code>run_01/qra.csv</code>.</div>
+        </div></div><div class='runpanel run-run_02'><div class="panel">
+      <div class="panel-section">
+        <div class="h">Question</div>
+        <div class="question">Name a prime number greater than 10.</div>
+      </div>
+
+      <div class="panel-section">
+        <div class="h">Reasoning trace</div>
+        <div class="steps">
+          <div class="step" style="--bg:#e74c3c; --fg:#ffffff; --border:#b33a2f;">
+              <div class="step-head">
+                <span class="pill">Plan</span>
+                <span class="step-title">Step 1</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Plan step 1</div>
+                <div class="step-data markdown"><pre>{
+  &quot;note&quot;: &quot;dummy payload for plan&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#3498db; --fg:#ffffff; --border:#2b79ad;">
+              <div class="step-head">
+                <span class="pill">Search</span>
+                <span class="step-title">Step 2</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Search step 2</div>
+                <div class="step-data tool-search"><pre>{
+  &quot;note&quot;: &quot;dummy payload for search&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#9b59b6; --fg:#ffffff; --border:#7b3f97;">
+              <div class="step-head">
+                <span class="pill">Evaluate</span>
+                <span class="step-title">Step 3</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Evaluate step 3</div>
+                <div class="step-data eval"><pre>{
+  &quot;note&quot;: &quot;dummy payload for evaluate&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#3498db; --fg:#ffffff; --border:#2b79ad;">
+              <div class="step-head">
+                <span class="pill">Search</span>
+                <span class="step-title">Step 4</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Search step 4</div>
+                <div class="step-data tool-search"><pre>{
+  &quot;note&quot;: &quot;dummy payload for search&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#9b59b6; --fg:#ffffff; --border:#7b3f97;">
+              <div class="step-head">
+                <span class="pill">Evaluate</span>
+                <span class="step-title">Step 5</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Evaluate step 5</div>
+                <div class="step-data eval"><pre>{
+  &quot;note&quot;: &quot;dummy payload for evaluate&quot;
+}</pre></div>
+              </div>
+            </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="h">Final answer</div>
+        <div class="final">11 is a prime number greater than 10.</div>
+      </div>
+    </div></div><div class='runpanel run-run_03'><div class="missing">
+          <div class="missing-title">Missing</div>
+          <div class="missing-body">No row for this question_id in <code>run_03/qra.csv</code>.</div>
+        </div></div><div class='runpanel run-run_04'><div class="panel">
+      <div class="panel-section">
+        <div class="h">Question</div>
+        <div class="question">Name a prime number greater than 10.</div>
+      </div>
+
+      <div class="panel-section">
+        <div class="h">Reasoning trace</div>
+        <div class="steps">
+          <div class="step" style="--bg:#e74c3c; --fg:#ffffff; --border:#b33a2f;">
+              <div class="step-head">
+                <span class="pill">Plan</span>
+                <span class="step-title">Step 1</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Plan step 1</div>
+                <div class="step-data markdown"><pre>{
+  &quot;note&quot;: &quot;dummy payload for plan&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#3498db; --fg:#ffffff; --border:#2b79ad;">
+              <div class="step-head">
+                <span class="pill">Search</span>
+                <span class="step-title">Step 2</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Search step 2</div>
+                <div class="step-data tool-search"><pre>{
+  &quot;note&quot;: &quot;dummy payload for search&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#9b59b6; --fg:#ffffff; --border:#7b3f97;">
+              <div class="step-head">
+                <span class="pill">Evaluate</span>
+                <span class="step-title">Step 3</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Evaluate step 3</div>
+                <div class="step-data eval"><pre>{
+  &quot;note&quot;: &quot;dummy payload for evaluate&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#3498db; --fg:#ffffff; --border:#2b79ad;">
+              <div class="step-head">
+                <span class="pill">Search</span>
+                <span class="step-title">Step 4</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Search step 4</div>
+                <div class="step-data tool-search"><pre>{
+  &quot;note&quot;: &quot;dummy payload for search&quot;
+}</pre></div>
+              </div>
+            </div>
+<div class="step" style="--bg:#9b59b6; --fg:#ffffff; --border:#7b3f97;">
+              <div class="step-head">
+                <span class="pill">Evaluate</span>
+                <span class="step-title">Step 5</span>
+              </div>
+              <div class="step-body">
+                <div class="step-summary">Evaluate step 5</div>
+                <div class="step-data eval"><pre>{
+  &quot;note&quot;: &quot;dummy payload for evaluate&quot;
+}</pre></div>
+              </div>
+            </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="h">Final answer</div>
+        <div class="final">11 is a prime number greater than 10.</div>
+      </div>
+    </div></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+            </main>
+          </div>
+        </div>
+      </div>
+    </body>
+    </html>
