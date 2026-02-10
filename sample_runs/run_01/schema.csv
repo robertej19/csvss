@@ -1,6 +1,6 @@
 section,key,value,type,label,bg,fg,border,component
 meta,schema_version,1,,,,,,
-meta,run_name,Run (R/W/B) plan→search→generate,,,,,,
+meta,run_name,Rainbow v1 (Understand→Plan→Question→Search→Evaluate→Generate→Judge),,,,,,
 meta,reasoning_format,json,,,,,,
 meta,default_bg,#888888,,,,,,
 meta,default_fg,#ffffff,,,,,,
@@ -10,6 +10,10 @@ columns,question_id,question_id,,,,,,
 columns,question,question,,,,,,
 columns,reasoning,reasoning,,,,,,
 columns,final,final,,,,,,
-type_style,,,plan,Plan,#e74c3c,#ffffff,#b33a2f,markdown
-type_style,,,search,Search,#f7f7f7,#111111,#aaaaaa,tool_search
-type_style,,,generate,Generate,#1f5fff,#ffffff,#163fbf,markdown
+type_style,,,understand base,Understand Base,#E53935,#ffffff,#B71C1C,markdown
+type_style,,,plan,Plan,#FB8C00,#111111,#EF6C00,markdown
+type_style,,,question,Question,#FDD835,#111111,#F9A825,markdown
+type_style,,,search,Search,#43A047,#ffffff,#2E7D32,tool_search
+type_style,,,evaluate,Evaluate,#1E88E5,#ffffff,#1565C0,eval
+type_style,,,generate,Generate,#5E35B1,#ffffff,#4527A0,markdown
+type_style,,,judge,Judge,#8E24AA,#ffffff,#6A1B9A,judge
