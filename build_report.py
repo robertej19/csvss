@@ -683,25 +683,36 @@ def build_css(qids: list[int], run_keys: list[str]) -> str:
         # We check from left radio and ensure right is NOT checked by using :not() on a sibling
         # But CSS can't easily check "A checked AND B not checked" for siblings
         # So we'll apply left style, then override with right style if right is also checked
+        # When left is checked: red highlight with smooth gradient
         dyn.append(
             f"#left-{rk}:checked ~ .card .topbar .rtab-wrapper.run-{rk}"
-            "{background: linear-gradient(to right, var(--leftHi) 0%, var(--leftHi) 50%, rgba(255,255,255,.02) 50%, rgba(255,255,255,.02) 100%); border-color: var(--leftHiB);}"
+            + "{background: linear-gradient(to right, rgba(231,76,60,.25) 0%, rgba(231,76,60,.20) 40%, rgba(231,76,60,.12) 50%, rgba(231,76,60,.06) 60%, rgba(255,255,255,.02) 70%, rgba(255,255,255,.02) 100%); border-color: var(--leftHiB);}"
         )
         dyn.append(
             f"#left-{rk}:checked ~ .card .topbar .rtab-wrapper.run-{rk} .rtab-content"
-            "{color: var(--text);}"
+            + "{color: var(--text);}"
         )
-        # When right is checked: blue highlight on right half
-        # This applies when only right is checked
+        # When both left and right are checked: red-to-blue gradient
+        # We can detect "both checked" using: #left-{rk}:checked ~ #right-{rk}:checked
+        # (left comes before right in HTML, so this selector works)
+        dyn.append(
+            f"#left-{rk}:checked ~ #right-{rk}:checked ~ .card .topbar .rtab-wrapper.run-{rk}"
+            + "{background: linear-gradient(to right, rgba(231,76,60,.25) 0%, rgba(231,76,60,.20) 20%, rgba(231,76,60,.12) 30%, rgba(142,36,170,.15) 40%, rgba(142,36,170,.20) 50%, rgba(52,152,219,.20) 60%, rgba(52,152,219,.25) 80%, rgba(52,152,219,.25) 100%); border-color: rgba(142,36,170,.50);}"
+        )
+        dyn.append(
+            f"#left-{rk}:checked ~ #right-{rk}:checked ~ .card .topbar .rtab-wrapper.run-{rk} .rtab-content"
+            + "{color: var(--text);}"
+        )
+        # When only right is checked (left is NOT checked): blue gradient on right side
+        # This rule has lower specificity than "both checked", so it only applies when left is not checked
         dyn.append(
             f"#right-{rk}:checked ~ .card .topbar .rtab-wrapper.run-{rk}"
-            "{background: linear-gradient(to right, rgba(255,255,255,.02) 0%, rgba(255,255,255,.02) 50%, var(--rightHi) 50%, var(--rightHi) 100%); border-color: var(--rightHiB);}"
+            + "{background: linear-gradient(to right, rgba(255,255,255,.02) 0%, rgba(255,255,255,.02) 30%, rgba(52,152,219,.06) 40%, rgba(52,152,219,.12) 50%, rgba(52,152,219,.20) 60%, rgba(52,152,219,.25) 100%); border-color: var(--rightHiB);}"
         )
         dyn.append(
             f"#right-{rk}:checked ~ .card .topbar .rtab-wrapper.run-{rk} .rtab-content"
-            "{color: var(--text);}"
+            + "{color: var(--text);}"
         )
-        # When both are checked: purple highlight (red + blue = purple)
         # Since CSS can't easily detect "both checked" for siblings, we use a workaround:
         # Apply purple gradient when right is checked AND left is also checked
         # We can't directly detect "both", so we apply purple gradient when right is checked
