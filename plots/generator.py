@@ -60,6 +60,7 @@ spec_rows = []
 # meta
 spec_rows += [
     {"section": "meta", "key": "title", "value": "QA Heatmap Demo (metrics + tag filtering)"},
+    {"section": "meta", "key": "description", "value": "This report shows accuracy, latency, and helpfulness by question and answer set. Use the Tags and Metric panels to filter the heatmap and downstream KDE and radar plots."},
     {"section": "meta", "key": "x_label", "value": "Questions"},
     {"section": "meta", "key": "y_label", "value": "Answers"},
     {"section": "meta", "key": "value_label", "value": "Metric value"},

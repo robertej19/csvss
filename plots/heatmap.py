@@ -255,8 +255,8 @@ def svg_kde_multi(
     xlabel: str,
     trace_toggle_prefix: str = "",  # e.g. "kde-t-none-m_accuracy" for checkbox ids
 ) -> str:
-    W, H = 520, 280
-    pad_l, pad_r, pad_t, pad_b = 46, 18, 26, 34
+    W, H = 520, 360
+    pad_l, pad_r, pad_t, pad_b = 46, 18, 44, 34
     plot_w = W - pad_l - pad_r
     plot_h = H - pad_t - pad_b
 
@@ -314,8 +314,8 @@ def svg_kde_multi(
         parts.append("</g>")
 
     # Legend at bottom (below x-axis): with trace toggles if trace_toggle_prefix set
-    legend_y = 254
-    legend_fh = 24
+    legend_y = 328
+    legend_fh = 32
     if trace_toggle_prefix:
         legend_parts: List[str] = []
         for i, (lab, vals, col, _, _) in enumerate(density_series):
@@ -324,7 +324,7 @@ def svg_kde_multi(
                 f'<label class="kde-legend-item">'
                 f'<input type="checkbox" class="kde-trace-cb" id="{esc(cid)}" checked>'
                 f'<span class="kde-legend-swatch" style="background:{col}"></span>'
-                f'<span class="kde-legend-txt">{esc(lab)} (n={len(vals)})</span>'
+                f'<span class="kde-legend-txt">{esc(lab)}</span>'
                 f'</label>'
             )
         legend_html = "\n".join(legend_parts)
@@ -341,21 +341,20 @@ def svg_kde_multi(
             legend_block += (
                 f'<g transform="translate({lx},{legend_y + 12})">'
                 f'<rect x="0" y="-9" width="10" height="10" fill="{col}" fill-opacity="0.95"/>'
-                f'<text x="14" y="0" font-size="13" fill="#000000">{esc(lab)} (n={len(vals)})</text>'
+                f'<text x="14" y="0" font-size="15" fill="#000000">{esc(lab)}</text>'
                 f"</g>"
             )
 
     svg = f"""
     <svg viewBox="0 0 {W} {H}" width="100%" height="100%" role="img" aria-label="{esc(title)}" style="pointer-events:all">
-      <text x="{pad_l}" y="18" font-size="16" fill="#000000" font-weight="800">{esc(title)}</text>
-      <text x="{pad_l+plot_w/2}" y="{pad_t+plot_h+32}" font-size="14" fill="#333333" text-anchor="middle">{esc(xlabel)} (total n={total_n})</text>
+      <text x="{W/2}" y="18" font-size="19" fill="#000000" font-weight="800" text-anchor="middle">{esc(title)}</text>
 
       <line x1="{pad_l}" y1="{pad_t+plot_h}" x2="{pad_l+plot_w}" y2="{pad_t+plot_h}" stroke="rgba(17,24,39,.25)"/>
       <line x1="{pad_l}" y1="{pad_t}" x2="{pad_l}" y2="{pad_t+plot_h}" stroke="rgba(17,24,39,.25)"/>
 
-      <text x="{pad_l}" y="{pad_t+plot_h+18}" font-size="13" fill="#333333">{xmin:g}</text>
-      <text x="{pad_l+plot_w/2}" y="{pad_t+plot_h+18}" font-size="13" fill="#333333" text-anchor="middle">{(xmin+xmax)/2:g}</text>
-      <text x="{pad_l+plot_w}" y="{pad_t+plot_h+18}" font-size="13" fill="#333333" text-anchor="end">{xmax:g}</text>
+      <text x="{pad_l}" y="{pad_t+plot_h+18}" font-size="15" fill="#333333">{xmin:g}</text>
+      <text x="{pad_l+plot_w/2}" y="{pad_t+plot_h+18}" font-size="15" fill="#333333" text-anchor="middle">{(xmin+xmax)/2:g}</text>
+      <text x="{pad_l+plot_w}" y="{pad_t+plot_h+18}" font-size="15" fill="#333333" text-anchor="end">{xmax:g}</text>
 
       {"".join(parts)}
       {legend_block}
@@ -370,8 +369,8 @@ def svg_radar_multi(
     title: str,
     trace_toggle_prefix: str = "",
 ) -> str:
-    W, H = 520, 280
-    cx, cy = 155, 130
+    W, H = 520, 400
+    cx, cy = 260, 188
     R = 92
     label_r = 118
 
@@ -463,8 +462,8 @@ def svg_radar_multi(
         polys.append("</g>")
 
     # Legend at bottom (below chart)
-    legend_y = 252
-    legend_fh = 26
+    legend_y = 358
+    legend_fh = 40
     if trace_toggle_prefix:
         legend_parts = []
         for i, (lab, _, col) in enumerate(series_means):
@@ -487,7 +486,7 @@ def svg_radar_multi(
 
     svg = f"""
     <svg viewBox="0 0 {W} {H}" width="100%" height="100%" role="img" aria-label="{esc(title)}" style="pointer-events:all">
-      <text x="18" y="18" font-size="16" fill="#000000" font-weight="800">{esc(title)}</text>
+      <text x="{W/2}" y="18" font-size="19" fill="#000000" font-weight="800" text-anchor="middle">{esc(title)}</text>
 
       {"".join(f'<polygon points="{rp}" fill="none" stroke="rgba(17,24,39,.12)" stroke-width="1"/>' for rp in rings)}
       {"".join(f'<line x1="{cx}" y1="{cy}" x2="{x:.2f}" y2="{y:.2f}" stroke="rgba(17,24,39,.14)" />'
@@ -498,7 +497,7 @@ def svg_radar_multi(
       <circle cx="{cx}" cy="{cy}" r="2.6" fill="rgba(17,24,39,.75)"/>
 
       {"".join(
-        f'<text x="{x:.2f}" y="{y:.2f}" font-size="13" fill="#000000" text-anchor="{anchor_for_ang(a)}">'
+        f'<text x="{x:.2f}" y="{y:.2f}" font-size="15" fill="#000000" text-anchor="{anchor_for_ang(a)}">'
         f'{esc(str(m["label"]))}</text>'
         for (x, y, a), m in zip(label_pts, metric_defs)
       )}
@@ -580,12 +579,18 @@ def render(spec: Dict[str, Any], data: Dict[str, Any]) -> str:
     tags = spec["tags"]
 
     title = meta.get("title", "Heatmap")
+    description = meta.get("description", "").strip()
+    if not description:
+        description = (
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
+            "Select a metric and optional tags to explore the heatmap, KDE, and radar views below."
+        )
     x_axis_label = meta.get("x_label", "X")
     y_axis_label = meta.get("y_label", "Y")
     tags_sep = meta.get("tags_separator", "|")
 
     cell_px = int(float(layout.get("cell_px", "28") or 28))
-    font_px = int(float(layout.get("font_px", "16") or 16))
+    font_px = int(float(layout.get("font_px", "19") or 19))
 
     x_order = data["x_order"]
     y_order = data["y_order"]
@@ -695,41 +700,20 @@ def render(spec: Dict[str, Any], data: Dict[str, Any]) -> str:
                     val_str = fmt_value(v, fmt)
                     tip_note = d.get("note_html", "")
 
-                tip_rows = []
-                if tooltip_fields.get("x_label", "text") != "off":
-                    tip_rows.append(
-                        f'<div class="tipRow"><span class="k">{esc(x_axis_label)}</span>'
-                        f'<span class="v">{esc(x_label[xid])}</span></div>'
-                    )
-                if tooltip_fields.get("y_label", "text") != "off":
-                    tip_rows.append(
-                        f'<div class="tipRow"><span class="k">{esc(y_axis_label)}</span>'
-                        f'<span class="v">{esc(y_label[yid])}</span></div>'
-                    )
-                if tooltip_fields.get("metric", "text") != "off":
-                    tip_rows.append(
-                        f'<div class="tipRow"><span class="k">metric</span>'
-                        f'<span class="v">{esc(m["label"])}</span></div>'
-                    )
-                if tooltip_fields.get("value", "text") != "off":
-                    tip_rows.append(
-                        f'<div class="tipRow"><span class="k">value</span>'
-                        f'<span class="v">{esc(val_str)}</span></div>'
-                    )
-                if tooltip_fields.get("tags", "text") != "off":
-                    tip_rows.append(
-                        f'<div class="tipRow"><span class="k">tags</span>'
-                        f'<span class="v">{esc(tag_str) if tag_str else "—"}</span></div>'
-                    )
-
+                # Tooltip format: "X, Y" \n Metric: Z \n Tags: ... \n Note: ...
+                tip_first = f"{esc(x_label[xid])}, {esc(y_label[yid])}"
+                tip_metric = f"{esc(m['label'])}: {esc(val_str)}"
+                tip_tags = f"Tags: {esc(tag_str) if tag_str else '—'}"
                 note_mode = tooltip_fields.get("note_html", "off")
-                note_block = tip_note if (note_mode in ("html", "html_sanitized") and tip_note) else ""
+                note_content = tip_note if (note_mode in ("html", "html_sanitized") and tip_note) else ""
+                note_block = f'<div class="tipNote">Note: {note_content}</div>' if note_content else ""
 
                 tip_html = (
                     f'<div class="tip">'
-                    f'  <div class="tipTitle">{esc(y_label[yid])} × {esc(x_label[xid])}</div>'
-                    f'  {"".join(tip_rows)}'
-                    f'  {note_block}'
+                    f'<div class="tipTitle">{tip_first}</div>'
+                    f'<div class="tipRow"><span class="v">{tip_metric}</span></div>'
+                    f'<div class="tipRow"><span class="v">{tip_tags}</span></div>'
+                    f'{note_block}'
                     f'</div>'
                 )
                 col_parts.append(f'<div class="{classes}" style="background:{bg}">{tip_html}</div>')
@@ -746,7 +730,7 @@ def render(spec: Dict[str, Any], data: Dict[str, Any]) -> str:
                     {''.join(tag_label_controls)}
                   </div>
                 </div>
-                <div class="plotSegment heatmapLegendBox">
+                <div class="plotSegment heatmapLegendBox" style="--n-cols: {len(x_order)}; --n-rows: {len(y_order)}">
                   <div class="heatwrap">
                     <div class="ycol">{ycol_html}</div>
                     <div class="xwrap">
@@ -756,9 +740,13 @@ def render(spec: Dict[str, Any], data: Dict[str, Any]) -> str:
                   </div>
                   <aside class="legend">
                     <div class="legendTitle">{esc(m["label"])}</div>
-                    <div class="cb">{cb_html}</div>
-                    <div class="cbLabels"><span>{esc(vmax)}</span><span>{esc(vmin)}</span></div>
-                    <div class="legendMeta">palette={esc(pal_name)} bins={len(palette)}</div>
+                    <div class="cbWrap">
+                      <div class="cb">{cb_html}</div>
+                      <div class="cbLabelsRight">
+                        <span class="cbVal cbMax">{esc(vmax)}</span>
+                        <span class="cbVal cbMin">{esc(vmin)}</span>
+                      </div>
+                    </div>
                   </aside>
                 </div>
                 <div class="plotSegment metricColumn">
@@ -798,7 +786,7 @@ def render(spec: Dict[str, Any], data: Dict[str, Any]) -> str:
         safe_radar = (subset.key or "none").replace("|", "_").replace(" ", "_")
         radar_toggle_prefix = f"radar-t-{safe_radar}"
         radar_svg = svg_radar_multi(
-            metrics, radar_series, title="Radar: mean per answer-set (filtered questions)",
+            metrics, radar_series, title="Radar Plot",
             trace_toggle_prefix=radar_toggle_prefix,
         )
         radar_blocks.append(f'<div class="radarPlot" data-subset="{esc(subset.key)}">{radar_svg}</div>')
@@ -820,7 +808,7 @@ def render(spec: Dict[str, Any], data: Dict[str, Any]) -> str:
                 kde_series,
                 xmin=float(m["vmin"]),
                 xmax=float(m["vmax"]),
-                title="KDE: per answer-set distribution (filtered questions)",
+                title=f'{m["label"]} KDE',
                 xlabel=m["label"],
                 trace_toggle_prefix=kde_toggle_prefix,
             )
@@ -843,9 +831,12 @@ def render(spec: Dict[str, Any], data: Dict[str, Any]) -> str:
                 f'{sel}:has(#metric-{mid}:checked) ~ .below .kdePlot[data-subset="{subset.key}"][data-metric="{mid}"] {{ display: block; }}'
             )
 
+    max_legend_title_ch = max((len(m["label"]) for m in metrics), default=1)
+
     # White theme + viridis accents
     css = f"""
     :root {{
+      --legend-title-ch: {max_legend_title_ch};
       --bg: #ffffff;
       --panel: #ffffff;
       --border: #d9dde7;
@@ -888,7 +879,7 @@ def render(spec: Dict[str, Any], data: Dict[str, Any]) -> str:
     }}
 
     .header {{
-      padding: 14px 16px;
+      padding: 12px 14px;
       border-bottom: 1px solid var(--border);
       background: #f6f8fb;
       display: flex;
@@ -902,14 +893,22 @@ def render(spec: Dict[str, Any], data: Dict[str, Any]) -> str:
 
     .title {{
       margin: 0;
-      font-size: 22px;
+      font-size: 26px;
       font-weight: 850;
       letter-spacing: .2px;
     }}
 
+    .description {{
+      margin: 8px 0 0;
+      font-size: 18px;
+      line-height: 1.5;
+      color: var(--muted);
+      max-width: 60em;
+    }}
+
     .sub {{
       color: var(--muted);
-      font-size: 15px;
+      font-size: 18px;
       margin: 0;
       white-space: nowrap;
     }}
@@ -921,11 +920,12 @@ def render(spec: Dict[str, Any], data: Dict[str, Any]) -> str:
     }}
 
     .controlTitle {{
-      font-size: 14px;
+      font-size: 18px;
+      font-weight: 700;
       color: var(--muted);
       text-transform: uppercase;
       letter-spacing: .12em;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }}
 
     .pillRow {{
@@ -936,12 +936,12 @@ def render(spec: Dict[str, Any], data: Dict[str, Any]) -> str:
 
     .pill {{
       display: inline-block;
-      padding: 6px 10px;
+      padding: 5px 10px;
       border-radius: 999px;
       border: 1px solid rgba(17,24,39,.16);
       background: rgba(17,24,39,.03);
       color: var(--text);
-      font-size: 15px;
+      font-size: 17px;
       cursor: pointer;
       user-select: none;
     }}
@@ -951,7 +951,7 @@ def render(spec: Dict[str, Any], data: Dict[str, Any]) -> str:
     }}
 
     .plot {{
-      padding: 16px;
+      padding: 12px;
     }}
 
     .metricView {{ display: none; }}
@@ -966,7 +966,7 @@ def render(spec: Dict[str, Any], data: Dict[str, Any]) -> str:
     .plotSegment {{
       border: 1px solid var(--border);
       background: rgba(17,24,39,.02);
-      padding: 12px;
+      padding: 10px;
     }}
     .plotSegment:first-child {{
       border-right: none;
@@ -976,13 +976,15 @@ def render(spec: Dict[str, Any], data: Dict[str, Any]) -> str:
       display: flex;
       flex-direction: row;
       gap: 12px;
-      align-items: flex-start;
+      align-items: center;
       flex: 1;
       min-width: 0;
+      padding-left: 2%;
     }}
     .plotSegment.heatmapLegendBox .heatwrap {{
       flex: 1;
       min-width: 0;
+      container-type: inline-size;
     }}
     .plotSegment:last-child {{
       border-left: none;
@@ -1008,13 +1010,14 @@ def render(spec: Dict[str, Any], data: Dict[str, Any]) -> str:
 
     .heatwrap {{
       display: flex;
-      gap: 12px;
+      gap: 6px;
       align-items: flex-start;
     }}
 
     .ycol {{
       flex: 0 0 auto;
-      width: 220px;
+      width: max-content;
+      min-width: 60px;
       display: flex;
       flex-direction: column;
       gap: 0;
@@ -1024,12 +1027,13 @@ def render(spec: Dict[str, Any], data: Dict[str, Any]) -> str:
       display: flex;
       flex-direction: column;
       align-items: flex-start;
+      width: 90cqw;
     }}
     .xAxisTitle {{
       width: 100%;
       text-align: center;
-      padding: 8px 0 0;
-      font-size: 14px;
+      padding: 6px 0 0;
+      font-size: 16px;
       color: var(--muted);
     }}
 
@@ -1038,9 +1042,9 @@ def render(spec: Dict[str, Any], data: Dict[str, Any]) -> str:
       display: flex;
       align-items: center;
       justify-content: flex-end;
-      padding-right: 10px;
+      padding-right: 6px;
       color: var(--muted);
-      font-size: 14px;
+      font-size: 16px;
       user-select: none;
       white-space: nowrap;
     }}
@@ -1052,7 +1056,8 @@ def render(spec: Dict[str, Any], data: Dict[str, Any]) -> str:
     }}
 
     .xcol {{
-      flex: 0 0 auto;
+      flex: 0 0 calc(90cqw / var(--n-cols));
+      width: calc(90cqw / var(--n-cols));
       display: flex;
       flex-direction: column;
       gap: 0;
@@ -1060,15 +1065,15 @@ def render(spec: Dict[str, Any], data: Dict[str, Any]) -> str:
 
     .xtick {{
       height: var(--cell);
-      width: var(--cell);
-      min-width: var(--cell);
-      max-width: var(--cell);
+      width: calc(90cqw / var(--n-cols));
+      min-width: calc(90cqw / var(--n-cols));
+      max-width: calc(90cqw / var(--n-cols));
       display: flex;
       align-items: flex-end;
       justify-content: center;
       text-align: center;
       color: var(--muted);
-      font-size: 14px;
+      font-size: 16px;
       user-select: none;
       padding-bottom: 2px;
       white-space: nowrap;
@@ -1078,7 +1083,7 @@ def render(spec: Dict[str, Any], data: Dict[str, Any]) -> str:
     }}
 
     .cell {{
-      width: var(--cell);
+      width: 100%;
       height: var(--cell);
       border-radius: 0;
       border: 1px solid rgba(17,24,39,.08);
@@ -1101,13 +1106,14 @@ def render(spec: Dict[str, Any], data: Dict[str, Any]) -> str:
       left: calc(100% + 10px);
       top: 50%;
       transform: translateY(-50%) translateX(-4px);
-      min-width: 260px;
-      max-width: 360px;
+      min-width: 200px;
+      max-width: min(520px, 90vw);
+      width: max-content;
       background: var(--tip-bg);
       border: 1px solid var(--tip-border);
       border-radius: 12px;
       box-shadow: 0 12px 24px rgba(17,24,39,.14);
-      padding: 10px 10px;
+      padding: 12px 14px;
       pointer-events: none;
       opacity: 0;
       transition: opacity .10s ease, transform .10s ease;
@@ -1120,35 +1126,35 @@ def render(spec: Dict[str, Any], data: Dict[str, Any]) -> str:
     .tipTitle {{
       font-weight: 850;
       margin-bottom: 8px;
-      font-size: 15px;
+      font-size: 17px;
       color: var(--text);
+      white-space: normal;
+      word-break: break-word;
     }}
     .tipRow {{
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      font-size: 14px;
-      color: var(--muted);
-      padding: 2px 0;
-    }}
-    .tipRow .k {{
-      text-transform: uppercase;
-      letter-spacing: .08em;
-      font-size: 13px;
+      font-size: 16px;
       color: var(--text);
+      padding: 3px 0;
+      white-space: normal;
+      word-break: break-word;
     }}
     .tipRow .v {{
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       color: var(--text);
-      max-width: 220px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      text-align: right;
+    }}
+    .tipNote {{
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(17,24,39,.12);
+      font-size: 15px;
+      color: var(--muted);
+      white-space: normal;
+      word-break: break-word;
     }}
 
     .legend {{
       flex: 0 0 auto;
+      min-width: calc(var(--legend-title-ch) * 1ch + 16px + 6px + 3.5em);
       border: none;
       border-radius: 0;
       padding: 8px 0 0 8px;
@@ -1158,36 +1164,37 @@ def render(spec: Dict[str, Any], data: Dict[str, Any]) -> str:
     }}
     .legendTitle {{
       margin: 0 0 6px;
-      font-size: 11px;
+      min-width: calc(var(--legend-title-ch) * 1ch);
+      font-size: 13px;
       letter-spacing: .08em;
       text-transform: uppercase;
       color: var(--muted);
     }}
+    .cbWrap {{
+      display: flex;
+      align-items: stretch;
+      gap: 6px;
+    }}
     .cb {{
-      display: grid;
-      grid-template-rows: repeat(11, 1fr);
-      grid-template-columns: 1fr;
-      gap: 1px;
-      border-radius: 6px;
-      overflow: hidden;
-      border: 1px solid rgba(17,24,39,.12);
+      display: flex;
+      flex-direction: column;
       width: 16px;
       min-height: 100px;
+      overflow: hidden;
+      border-radius: 2px;
     }}
-    .cbBlock {{ min-height: 6px; width: 100%; }}
-    .cbLabels {{
+    .cbBlock {{
+      flex: 1;
+      min-height: 4px;
+      width: 100%;
+    }}
+    .cbLabelsRight {{
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      margin-top: 4px;
       color: var(--muted);
-      font-size: 10px;
+      font-size: 12px;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    }}
-    .legendMeta {{
-      margin-top: 4px;
-      color: var(--muted);
-      font-size: 10px;
     }}
 
     .below {{
@@ -1204,18 +1211,24 @@ def render(spec: Dict[str, Any], data: Dict[str, Any]) -> str:
       border-radius: 12px;
       background: rgba(17,24,39,.02);
       padding: 10px;
-      min-height: 300px;
-    }}
-    .miniTitle {{
-      font-size: 14px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: .12em;
-      margin-bottom: 8px;
+      min-height: 420px;
+      overflow: visible;
     }}
     .miniBody {{
       width: 100%;
-      height: 280px;
+      height: 380px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: visible;
+    }}
+    .miniBody .kdePlot,
+    .miniBody .radarPlot {{
+      width: 520px;
+      max-width: 100%;
+      height: 380px;
+      margin: 0 auto;
+      overflow: visible;
     }}
 
     /* KDE/radar legend row at bottom (with trace toggles) */
@@ -1225,14 +1238,14 @@ def render(spec: Dict[str, Any], data: Dict[str, Any]) -> str:
       gap: 12px 20px;
       align-items: center;
       justify-content: center;
-      padding-top: 4px;
+      padding-top: 14px;
     }}
     .kde-legend-item, .radar-legend-item {{
       display: inline-flex;
       align-items: center;
       gap: 6px;
       cursor: pointer;
-      font-size: 13px;
+      font-size: 15px;
       color: var(--text);
       user-select: none;
     }}
@@ -1262,7 +1275,7 @@ def render(spec: Dict[str, Any], data: Dict[str, Any]) -> str:
       opacity: 1;
     }}
     .kde-tt-inner, .radar-tt-inner {{
-      font-size: 12px;
+      font-size: 14px;
       line-height: 1.4;
       padding: 8px 10px;
       background: var(--tip-bg);
@@ -1307,6 +1320,7 @@ def render(spec: Dict[str, Any], data: Dict[str, Any]) -> str:
           <div class="header">
             <h1 class="title">{esc(title)}</h1>
             <p class="sub">{esc(y_axis_label)} × {esc(x_axis_label)} • heatmap + KDE + radar (no JS)</p>
+            <p class="description">{esc(description)}</p>
           </div>
 
           <div class="state">
@@ -1321,14 +1335,12 @@ def render(spec: Dict[str, Any], data: Dict[str, Any]) -> str:
           <div class="below">
             <div class="belowGrid">
               <div class="miniCard">
-                <div class="miniTitle">KDE of selected metric, split by answer-set (hover curves)</div>
                 <div class="miniBody">
                   {''.join(kde_blocks)}
                 </div>
               </div>
 
               <div class="miniCard">
-                <div class="miniTitle">Radar of all metrics, split by answer-set (hover polygons/vertices)</div>
                 <div class="miniBody">
                   {''.join(radar_blocks)}
                 </div>

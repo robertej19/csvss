@@ -1,12 +1,13 @@
 bins,fmt,key,label,m_id,max,min,palette,section,tag_id,tag_label,value
 ,,title,,,,,,meta,,,QA Heatmap Demo (metrics + tag filtering)
+,,description,,,,,,meta,,,"This report shows accuracy, latency, and helpfulness by question and answer set. Use the Tags and Metric panels to filter the heatmap and downstream KDE and radar plots."
 ,,x_label,,,,,,meta,,,Questions
 ,,y_label,,,,,,meta,,,Answers
 ,,value_label,,,,,,meta,,,Metric value
 ,,tooltip_html_field,,,,,,meta,,,note_html
 ,,tags_separator,,,,,,meta,,,|
 ,,cell_px,,,,,,layout,,,28
-,,font_px,,,,,,layout,,,13
+,,font_px,,,,,,layout,,,16
 ,,show_values,,,,,,layout,,,false
 ,,x_label,,,,,,tooltip_fields,,,text
 ,,y_label,,,,,,tooltip_fields,,,text
