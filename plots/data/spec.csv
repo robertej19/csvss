@@ -1,0 +1,24 @@
+bins,fmt,key,label,m_id,max,min,palette,section,tag_id,tag_label,value
+,,title,,,,,,meta,,,QA Heatmap Demo (metrics + tag filtering)
+,,x_label,,,,,,meta,,,Questions
+,,y_label,,,,,,meta,,,Answers
+,,value_label,,,,,,meta,,,Metric value
+,,tooltip_html_field,,,,,,meta,,,note_html
+,,tags_separator,,,,,,meta,,,|
+,,cell_px,,,,,,layout,,,28
+,,font_px,,,,,,layout,,,13
+,,show_values,,,,,,layout,,,false
+,,x_label,,,,,,tooltip_fields,,,text
+,,y_label,,,,,,tooltip_fields,,,text
+,,metric,,,,,,tooltip_fields,,,text
+,,value,,,,,,tooltip_fields,,,text
+,,tags,,,,,,tooltip_fields,,,text
+,,note_html,,,,,,tooltip_fields,,,html_sanitized
+11,0.000,,Accuracy,m_accuracy,1.0,0.0,viridis,metrics,,,
+11,0.00,,Latency (s),m_latency,3.0,0.0,magma,metrics,,,
+11,0.0,,Helpfulness,m_helpfulness,5.0,0.0,plasma,metrics,,,
+,,,,,,,,tags,easy,Easy,
+,,,,,,,,tags,medium,Medium,
+,,,,,,,,tags,hard,Hard,
+,,,,,,,,tags,sports,Sports,
+,,,,,,,,tags,cooking,Cooking,

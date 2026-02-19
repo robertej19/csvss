@@ -1,0 +1,226 @@
+x_id,x_label,y_id,y_label,tags,m_accuracy,m_latency,m_helpfulness,note_html
+q1,Question 1,a1,Answer 1,cooking|easy,0.4111,2.6302,2.7502,"<div class=""note"">
+      <div class=""note-top"">
+        <span class=""flag"">🧊</span>
+        <strong>Cell report</strong>
+      </div>
+      <ul class=""note-list"">
+        <li><span class=""k"">qid</span> <code>q1</code></li>
+        <li><span class=""k"">aid</span> <code>a1</code></li>
+        <li><span class=""k"">acc</span> <span class=""pill"">0.411</span></li>
+        <li><span class=""k"">lat</span> <span class=""pill"">2.63s</span></li>
+        <li><span class=""k"">help</span> <span class=""pill"">2.8</span></li>
+        <li><span class=""k"">tags</span> <em>cooking|easy</em></li>
+      </ul>
+      <div class=""note-foot"">safe tooltip HTML (sanitized)</div>
+    </div>"
+q1,Question 1,a2,Answer 2,cooking|easy,0.495,2.7072,2.8861,"<div class=""note"">
+      <div class=""note-top"">
+        <span class=""flag"">⚠️</span>
+        <strong>Cell report</strong>
+      </div>
+      <ul class=""note-list"">
+        <li><span class=""k"">qid</span> <code>q1</code></li>
+        <li><span class=""k"">aid</span> <code>a2</code></li>
+        <li><span class=""k"">acc</span> <span class=""pill"">0.495</span></li>
+        <li><span class=""k"">lat</span> <span class=""pill"">2.71s</span></li>
+        <li><span class=""k"">help</span> <span class=""pill"">2.9</span></li>
+        <li><span class=""k"">tags</span> <em>cooking|easy</em></li>
+      </ul>
+      <div class=""note-foot"">safe tooltip HTML (sanitized)</div>
+    </div>"
+q1,Question 1,a3,Answer 3,cooking|easy,0.3846,2.7015,2.2145,"<div class=""note"">
+      <div class=""note-top"">
+        <span class=""flag"">🧊</span>
+        <strong>Cell report</strong>
+      </div>
+      <ul class=""note-list"">
+        <li><span class=""k"">qid</span> <code>q1</code></li>
+        <li><span class=""k"">aid</span> <code>a3</code></li>
+        <li><span class=""k"">acc</span> <span class=""pill"">0.385</span></li>
+        <li><span class=""k"">lat</span> <span class=""pill"">2.70s</span></li>
+        <li><span class=""k"">help</span> <span class=""pill"">2.2</span></li>
+        <li><span class=""k"">tags</span> <em>cooking|easy</em></li>
+      </ul>
+      <div class=""note-foot"">safe tooltip HTML (sanitized)</div>
+    </div>"
+q2,Question 2,a1,Answer 1,medium,0.5915,2.614,3.0796,"<div class=""note"">
+      <div class=""note-top"">
+        <span class=""flag"">⚠️</span>
+        <strong>Cell report</strong>
+      </div>
+      <ul class=""note-list"">
+        <li><span class=""k"">qid</span> <code>q2</code></li>
+        <li><span class=""k"">aid</span> <code>a1</code></li>
+        <li><span class=""k"">acc</span> <span class=""pill"">0.592</span></li>
+        <li><span class=""k"">lat</span> <span class=""pill"">2.61s</span></li>
+        <li><span class=""k"">help</span> <span class=""pill"">3.1</span></li>
+        <li><span class=""k"">tags</span> <em>medium</em></li>
+      </ul>
+      <div class=""note-foot"">safe tooltip HTML (sanitized)</div>
+    </div>"
+q2,Question 2,a2,Answer 2,medium,0.803,1.6654,3.9485,"<div class=""note"">
+      <div class=""note-top"">
+        <span class=""flag"">✅</span>
+        <strong>Cell report</strong>
+      </div>
+      <ul class=""note-list"">
+        <li><span class=""k"">qid</span> <code>q2</code></li>
+        <li><span class=""k"">aid</span> <code>a2</code></li>
+        <li><span class=""k"">acc</span> <span class=""pill"">0.803</span></li>
+        <li><span class=""k"">lat</span> <span class=""pill"">1.67s</span></li>
+        <li><span class=""k"">help</span> <span class=""pill"">3.9</span></li>
+        <li><span class=""k"">tags</span> <em>medium</em></li>
+      </ul>
+      <div class=""note-foot"">safe tooltip HTML (sanitized)</div>
+    </div>"
+q2,Question 2,a3,Answer 3,medium,0.5705,2.7255,3.5953,"<div class=""note"">
+      <div class=""note-top"">
+        <span class=""flag"">⚠️</span>
+        <strong>Cell report</strong>
+      </div>
+      <ul class=""note-list"">
+        <li><span class=""k"">qid</span> <code>q2</code></li>
+        <li><span class=""k"">aid</span> <code>a3</code></li>
+        <li><span class=""k"">acc</span> <span class=""pill"">0.571</span></li>
+        <li><span class=""k"">lat</span> <span class=""pill"">2.73s</span></li>
+        <li><span class=""k"">help</span> <span class=""pill"">3.6</span></li>
+        <li><span class=""k"">tags</span> <em>medium</em></li>
+      </ul>
+      <div class=""note-foot"">safe tooltip HTML (sanitized)</div>
+    </div>"
+q3,Question 3,a1,Answer 1,hard|sports,0.6925,2.6793,4.1034,"<div class=""note"">
+      <div class=""note-top"">
+        <span class=""flag"">⚠️</span>
+        <strong>Cell report</strong>
+      </div>
+      <ul class=""note-list"">
+        <li><span class=""k"">qid</span> <code>q3</code></li>
+        <li><span class=""k"">aid</span> <code>a1</code></li>
+        <li><span class=""k"">acc</span> <span class=""pill"">0.693</span></li>
+        <li><span class=""k"">lat</span> <span class=""pill"">2.68s</span></li>
+        <li><span class=""k"">help</span> <span class=""pill"">4.1</span></li>
+        <li><span class=""k"">tags</span> <em>hard|sports</em></li>
+      </ul>
+      <div class=""note-foot"">safe tooltip HTML (sanitized)</div>
+    </div>"
+q3,Question 3,a2,Answer 2,hard|sports,0.9047,0.5717,4.4714,"<div class=""note"">
+      <div class=""note-top"">
+        <span class=""flag"">✅</span>
+        <strong>Cell report</strong>
+      </div>
+      <ul class=""note-list"">
+        <li><span class=""k"">qid</span> <code>q3</code></li>
+        <li><span class=""k"">aid</span> <code>a2</code></li>
+        <li><span class=""k"">acc</span> <span class=""pill"">0.905</span></li>
+        <li><span class=""k"">lat</span> <span class=""pill"">0.57s</span></li>
+        <li><span class=""k"">help</span> <span class=""pill"">4.5</span></li>
+        <li><span class=""k"">tags</span> <em>hard|sports</em></li>
+      </ul>
+      <div class=""note-foot"">safe tooltip HTML (sanitized)</div>
+    </div>"
+q3,Question 3,a3,Answer 3,hard|sports,0.6492,2.6236,3.4628,"<div class=""note"">
+      <div class=""note-top"">
+        <span class=""flag"">⚠️</span>
+        <strong>Cell report</strong>
+      </div>
+      <ul class=""note-list"">
+        <li><span class=""k"">qid</span> <code>q3</code></li>
+        <li><span class=""k"">aid</span> <code>a3</code></li>
+        <li><span class=""k"">acc</span> <span class=""pill"">0.649</span></li>
+        <li><span class=""k"">lat</span> <span class=""pill"">2.62s</span></li>
+        <li><span class=""k"">help</span> <span class=""pill"">3.5</span></li>
+        <li><span class=""k"">tags</span> <em>hard|sports</em></li>
+      </ul>
+      <div class=""note-foot"">safe tooltip HTML (sanitized)</div>
+    </div>"
+q4,Question 4,a1,Answer 1,easy|sports,0.6298,2.6361,3.5762,"<div class=""note"">
+      <div class=""note-top"">
+        <span class=""flag"">⚠️</span>
+        <strong>Cell report</strong>
+      </div>
+      <ul class=""note-list"">
+        <li><span class=""k"">qid</span> <code>q4</code></li>
+        <li><span class=""k"">aid</span> <code>a1</code></li>
+        <li><span class=""k"">acc</span> <span class=""pill"">0.630</span></li>
+        <li><span class=""k"">lat</span> <span class=""pill"">2.64s</span></li>
+        <li><span class=""k"">help</span> <span class=""pill"">3.6</span></li>
+        <li><span class=""k"">tags</span> <em>easy|sports</em></li>
+      </ul>
+      <div class=""note-foot"">safe tooltip HTML (sanitized)</div>
+    </div>"
+q4,Question 4,a2,Answer 2,easy|sports,0.8244,1.5745,4.3311,"<div class=""note"">
+      <div class=""note-top"">
+        <span class=""flag"">✅</span>
+        <strong>Cell report</strong>
+      </div>
+      <ul class=""note-list"">
+        <li><span class=""k"">qid</span> <code>q4</code></li>
+        <li><span class=""k"">aid</span> <code>a2</code></li>
+        <li><span class=""k"">acc</span> <span class=""pill"">0.824</span></li>
+        <li><span class=""k"">lat</span> <span class=""pill"">1.57s</span></li>
+        <li><span class=""k"">help</span> <span class=""pill"">4.3</span></li>
+        <li><span class=""k"">tags</span> <em>easy|sports</em></li>
+      </ul>
+      <div class=""note-foot"">safe tooltip HTML (sanitized)</div>
+    </div>"
+q4,Question 4,a3,Answer 3,easy|sports,0.5544,2.6119,3.0119,"<div class=""note"">
+      <div class=""note-top"">
+        <span class=""flag"">⚠️</span>
+        <strong>Cell report</strong>
+      </div>
+      <ul class=""note-list"">
+        <li><span class=""k"">qid</span> <code>q4</code></li>
+        <li><span class=""k"">aid</span> <code>a3</code></li>
+        <li><span class=""k"">acc</span> <span class=""pill"">0.554</span></li>
+        <li><span class=""k"">lat</span> <span class=""pill"">2.61s</span></li>
+        <li><span class=""k"">help</span> <span class=""pill"">3.0</span></li>
+        <li><span class=""k"">tags</span> <em>easy|sports</em></li>
+      </ul>
+      <div class=""note-foot"">safe tooltip HTML (sanitized)</div>
+    </div>"
+q5,Question 5,a1,Answer 1,cooking|medium,0.4468,2.6855,2.6571,"<div class=""note"">
+      <div class=""note-top"">
+        <span class=""flag"">🧊</span>
+        <strong>Cell report</strong>
+      </div>
+      <ul class=""note-list"">
+        <li><span class=""k"">qid</span> <code>q5</code></li>
+        <li><span class=""k"">aid</span> <code>a1</code></li>
+        <li><span class=""k"">acc</span> <span class=""pill"">0.447</span></li>
+        <li><span class=""k"">lat</span> <span class=""pill"">2.69s</span></li>
+        <li><span class=""k"">help</span> <span class=""pill"">2.7</span></li>
+        <li><span class=""k"">tags</span> <em>cooking|medium</em></li>
+      </ul>
+      <div class=""note-foot"">safe tooltip HTML (sanitized)</div>
+    </div>"
+q5,Question 5,a2,Answer 2,cooking|medium,0.5463,2.6906,3.0452,"<div class=""note"">
+      <div class=""note-top"">
+        <span class=""flag"">⚠️</span>
+        <strong>Cell report</strong>
+      </div>
+      <ul class=""note-list"">
+        <li><span class=""k"">qid</span> <code>q5</code></li>
+        <li><span class=""k"">aid</span> <code>a2</code></li>
+        <li><span class=""k"">acc</span> <span class=""pill"">0.546</span></li>
+        <li><span class=""k"">lat</span> <span class=""pill"">2.69s</span></li>
+        <li><span class=""k"">help</span> <span class=""pill"">3.0</span></li>
+        <li><span class=""k"">tags</span> <em>cooking|medium</em></li>
+      </ul>
+      <div class=""note-foot"">safe tooltip HTML (sanitized)</div>
+    </div>"
+q5,Question 5,a3,Answer 3,cooking|medium,0.4582,2.7398,2.6536,"<div class=""note"">
+      <div class=""note-top"">
+        <span class=""flag"">⚠️</span>
+        <strong>Cell report</strong>
+      </div>
+      <ul class=""note-list"">
+        <li><span class=""k"">qid</span> <code>q5</code></li>
+        <li><span class=""k"">aid</span> <code>a3</code></li>
+        <li><span class=""k"">acc</span> <span class=""pill"">0.458</span></li>
+        <li><span class=""k"">lat</span> <span class=""pill"">2.74s</span></li>
+        <li><span class=""k"">help</span> <span class=""pill"">2.7</span></li>
+        <li><span class=""k"">tags</span> <em>cooking|medium</em></li>
+      </ul>
+      <div class=""note-foot"">safe tooltip HTML (sanitized)</div>
+    </div>"
