@@ -1,0 +1,13 @@
+Metadata-Version: 2.4
+Name: cssplt
+Version: 0.1.0
+Summary: Single-file HTML+CSS-only interactive plots (no JavaScript)
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+Requires-Dist: pandas>=1.0
+
+# cssplt
+
+Single-file HTML+CSS-only interactive plots (no JavaScript).
+
+**Step 1:** Skeleton; run `python examples/demo_linked.py` to generate `demo_linked.html`.
