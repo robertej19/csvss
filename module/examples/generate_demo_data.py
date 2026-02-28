@@ -41,11 +41,15 @@ def _gauss_clip(mu: float, sigma: float, low: float, high: float) -> float:
     return max(low, min(high, x))
 
 
+# Tag per model for heatmap row filtering (Option A)
+HEATMAP_MODEL_TAG = {"M1": "fast", "M2": "none", "M3": "robust", "M4": "accurate", "M5": "cheap", "M6": "balanced"}
+
+
 def make_heatmap_df(seed: int = DEFAULT_SEED) -> pd.DataFrame:
-    """Heatmap: one row per (model, dataset) with accuracy, latency, cost."""
+    """Heatmap: one row per (model, dataset) with accuracy, latency, cost, and tag."""
     random.seed(seed)
-    models = ["M1", "M2", "M3"]
-    datasets = ["D1", "D2", "D3"]
+    models = ["M1", "M2", "M3", "M4", "M5", "M6"]
+    datasets = ["D1", "D2", "D3", "D4", "D5", "D6"]
     rows = []
     for m in models:
         for d in datasets:
@@ -55,6 +59,7 @@ def make_heatmap_df(seed: int = DEFAULT_SEED) -> pd.DataFrame:
                 "accuracy": round(random.uniform(0.5, 0.98), 4),
                 "latency": round(random.uniform(5, 95), 2),
                 "cost": round(random.uniform(0.5, 9.5), 2),
+                "tag": HEATMAP_MODEL_TAG.get(m, "none"),
             })
     return pd.DataFrame(rows)
 
@@ -62,7 +67,7 @@ def make_heatmap_df(seed: int = DEFAULT_SEED) -> pd.DataFrame:
 def make_kde_df(seed: int = DEFAULT_SEED) -> pd.DataFrame:
     """KDE: long-format sample values per (tag, metric)."""
     random.seed(seed)
-    tags = ["none", "fast", "robust"]
+    tags = ["none", "fast", "robust", "accurate", "cheap", "balanced"]
     metrics = ["accuracy", "latency", "cost"]
     rows = []
     for tag in tags:
@@ -84,7 +89,7 @@ def make_kde_df(seed: int = DEFAULT_SEED) -> pd.DataFrame:
 def make_radar_df(seed: int = DEFAULT_SEED) -> pd.DataFrame:
     """Radar: one row per series with accuracy, latency, cost in [0,1] scale."""
     random.seed(seed)
-    series = ["none", "fast", "robust"]
+    series = ["none", "fast", "robust", "accurate", "cheap", "balanced"]
     rows = []
     for s in series:
         a = round(random.uniform(0.55, 0.95), 4)

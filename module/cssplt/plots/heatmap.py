@@ -8,11 +8,14 @@ hover tooltips; linking to global controls happens in later steps.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import List, Tuple
+from typing import List, Tuple, TYPE_CHECKING
 
 import pandas as pd
 
 from cssplt.core.utils import esc
+
+if TYPE_CHECKING:
+    from cssplt.core.state import MultiCheckVar
 
 
 @dataclass
@@ -23,6 +26,9 @@ class HeatmapArtist:
     - ``row``: row key (e.g. model)
     - ``col``: column key (e.g. dataset)
     - ``metric``: chosen metric column name (e.g. accuracy, latency, cost)
+
+    Optional ``tag_col``: when set, each body row gets data-tag from that column
+    so tag checkboxes can filter rows via CSS (Option A).
     """
 
     df: pd.DataFrame
@@ -30,6 +36,7 @@ class HeatmapArtist:
     col: str = "dataset"
     metric: str = "accuracy"
     heatmap_id: str = "heatmap"
+    tag_col: str | None = None
 
     def render_html(self) -> str:
         """Return HTML for the heatmap grid."""
@@ -44,6 +51,12 @@ class HeatmapArtist:
 
         row_labels = [str(r) for r in pivot.index]
         col_labels = [str(c) for c in pivot.columns]
+        row_to_tag: dict[str, str] = {}
+        if self.tag_col and self.tag_col in self.df.columns:
+            for r in row_labels:
+                match = self.df[self.df[self.row].astype(str) == r]
+                if not match.empty:
+                    row_to_tag[r] = str(match[self.tag_col].iloc[0])
 
         vmin = float(pivot.min().min())
         vmax = float(pivot.max().max())
@@ -72,7 +85,7 @@ class HeatmapArtist:
         # Header row: empty corner + column headers.
         lines.append(
             f'  <div class="cssplt-heatmap-row cssplt-heatmap-row--header" '
-            f'style="grid-template-columns: repeat({n_cols}, minmax(48px, 1fr));">'
+            f'style="grid-template-columns: repeat({n_cols}, minmax(0, 1fr));">'
         )
         lines.append('    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--corner"></div>')
         for col_label in col_labels:
@@ -85,9 +98,11 @@ class HeatmapArtist:
         # Body rows.
         for r_label in row_labels:
             row_values = pivot.loc[r_label]
+            data_tag = f' data-tag="{esc(row_to_tag[r_label])}"' if r_label in row_to_tag else ""
             lines.append(
-                f'  <div class="cssplt-heatmap-row" '
-                f'style="grid-template-columns: repeat({n_cols}, minmax(48px, 1fr));">'
+                f'  <div class="cssplt-heatmap-row"'
+                f'{data_tag} '
+                f'style="grid-template-columns: repeat({n_cols}, minmax(0, 1fr));">'
             )
             # Row header.
             lines.append(
@@ -118,12 +133,16 @@ class HeatmapArtist:
         self,
         metric_var_key: str,
         metric_values: List[str],
+        tag_var: "MultiCheckVar | None" = None,
+        tag_col: str | None = None,
     ) -> Tuple[str, str]:
-        """Render one heatmap per metric and CSS to show only the selected view (Option B).
+        """Render one heatmap per metric (Option B) and optional tag row filter (Option A).
 
-        Returns (html_fragment, css_fragment). Use the CSS in the figure's
-        main <style> so :has() on the metric radio shows the matching view.
+        When tag_var and tag_col are provided, body rows get data-tag and CSS
+        filters visibility by selected tag(s): no selection = show all; selection = show
+        rows whose tag is in the selected set (ANY).
         """
+        use_tag_filter = tag_var is not None and tag_col and tag_col in self.df.columns
         html_parts: List[str] = []
         for m in metric_values:
             if m not in self.df.columns:
@@ -136,6 +155,7 @@ class HeatmapArtist:
                 col=self.col,
                 metric=m,
                 heatmap_id=f"{self.heatmap_id}-{m}",
+                tag_col=tag_col if use_tag_filter else None,
             )
             view_html = one.render_html()
             html_parts.append(
@@ -154,6 +174,22 @@ class HeatmapArtist:
                 f'.cssplt-heatmap-view[data-metric-view="{esc(m)}"]'
             )
             css_lines.append(f"{sel} {{ display: block; }}")
+
+        if use_tag_filter and tag_var is not None:
+            # Option A: tag filter rows. Hide tagged rows by default; when no tag
+            # selected show all; when tag t selected show rows with data-tag="t".
+            css_lines.append(".cssplt-heatmap-row[data-tag] { display: none; }")
+            key = esc(tag_var.key)
+            css_lines.append(
+                f'.cssplt-fig:not(:has(input[type="checkbox"][data-var-key="{key}"]:checked)) '
+                '.cssplt-heatmap-row[data-tag] { display: grid; }'
+            )
+            for opt in tag_var.options:
+                t = esc(opt.value)
+                css_lines.append(
+                    f'.cssplt-fig:has(input[type="checkbox"][data-var-key="{key}"][data-var-value="{t}"]:checked) '
+                    f'.cssplt-heatmap-row[data-tag="{t}"] {{ display: grid; }}'
+                )
         css_fragment = "\n".join(css_lines)
         return (html_fragment, css_fragment)
 
