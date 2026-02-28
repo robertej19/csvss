@@ -50,21 +50,26 @@ class Figure:
 
     # Internal helpers -----------------------------------------------
     def _build_html(self) -> str:
-        controls_html = self.state.render_html()
-        if controls_html:
-            controls_block = "\n".join(
-                "      " + line for line in controls_html.splitlines()
-            )
-        else:
-            controls_block = "      <!-- no controls -->"
+        tags_html = self.state.render_multis_html()
+        metrics_html = self.state.render_radios_html()
+        tags_block = (
+            "\n".join("        " + line for line in tags_html.splitlines())
+            if tags_html
+            else "        <!-- no tag controls -->"
+        )
+        metrics_block = (
+            "\n".join("        " + line for line in metrics_html.splitlines())
+            if metrics_html
+            else "        <!-- no metric controls -->"
+        )
 
         axes_boxes = [
             ax._render_box() for ax in self._axes  # type: ignore[attr-defined]
         ]
         if axes_boxes:
-            axes_block = "\n".join("      " + box for box in axes_boxes)
+            axes_block = "\n".join("        " + box for box in axes_boxes)
         else:
-            axes_block = "      <!-- no axes -->"
+            axes_block = "        <!-- no axes -->"
 
         extra_css_parts = [
             getattr(ax, "_extra_css", "") for ax in self._axes
@@ -116,8 +121,6 @@ body {{
   max-width: min(1120px, 100%);
   min-width: 0;
   margin: 0 auto;
-  display: grid;
-  gap: clamp(1rem, 2.5vw, 1.5rem);
   padding: clamp(1rem, 2.5vw, 1.5rem);
   border-radius: clamp(12px, 2vw, 16px);
   border: 1px solid {border};
@@ -125,13 +128,89 @@ body {{
   box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
 }}
 
-.cssplt-controls {{
+/* Desktop: tags left, heatmap center, metrics right */
+.cssplt-main-layout {{
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: clamp(1rem, 2vw, 1.5rem);
+  width: 100%;
+  min-width: 0;
+}}
+
+.cssplt-tags-column {{
   display: flex;
   flex-direction: column;
-  gap: clamp(0.5rem, 1.5vw, 0.75rem);
-  padding-bottom: clamp(0.5rem, 1.5vw, 0.75rem);
-  border-bottom: 1px solid {border};
+  align-items: flex-start;
+  justify-content: center;
+  flex-shrink: 0;
+  gap: 0.5rem;
+}}
+
+.cssplt-tags-column .cssplt-control {{
+  flex-direction: column;
+  align-items: flex-start;
+}}
+
+.cssplt-center {{
+  flex: 1 1 auto;
   min-width: 0;
+}}
+
+.cssplt-metrics-column {{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  flex-shrink: 0;
+  gap: 0.5rem;
+}}
+
+.cssplt-metrics-column .cssplt-control {{
+  flex-direction: column;
+  align-items: flex-end;
+}}
+
+/* Mobile: metrics above, heatmap, tags below */
+@media (max-width: 768px) {{
+  .cssplt-main-layout {{
+    flex-direction: column;
+    align-items: stretch;
+  }}
+
+  .cssplt-tags-column {{
+    order: 3;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }}
+
+  .cssplt-tags-column .cssplt-control {{
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+  }}
+
+  .cssplt-center {{
+    order: 2;
+  }}
+
+  .cssplt-metrics-column {{
+    order: 1;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }}
+
+  .cssplt-metrics-column .cssplt-control {{
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+  }}
 }}
 
 .cssplt-control {{
@@ -195,18 +274,55 @@ body {{
   padding: clamp(0.75rem, 2vw, 1.25rem);
   display: flex;
   align-items: stretch;
+  justify-content: center;
+}}
+
+.cssplt-axes-box > * {{
+  width: fit-content;
+  max-width: 100%;
+}}
+
+.cssplt-heatmap-wrapper {{
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: clamp(0.75rem, 2vw, 1.25rem);
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto;
+  min-width: 0;
 }}
 
 .cssplt-heatmap {{
   display: block;
+  flex: 0 1 auto;
   width: 100%;
   max-width: 100%;
   min-width: 0;
   border-radius: clamp(8px, 1.5vw, 10px);
-  overflow: hidden;
+  overflow: visible;
   background: {surface};
   border: 1px solid {border};
   font-size: clamp(0.7rem, 1.1vw, 0.9rem);
+}}
+
+.cssplt-heatmap-legend {{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  color: {muted};
+  line-height: 1.2;
+}}
+
+.cssplt-heatmap-legend-bar {{
+  width: 12px;
+  min-height: 80px;
+  flex: 1 1 auto;
+  border-radius: 4px;
+  border: 1px solid {border};
 }}
 
 .cssplt-heatmap-row {{
@@ -216,7 +332,6 @@ body {{
 .cssplt-heatmap-cell {{
   padding: 0.2rem 0.35rem;
   box-sizing: border-box;
-  border: 1px solid rgba(255, 255, 255, 0.6);
   min-width: 0;
   min-height: 2.5vh;
   display: flex;
@@ -262,6 +377,7 @@ body {{
   pointer-events: none;
   transition: opacity 120ms ease-out;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
 }}
 
 .cssplt-heatmap-cell--value:hover .cssplt-heatmap-tooltip {{
@@ -271,11 +387,18 @@ body {{
 </head>
 <body>
 <div class="cssplt-fig">
-  <div class="cssplt-controls">
-{controls_block}
-  </div>
-  <div class="cssplt-axes-grid">
+  <div class="cssplt-main-layout">
+    <div class="cssplt-tags-column">
+{tags_block}
+    </div>
+    <div class="cssplt-center">
+      <div class="cssplt-axes-grid">
 {axes_block}
+      </div>
+    </div>
+    <div class="cssplt-metrics-column">
+{metrics_block}
+    </div>
   </div>
 </div>
 </body>

@@ -29,8 +29,6 @@ body {
   max-width: min(1120px, 100%);
   min-width: 0;
   margin: 0 auto;
-  display: grid;
-  gap: clamp(1rem, 2.5vw, 1.5rem);
   padding: clamp(1rem, 2.5vw, 1.5rem);
   border-radius: clamp(12px, 2vw, 16px);
   border: 1px solid #e5e7eb;
@@ -38,13 +36,89 @@ body {
   box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
 }
 
-.cssplt-controls {
+/* Desktop: tags left, heatmap center, metrics right */
+.cssplt-main-layout {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: clamp(1rem, 2vw, 1.5rem);
+  width: 100%;
+  min-width: 0;
+}
+
+.cssplt-tags-column {
   display: flex;
   flex-direction: column;
-  gap: clamp(0.5rem, 1.5vw, 0.75rem);
-  padding-bottom: clamp(0.5rem, 1.5vw, 0.75rem);
-  border-bottom: 1px solid #e5e7eb;
+  align-items: flex-start;
+  justify-content: center;
+  flex-shrink: 0;
+  gap: 0.5rem;
+}
+
+.cssplt-tags-column .cssplt-control {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.cssplt-center {
+  flex: 1 1 auto;
   min-width: 0;
+}
+
+.cssplt-metrics-column {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  flex-shrink: 0;
+  gap: 0.5rem;
+}
+
+.cssplt-metrics-column .cssplt-control {
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+/* Mobile: metrics above, heatmap, tags below */
+@media (max-width: 768px) {
+  .cssplt-main-layout {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cssplt-tags-column {
+    order: 3;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .cssplt-tags-column .cssplt-control {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .cssplt-center {
+    order: 2;
+  }
+
+  .cssplt-metrics-column {
+    order: 1;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .cssplt-metrics-column .cssplt-control {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 .cssplt-control {
@@ -108,18 +182,55 @@ body {
   padding: clamp(0.75rem, 2vw, 1.25rem);
   display: flex;
   align-items: stretch;
+  justify-content: center;
+}
+
+.cssplt-axes-box > * {
+  width: fit-content;
+  max-width: 100%;
+}
+
+.cssplt-heatmap-wrapper {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: clamp(0.75rem, 2vw, 1.25rem);
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto;
+  min-width: 0;
 }
 
 .cssplt-heatmap {
   display: block;
+  flex: 0 1 auto;
   width: 100%;
   max-width: 100%;
   min-width: 0;
   border-radius: clamp(8px, 1.5vw, 10px);
-  overflow: hidden;
+  overflow: visible;
   background: #ffffff;
   border: 1px solid #e5e7eb;
   font-size: clamp(0.7rem, 1.1vw, 0.9rem);
+}
+
+.cssplt-heatmap-legend {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  color: #6b7280;
+  line-height: 1.2;
+}
+
+.cssplt-heatmap-legend-bar {
+  width: 12px;
+  min-height: 80px;
+  flex: 1 1 auto;
+  border-radius: 4px;
+  border: 1px solid #e5e7eb;
 }
 
 .cssplt-heatmap-row {
@@ -129,7 +240,6 @@ body {
 .cssplt-heatmap-cell {
   padding: 0.2rem 0.35rem;
   box-sizing: border-box;
-  border: 1px solid rgba(255, 255, 255, 0.6);
   min-width: 0;
   min-height: 2.5vh;
   display: flex;
@@ -175,6 +285,7 @@ body {
   pointer-events: none;
   transition: opacity 120ms ease-out;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
 }
 
 .cssplt-heatmap-cell--value:hover .cssplt-heatmap-tooltip {
@@ -197,226 +308,241 @@ body {
 </head>
 <body>
 <div class="cssplt-fig">
-  <div class="cssplt-controls">
-      <div class="cssplt-control cssplt-control--radio" data-var-key="metric">
-        <input type="radio" class="cssplt-input cssplt-input--radio" id="cssplt-metric-accuracy" name="metric" value="accuracy" data-var-key="metric" data-var-value="accuracy" checked="checked">
-        <label class="cssplt-pill" for="cssplt-metric-accuracy">accuracy</label>
-        <input type="radio" class="cssplt-input cssplt-input--radio" id="cssplt-metric-latency" name="metric" value="latency" data-var-key="metric" data-var-value="latency">
-        <label class="cssplt-pill" for="cssplt-metric-latency">latency</label>
-        <input type="radio" class="cssplt-input cssplt-input--radio" id="cssplt-metric-cost" name="metric" value="cost" data-var-key="metric" data-var-value="cost">
-        <label class="cssplt-pill" for="cssplt-metric-cost">cost</label>
-      </div>
-      <div class="cssplt-control cssplt-control--multi" data-var-key="tag">
-        <input type="checkbox" class="cssplt-input cssplt-input--checkbox" id="cssplt-tag-none" name="tag" value="none" data-var-key="tag" data-var-value="none">
-        <label class="cssplt-pill" for="cssplt-tag-none">none</label>
-        <input type="checkbox" class="cssplt-input cssplt-input--checkbox" id="cssplt-tag-fast" name="tag" value="fast" data-var-key="tag" data-var-value="fast">
-        <label class="cssplt-pill" for="cssplt-tag-fast">fast</label>
-        <input type="checkbox" class="cssplt-input cssplt-input--checkbox" id="cssplt-tag-robust" name="tag" value="robust" data-var-key="tag" data-var-value="robust">
-        <label class="cssplt-pill" for="cssplt-tag-robust">robust</label>
-        <input type="checkbox" class="cssplt-input cssplt-input--checkbox" id="cssplt-tag-accurate" name="tag" value="accurate" data-var-key="tag" data-var-value="accurate">
-        <label class="cssplt-pill" for="cssplt-tag-accurate">accurate</label>
-        <input type="checkbox" class="cssplt-input cssplt-input--checkbox" id="cssplt-tag-cheap" name="tag" value="cheap" data-var-key="tag" data-var-value="cheap">
-        <label class="cssplt-pill" for="cssplt-tag-cheap">cheap</label>
-        <input type="checkbox" class="cssplt-input cssplt-input--checkbox" id="cssplt-tag-balanced" name="tag" value="balanced" data-var-key="tag" data-var-value="balanced">
-        <label class="cssplt-pill" for="cssplt-tag-balanced">balanced</label>
-      </div>
+  <div class="cssplt-main-layout">
+    <div class="cssplt-tags-column">
+        <div class="cssplt-control cssplt-control--multi" data-var-key="tag">
+          <input type="checkbox" class="cssplt-input cssplt-input--checkbox" id="cssplt-tag-none" name="tag" value="none" data-var-key="tag" data-var-value="none">
+          <label class="cssplt-pill" for="cssplt-tag-none">none</label>
+          <input type="checkbox" class="cssplt-input cssplt-input--checkbox" id="cssplt-tag-fast" name="tag" value="fast" data-var-key="tag" data-var-value="fast">
+          <label class="cssplt-pill" for="cssplt-tag-fast">fast</label>
+          <input type="checkbox" class="cssplt-input cssplt-input--checkbox" id="cssplt-tag-robust" name="tag" value="robust" data-var-key="tag" data-var-value="robust">
+          <label class="cssplt-pill" for="cssplt-tag-robust">robust</label>
+          <input type="checkbox" class="cssplt-input cssplt-input--checkbox" id="cssplt-tag-accurate" name="tag" value="accurate" data-var-key="tag" data-var-value="accurate">
+          <label class="cssplt-pill" for="cssplt-tag-accurate">accurate</label>
+          <input type="checkbox" class="cssplt-input cssplt-input--checkbox" id="cssplt-tag-cheap" name="tag" value="cheap" data-var-key="tag" data-var-value="cheap">
+          <label class="cssplt-pill" for="cssplt-tag-cheap">cheap</label>
+          <input type="checkbox" class="cssplt-input cssplt-input--checkbox" id="cssplt-tag-balanced" name="tag" value="balanced" data-var-key="tag" data-var-value="balanced">
+          <label class="cssplt-pill" for="cssplt-tag-balanced">balanced</label>
+        </div>
+    </div>
+    <div class="cssplt-center">
+      <div class="cssplt-axes-grid">
+        <div class="cssplt-axes-box" data-axes-index="1"><div class="cssplt-heatmap-view" data-metric-view="accuracy"><div class="cssplt-heatmap-wrapper">
+  <div class="cssplt-heatmap" data-heatmap-id="heatmap-accuracy" data-metric="accuracy">
+    <div class="cssplt-heatmap-row cssplt-heatmap-row--header" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--corner"></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--col-header">D1</div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--col-header">D2</div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--col-header">D3</div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--col-header">D4</div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--col-header">D5</div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--col-header">D6</div>
+    </div>
+    <div class="cssplt-heatmap-row" data-tag="fast" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M1</div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D1" data-value="0.8069" style="background-color: #229c87"><div class="cssplt-heatmap-cell-inner">0.807</div><div class="cssplt-heatmap-tooltip">M1 / D1: 0.807</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D2" data-value="0.6071" style="background-color: #471b6d; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.607</div><div class="cssplt-heatmap-tooltip">M1 / D2: 0.607</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D3" data-value="0.9282" style="background-color: #c8e024"><div class="cssplt-heatmap-cell-inner">0.928</div><div class="cssplt-heatmap-tooltip">M1 / D3: 0.928</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D4" data-value="0.5143" style="background-color: #440154; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.514</div><div class="cssplt-heatmap-tooltip">M1 / D4: 0.514</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D5" data-value="0.5127" style="background-color: #440154; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.513</div><div class="cssplt-heatmap-tooltip">M1 / D5: 0.513</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D6" data-value="0.7616" style="background-color: #2b768c; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.762</div><div class="cssplt-heatmap-tooltip">M1 / D6: 0.762</div></div>
+    </div>
+    <div class="cssplt-heatmap-row" data-tag="none" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M2</div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D1" data-value="0.8885" style="background-color: #8fd442"><div class="cssplt-heatmap-cell-inner">0.888</div><div class="cssplt-heatmap-tooltip">M2 / D1: 0.888</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D2" data-value="0.8351" style="background-color: #45b571"><div class="cssplt-heatmap-cell-inner">0.835</div><div class="cssplt-heatmap-tooltip">M2 / D2: 0.835</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D3" data-value="0.9595" style="background-color: #e9e424"><div class="cssplt-heatmap-cell-inner">0.960</div><div class="cssplt-heatmap-tooltip">M2 / D3: 0.960</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D4" data-value="0.5464" style="background-color: #45095c; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.546</div><div class="cssplt-heatmap-tooltip">M2 / D4: 0.546</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D5" data-value="0.8874" style="background-color: #8ed443"><div class="cssplt-heatmap-cell-inner">0.887</div><div class="cssplt-heatmap-tooltip">M2 / D5: 0.887</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D6" data-value="0.9671" style="background-color: #f1e524"><div class="cssplt-heatmap-cell-inner">0.967</div><div class="cssplt-heatmap-tooltip">M2 / D6: 0.967</div></div>
+    </div>
+    <div class="cssplt-heatmap-row" data-tag="robust" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M3</div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D1" data-value="0.8981" style="background-color: #9ed739"><div class="cssplt-heatmap-cell-inner">0.898</div><div class="cssplt-heatmap-tooltip">M3 / D1: 0.898</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D2" data-value="0.7771" style="background-color: #26838b; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.777</div><div class="cssplt-heatmap-tooltip">M3 / D2: 0.777</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D3" data-value="0.6094" style="background-color: #471c6d; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.609</div><div class="cssplt-heatmap-tooltip">M3 / D3: 0.609</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D4" data-value="0.6117" style="background-color: #471d6e; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.612</div><div class="cssplt-heatmap-tooltip">M3 / D4: 0.612</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D5" data-value="0.8051" style="background-color: #209b88"><div class="cssplt-heatmap-cell-inner">0.805</div><div class="cssplt-heatmap-tooltip">M3 / D5: 0.805</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D6" data-value="0.6006" style="background-color: #47196b; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.601</div><div class="cssplt-heatmap-tooltip">M3 / D6: 0.601</div></div>
+    </div>
+    <div class="cssplt-heatmap-row" data-tag="accurate" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M4</div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D1" data-value="0.8111" style="background-color: #27a084"><div class="cssplt-heatmap-cell-inner">0.811</div><div class="cssplt-heatmap-tooltip">M4 / D1: 0.811</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D2" data-value="0.8500" style="background-color: #58c165"><div class="cssplt-heatmap-cell-inner">0.850</div><div class="cssplt-heatmap-tooltip">M4 / D2: 0.850</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D3" data-value="0.9750" style="background-color: #f9e624"><div class="cssplt-heatmap-cell-inner">0.975</div><div class="cssplt-heatmap-tooltip">M4 / D3: 0.975</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D4" data-value="0.8286" style="background-color: #3daf76"><div class="cssplt-heatmap-cell-inner">0.829</div><div class="cssplt-heatmap-tooltip">M4 / D4: 0.829</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D5" data-value="0.6099" style="background-color: #471c6e; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.610</div><div class="cssplt-heatmap-tooltip">M4 / D5: 0.610</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D6" data-value="0.6285" style="background-color: #482273; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.628</div><div class="cssplt-heatmap-tooltip">M4 / D6: 0.628</div></div>
+    </div>
+    <div class="cssplt-heatmap-row" data-tag="cheap" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M5</div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D1" data-value="0.9207" style="background-color: #c0df24"><div class="cssplt-heatmap-cell-inner">0.921</div><div class="cssplt-heatmap-tooltip">M5 / D1: 0.921</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D2" data-value="0.6899" style="background-color: #414085; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.690</div><div class="cssplt-heatmap-tooltip">M5 / D2: 0.690</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D3" data-value="0.6271" style="background-color: #482273; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.627</div><div class="cssplt-heatmap-tooltip">M5 / D3: 0.627</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D4" data-value="0.6261" style="background-color: #482172; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.626</div><div class="cssplt-heatmap-tooltip">M5 / D4: 0.626</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D5" data-value="0.6917" style="background-color: #414285; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.692</div><div class="cssplt-heatmap-tooltip">M5 / D5: 0.692</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D6" data-value="0.7446" style="background-color: #30688d; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.745</div><div class="cssplt-heatmap-tooltip">M5 / D6: 0.745</div></div>
+    </div>
+    <div class="cssplt-heatmap-row" data-tag="balanced" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M6</div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D1" data-value="0.5526" style="background-color: #460b5e; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.553</div><div class="cssplt-heatmap-tooltip">M6 / D1: 0.553</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D2" data-value="0.7026" style="background-color: #3d4a87; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.703</div><div class="cssplt-heatmap-tooltip">M6 / D2: 0.703</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D3" data-value="0.9781" style="background-color: #fde724"><div class="cssplt-heatmap-cell-inner">0.978</div><div class="cssplt-heatmap-tooltip">M6 / D3: 0.978</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D4" data-value="0.9132" style="background-color: #b5dc2a"><div class="cssplt-heatmap-cell-inner">0.913</div><div class="cssplt-heatmap-tooltip">M6 / D4: 0.913</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D5" data-value="0.8272" style="background-color: #3bae77"><div class="cssplt-heatmap-cell-inner">0.827</div><div class="cssplt-heatmap-tooltip">M6 / D5: 0.827</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D6" data-value="0.8077" style="background-color: #239d86"><div class="cssplt-heatmap-cell-inner">0.808</div><div class="cssplt-heatmap-tooltip">M6 / D6: 0.808</div></div>
+    </div>
   </div>
-  <div class="cssplt-axes-grid">
-      <div class="cssplt-axes-box" data-axes-index="1"><div class="cssplt-heatmap-view" data-metric-view="accuracy"><div class="cssplt-heatmap" data-heatmap-id="heatmap-accuracy" data-metric="accuracy">
-  <div class="cssplt-heatmap-row cssplt-heatmap-row--header" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--corner"></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--col-header">D1</div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--col-header">D2</div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--col-header">D3</div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--col-header">D4</div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--col-header">D5</div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--col-header">D6</div>
-  </div>
-  <div class="cssplt-heatmap-row" data-tag="fast" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M1</div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D1" data-value="0.8069" style="background-color: hsl(134, 80%, 63%);"><div class="cssplt-heatmap-cell-inner">0.807</div><div class="cssplt-heatmap-tooltip">M1 / D1: 0.807</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D2" data-value="0.6071" style="background-color: hsl(219, 80%, 37%);"><div class="cssplt-heatmap-cell-inner">0.607</div><div class="cssplt-heatmap-tooltip">M1 / D2: 0.607</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D3" data-value="0.9282" style="background-color: hsl(81, 80%, 79%);"><div class="cssplt-heatmap-cell-inner">0.928</div><div class="cssplt-heatmap-tooltip">M1 / D3: 0.928</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D4" data-value="0.5143" style="background-color: hsl(259, 80%, 25%);"><div class="cssplt-heatmap-cell-inner">0.514</div><div class="cssplt-heatmap-tooltip">M1 / D4: 0.514</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D5" data-value="0.5127" style="background-color: hsl(260, 80%, 25%);"><div class="cssplt-heatmap-cell-inner">0.513</div><div class="cssplt-heatmap-tooltip">M1 / D5: 0.513</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D6" data-value="0.7616" style="background-color: hsl(153, 80%, 57%);"><div class="cssplt-heatmap-cell-inner">0.762</div><div class="cssplt-heatmap-tooltip">M1 / D6: 0.762</div></div>
-  </div>
-  <div class="cssplt-heatmap-row" data-tag="none" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M2</div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D1" data-value="0.8885" style="background-color: hsl(99, 80%, 73%);"><div class="cssplt-heatmap-cell-inner">0.888</div><div class="cssplt-heatmap-tooltip">M2 / D1: 0.888</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D2" data-value="0.8351" style="background-color: hsl(121, 80%, 67%);"><div class="cssplt-heatmap-cell-inner">0.835</div><div class="cssplt-heatmap-tooltip">M2 / D2: 0.835</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D3" data-value="0.9595" style="background-color: hsl(68, 80%, 83%);"><div class="cssplt-heatmap-cell-inner">0.960</div><div class="cssplt-heatmap-tooltip">M2 / D3: 0.960</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D4" data-value="0.5464" style="background-color: hsl(246, 80%, 29%);"><div class="cssplt-heatmap-cell-inner">0.546</div><div class="cssplt-heatmap-tooltip">M2 / D4: 0.546</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D5" data-value="0.8874" style="background-color: hsl(99, 80%, 73%);"><div class="cssplt-heatmap-cell-inner">0.887</div><div class="cssplt-heatmap-tooltip">M2 / D5: 0.887</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D6" data-value="0.9671" style="background-color: hsl(65, 80%, 84%);"><div class="cssplt-heatmap-cell-inner">0.967</div><div class="cssplt-heatmap-tooltip">M2 / D6: 0.967</div></div>
-  </div>
-  <div class="cssplt-heatmap-row" data-tag="robust" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M3</div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D1" data-value="0.8981" style="background-color: hsl(94, 80%, 75%);"><div class="cssplt-heatmap-cell-inner">0.898</div><div class="cssplt-heatmap-tooltip">M3 / D1: 0.898</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D2" data-value="0.7771" style="background-color: hsl(146, 80%, 59%);"><div class="cssplt-heatmap-cell-inner">0.777</div><div class="cssplt-heatmap-tooltip">M3 / D2: 0.777</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D3" data-value="0.6094" style="background-color: hsl(218, 80%, 37%);"><div class="cssplt-heatmap-cell-inner">0.609</div><div class="cssplt-heatmap-tooltip">M3 / D3: 0.609</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D4" data-value="0.6117" style="background-color: hsl(217, 80%, 38%);"><div class="cssplt-heatmap-cell-inner">0.612</div><div class="cssplt-heatmap-tooltip">M3 / D4: 0.612</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D5" data-value="0.8051" style="background-color: hsl(134, 80%, 63%);"><div class="cssplt-heatmap-cell-inner">0.805</div><div class="cssplt-heatmap-tooltip">M3 / D5: 0.805</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D6" data-value="0.6006" style="background-color: hsl(222, 80%, 36%);"><div class="cssplt-heatmap-cell-inner">0.601</div><div class="cssplt-heatmap-tooltip">M3 / D6: 0.601</div></div>
-  </div>
-  <div class="cssplt-heatmap-row" data-tag="accurate" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M4</div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D1" data-value="0.8111" style="background-color: hsl(132, 80%, 63%);"><div class="cssplt-heatmap-cell-inner">0.811</div><div class="cssplt-heatmap-tooltip">M4 / D1: 0.811</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D2" data-value="0.8500" style="background-color: hsl(115, 80%, 68%);"><div class="cssplt-heatmap-cell-inner">0.850</div><div class="cssplt-heatmap-tooltip">M4 / D2: 0.850</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D3" data-value="0.9750" style="background-color: hsl(61, 80%, 85%);"><div class="cssplt-heatmap-cell-inner">0.975</div><div class="cssplt-heatmap-tooltip">M4 / D3: 0.975</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D4" data-value="0.8286" style="background-color: hsl(124, 80%, 66%);"><div class="cssplt-heatmap-cell-inner">0.829</div><div class="cssplt-heatmap-tooltip">M4 / D4: 0.829</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D5" data-value="0.6099" style="background-color: hsl(218, 80%, 38%);"><div class="cssplt-heatmap-cell-inner">0.610</div><div class="cssplt-heatmap-tooltip">M4 / D5: 0.610</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D6" data-value="0.6285" style="background-color: hsl(210, 80%, 40%);"><div class="cssplt-heatmap-cell-inner">0.628</div><div class="cssplt-heatmap-tooltip">M4 / D6: 0.628</div></div>
-  </div>
-  <div class="cssplt-heatmap-row" data-tag="cheap" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M5</div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D1" data-value="0.9207" style="background-color: hsl(85, 80%, 78%);"><div class="cssplt-heatmap-cell-inner">0.921</div><div class="cssplt-heatmap-tooltip">M5 / D1: 0.921</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D2" data-value="0.6899" style="background-color: hsl(184, 80%, 48%);"><div class="cssplt-heatmap-cell-inner">0.690</div><div class="cssplt-heatmap-tooltip">M5 / D2: 0.690</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D3" data-value="0.6271" style="background-color: hsl(211, 80%, 40%);"><div class="cssplt-heatmap-cell-inner">0.627</div><div class="cssplt-heatmap-tooltip">M5 / D3: 0.627</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D4" data-value="0.6261" style="background-color: hsl(211, 80%, 40%);"><div class="cssplt-heatmap-cell-inner">0.626</div><div class="cssplt-heatmap-tooltip">M5 / D4: 0.626</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D5" data-value="0.6917" style="background-color: hsl(183, 80%, 48%);"><div class="cssplt-heatmap-cell-inner">0.692</div><div class="cssplt-heatmap-tooltip">M5 / D5: 0.692</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D6" data-value="0.7446" style="background-color: hsl(160, 80%, 55%);"><div class="cssplt-heatmap-cell-inner">0.745</div><div class="cssplt-heatmap-tooltip">M5 / D6: 0.745</div></div>
-  </div>
-  <div class="cssplt-heatmap-row" data-tag="balanced" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M6</div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D1" data-value="0.5526" style="background-color: hsl(243, 80%, 30%);"><div class="cssplt-heatmap-cell-inner">0.553</div><div class="cssplt-heatmap-tooltip">M6 / D1: 0.553</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D2" data-value="0.7026" style="background-color: hsl(178, 80%, 49%);"><div class="cssplt-heatmap-cell-inner">0.703</div><div class="cssplt-heatmap-tooltip">M6 / D2: 0.703</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D3" data-value="0.9781" style="background-color: hsl(60, 80%, 85%);"><div class="cssplt-heatmap-cell-inner">0.978</div><div class="cssplt-heatmap-tooltip">M6 / D3: 0.978</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D4" data-value="0.9132" style="background-color: hsl(88, 80%, 77%);"><div class="cssplt-heatmap-cell-inner">0.913</div><div class="cssplt-heatmap-tooltip">M6 / D4: 0.913</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D5" data-value="0.8272" style="background-color: hsl(125, 80%, 66%);"><div class="cssplt-heatmap-cell-inner">0.827</div><div class="cssplt-heatmap-tooltip">M6 / D5: 0.827</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D6" data-value="0.8077" style="background-color: hsl(133, 80%, 63%);"><div class="cssplt-heatmap-cell-inner">0.808</div><div class="cssplt-heatmap-tooltip">M6 / D6: 0.808</div></div>
-  </div>
+  <div class="cssplt-heatmap-legend"><span class="cssplt-heatmap-legend-max">0.978</span><div class="cssplt-heatmap-legend-bar" style="background: linear-gradient(to top, #440154 0%, #470f62 12%, #482273 25%, #423e85 37%, #30688d 50%, #1e998a 62%, #67cc5c 75%, #bfdf24 87%, #fde724 100%);"></div><span class="cssplt-heatmap-legend-min">0.513</span></div>
 </div></div>
-<div class="cssplt-heatmap-view" data-metric-view="latency"><div class="cssplt-heatmap" data-heatmap-id="heatmap-latency" data-metric="latency">
-  <div class="cssplt-heatmap-row cssplt-heatmap-row--header" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--corner"></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--col-header">D1</div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--col-header">D2</div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--col-header">D3</div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--col-header">D4</div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--col-header">D5</div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--col-header">D6</div>
+<div class="cssplt-heatmap-view" data-metric-view="latency"><div class="cssplt-heatmap-wrapper">
+  <div class="cssplt-heatmap" data-heatmap-id="heatmap-latency" data-metric="latency">
+    <div class="cssplt-heatmap-row cssplt-heatmap-row--header" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--corner"></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--col-header">D1</div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--col-header">D2</div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--col-header">D3</div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--col-header">D4</div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--col-header">D5</div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--col-header">D6</div>
+    </div>
+    <div class="cssplt-heatmap-row" data-tag="fast" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M1</div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D1" data-value="7.2500" style="background-color: #440356; color: #ffffff"><div class="cssplt-heatmap-cell-inner">7.250</div><div class="cssplt-heatmap-tooltip">M1 / D1: 7.250</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D2" data-value="71.2800" style="background-color: #8dd444"><div class="cssplt-heatmap-cell-inner">71.280</div><div class="cssplt-heatmap-tooltip">M1 / D2: 71.280</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D3" data-value="12.8200" style="background-color: #460b5e; color: #ffffff"><div class="cssplt-heatmap-cell-inner">12.820</div><div class="cssplt-heatmap-tooltip">M1 / D3: 12.820</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D4" data-value="24.6800" style="background-color: #472071; color: #ffffff"><div class="cssplt-heatmap-cell-inner">24.680</div><div class="cssplt-heatmap-tooltip">M1 / D4: 24.680</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D5" data-value="22.9000" style="background-color: #471c6e; color: #ffffff"><div class="cssplt-heatmap-cell-inner">22.900</div><div class="cssplt-heatmap-tooltip">M1 / D5: 22.900</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D6" data-value="24.8400" style="background-color: #482071; color: #ffffff"><div class="cssplt-heatmap-cell-inner">24.840</div><div class="cssplt-heatmap-tooltip">M1 / D6: 24.840</div></div>
+    </div>
+    <div class="cssplt-heatmap-row" data-tag="none" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M2</div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D1" data-value="5.5800" style="background-color: #440154; color: #ffffff"><div class="cssplt-heatmap-cell-inner">5.580</div><div class="cssplt-heatmap-tooltip">M2 / D1: 5.580</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D2" data-value="35.6200" style="background-color: #423d84; color: #ffffff"><div class="cssplt-heatmap-cell-inner">35.620</div><div class="cssplt-heatmap-tooltip">M2 / D2: 35.620</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D3" data-value="35.2900" style="background-color: #423c83; color: #ffffff"><div class="cssplt-heatmap-cell-inner">35.290</div><div class="cssplt-heatmap-tooltip">M2 / D3: 35.290</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D4" data-value="81.2700" style="background-color: #d8e224"><div class="cssplt-heatmap-cell-inner">81.270</div><div class="cssplt-heatmap-tooltip">M2 / D4: 81.270</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D5" data-value="70.6800" style="background-color: #88d347"><div class="cssplt-heatmap-cell-inner">70.680</div><div class="cssplt-heatmap-tooltip">M2 / D5: 70.680</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D6" data-value="39.0700" style="background-color: #3d4a87; color: #ffffff"><div class="cssplt-heatmap-cell-inner">39.070</div><div class="cssplt-heatmap-tooltip">M2 / D6: 39.070</div></div>
+    </div>
+    <div class="cssplt-heatmap-row" data-tag="robust" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M3</div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D1" data-value="60.6700" style="background-color: #3aad78"><div class="cssplt-heatmap-cell-inner">60.670</div><div class="cssplt-heatmap-tooltip">M3 / D1: 60.670</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D2" data-value="68.4100" style="background-color: #74ce54"><div class="cssplt-heatmap-cell-inner">68.410</div><div class="cssplt-heatmap-tooltip">M3 / D2: 68.410</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D3" data-value="31.0400" style="background-color: #45307c; color: #ffffff"><div class="cssplt-heatmap-cell-inner">31.040</div><div class="cssplt-heatmap-tooltip">M3 / D3: 31.040</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D4" data-value="14.0900" style="background-color: #460d60; color: #ffffff"><div class="cssplt-heatmap-cell-inner">14.090</div><div class="cssplt-heatmap-tooltip">M3 / D4: 14.090</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D5" data-value="37.8300" style="background-color: #3f4586; color: #ffffff"><div class="cssplt-heatmap-cell-inner">37.830</div><div class="cssplt-heatmap-tooltip">M3 / D5: 37.830</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D6" data-value="29.0300" style="background-color: #462b78; color: #ffffff"><div class="cssplt-heatmap-cell-inner">29.030</div><div class="cssplt-heatmap-tooltip">M3 / D6: 29.030</div></div>
+    </div>
+    <div class="cssplt-heatmap-row" data-tag="accurate" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M4</div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D1" data-value="59.8200" style="background-color: #34a97b"><div class="cssplt-heatmap-cell-inner">59.820</div><div class="cssplt-heatmap-tooltip">M4 / D1: 59.820</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D2" data-value="19.7100" style="background-color: #471769; color: #ffffff"><div class="cssplt-heatmap-cell-inner">19.710</div><div class="cssplt-heatmap-tooltip">M4 / D2: 19.710</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D3" data-value="62.6000" style="background-color: #48b76f"><div class="cssplt-heatmap-cell-inner">62.600</div><div class="cssplt-heatmap-tooltip">M4 / D3: 62.600</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D4" data-value="80.8600" style="background-color: #d6e224"><div class="cssplt-heatmap-cell-inner">80.860</div><div class="cssplt-heatmap-tooltip">M4 / D4: 80.860</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D5" data-value="7.8900" style="background-color: #440457; color: #ffffff"><div class="cssplt-heatmap-cell-inner">7.890</div><div class="cssplt-heatmap-tooltip">M4 / D5: 7.890</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D6" data-value="23.9900" style="background-color: #471e70; color: #ffffff"><div class="cssplt-heatmap-cell-inner">23.990</div><div class="cssplt-heatmap-tooltip">M4 / D6: 23.990</div></div>
+    </div>
+    <div class="cssplt-heatmap-row" data-tag="cheap" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M5</div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D1" data-value="33.3200" style="background-color: #443680; color: #ffffff"><div class="cssplt-heatmap-cell-inner">33.320</div><div class="cssplt-heatmap-tooltip">M5 / D1: 33.320</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D2" data-value="87.3100" style="background-color: #fde724"><div class="cssplt-heatmap-cell-inner">87.310</div><div class="cssplt-heatmap-tooltip">M5 / D2: 87.310</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D3" data-value="27.2000" style="background-color: #472575; color: #ffffff"><div class="cssplt-heatmap-cell-inner">27.200</div><div class="cssplt-heatmap-tooltip">M5 / D3: 27.200</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D4" data-value="57.6100" style="background-color: #259e85"><div class="cssplt-heatmap-cell-inner">57.610</div><div class="cssplt-heatmap-tooltip">M5 / D4: 57.610</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D5" data-value="24.7400" style="background-color: #482071; color: #ffffff"><div class="cssplt-heatmap-cell-inner">24.740</div><div class="cssplt-heatmap-tooltip">M5 / D5: 24.740</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D6" data-value="13.1800" style="background-color: #460c5e; color: #ffffff"><div class="cssplt-heatmap-cell-inner">13.180</div><div class="cssplt-heatmap-tooltip">M5 / D6: 13.180</div></div>
+    </div>
+    <div class="cssplt-heatmap-row" data-tag="balanced" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M6</div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D1" data-value="61.4700" style="background-color: #40b174"><div class="cssplt-heatmap-cell-inner">61.470</div><div class="cssplt-heatmap-tooltip">M6 / D1: 61.470</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D2" data-value="10.7200" style="background-color: #45085b; color: #ffffff"><div class="cssplt-heatmap-cell-inner">10.720</div><div class="cssplt-heatmap-tooltip">M6 / D2: 10.720</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D3" data-value="52.6200" style="background-color: #25868b; color: #ffffff"><div class="cssplt-heatmap-cell-inner">52.620</div><div class="cssplt-heatmap-tooltip">M6 / D3: 52.620</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D4" data-value="6.0300" style="background-color: #440154; color: #ffffff"><div class="cssplt-heatmap-cell-inner">6.030</div><div class="cssplt-heatmap-tooltip">M6 / D4: 6.030</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D5" data-value="53.3300" style="background-color: #24898b"><div class="cssplt-heatmap-cell-inner">53.330</div><div class="cssplt-heatmap-tooltip">M6 / D5: 53.330</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D6" data-value="15.0400" style="background-color: #460e61; color: #ffffff"><div class="cssplt-heatmap-cell-inner">15.040</div><div class="cssplt-heatmap-tooltip">M6 / D6: 15.040</div></div>
+    </div>
   </div>
-  <div class="cssplt-heatmap-row" data-tag="fast" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M1</div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D1" data-value="7.2500" style="background-color: hsl(256, 80%, 26%);"><div class="cssplt-heatmap-cell-inner">7.250</div><div class="cssplt-heatmap-tooltip">M1 / D1: 7.250</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D2" data-value="71.2800" style="background-color: hsl(99, 80%, 73%);"><div class="cssplt-heatmap-cell-inner">71.280</div><div class="cssplt-heatmap-tooltip">M1 / D2: 71.280</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D3" data-value="12.8200" style="background-color: hsl(242, 80%, 30%);"><div class="cssplt-heatmap-cell-inner">12.820</div><div class="cssplt-heatmap-tooltip">M1 / D3: 12.820</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D4" data-value="24.6800" style="background-color: hsl(213, 80%, 39%);"><div class="cssplt-heatmap-cell-inner">24.680</div><div class="cssplt-heatmap-tooltip">M1 / D4: 24.680</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D5" data-value="22.9000" style="background-color: hsl(218, 80%, 38%);"><div class="cssplt-heatmap-cell-inner">22.900</div><div class="cssplt-heatmap-tooltip">M1 / D5: 22.900</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D6" data-value="24.8400" style="background-color: hsl(213, 80%, 39%);"><div class="cssplt-heatmap-cell-inner">24.840</div><div class="cssplt-heatmap-tooltip">M1 / D6: 24.840</div></div>
-  </div>
-  <div class="cssplt-heatmap-row" data-tag="none" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M2</div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D1" data-value="5.5800" style="background-color: hsl(260, 80%, 25%);"><div class="cssplt-heatmap-cell-inner">5.580</div><div class="cssplt-heatmap-tooltip">M2 / D1: 5.580</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D2" data-value="35.6200" style="background-color: hsl(186, 80%, 47%);"><div class="cssplt-heatmap-cell-inner">35.620</div><div class="cssplt-heatmap-tooltip">M2 / D2: 35.620</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D3" data-value="35.2900" style="background-color: hsl(187, 80%, 47%);"><div class="cssplt-heatmap-cell-inner">35.290</div><div class="cssplt-heatmap-tooltip">M2 / D3: 35.290</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D4" data-value="81.2700" style="background-color: hsl(75, 80%, 81%);"><div class="cssplt-heatmap-cell-inner">81.270</div><div class="cssplt-heatmap-tooltip">M2 / D4: 81.270</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D5" data-value="70.6800" style="background-color: hsl(101, 80%, 73%);"><div class="cssplt-heatmap-cell-inner">70.680</div><div class="cssplt-heatmap-tooltip">M2 / D5: 70.680</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D6" data-value="39.0700" style="background-color: hsl(178, 80%, 50%);"><div class="cssplt-heatmap-cell-inner">39.070</div><div class="cssplt-heatmap-tooltip">M2 / D6: 39.070</div></div>
-  </div>
-  <div class="cssplt-heatmap-row" data-tag="robust" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M3</div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D1" data-value="60.6700" style="background-color: hsl(125, 80%, 65%);"><div class="cssplt-heatmap-cell-inner">60.670</div><div class="cssplt-heatmap-tooltip">M3 / D1: 60.670</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D2" data-value="68.4100" style="background-color: hsl(106, 80%, 71%);"><div class="cssplt-heatmap-cell-inner">68.410</div><div class="cssplt-heatmap-tooltip">M3 / D2: 68.410</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D3" data-value="31.0400" style="background-color: hsl(198, 80%, 44%);"><div class="cssplt-heatmap-cell-inner">31.040</div><div class="cssplt-heatmap-tooltip">M3 / D3: 31.040</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D4" data-value="14.0900" style="background-color: hsl(239, 80%, 31%);"><div class="cssplt-heatmap-cell-inner">14.090</div><div class="cssplt-heatmap-tooltip">M3 / D4: 14.090</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D5" data-value="37.8300" style="background-color: hsl(181, 80%, 49%);"><div class="cssplt-heatmap-cell-inner">37.830</div><div class="cssplt-heatmap-tooltip">M3 / D5: 37.830</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D6" data-value="29.0300" style="background-color: hsl(203, 80%, 42%);"><div class="cssplt-heatmap-cell-inner">29.030</div><div class="cssplt-heatmap-tooltip">M3 / D6: 29.030</div></div>
-  </div>
-  <div class="cssplt-heatmap-row" data-tag="accurate" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M4</div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D1" data-value="59.8200" style="background-color: hsl(127, 80%, 65%);"><div class="cssplt-heatmap-cell-inner">59.820</div><div class="cssplt-heatmap-tooltip">M4 / D1: 59.820</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D2" data-value="19.7100" style="background-color: hsl(225, 80%, 35%);"><div class="cssplt-heatmap-cell-inner">19.710</div><div class="cssplt-heatmap-tooltip">M4 / D2: 19.710</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D3" data-value="62.6000" style="background-color: hsl(120, 80%, 67%);"><div class="cssplt-heatmap-cell-inner">62.600</div><div class="cssplt-heatmap-tooltip">M4 / D3: 62.600</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D4" data-value="80.8600" style="background-color: hsl(76, 80%, 80%);"><div class="cssplt-heatmap-cell-inner">80.860</div><div class="cssplt-heatmap-tooltip">M4 / D4: 80.860</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D5" data-value="7.8900" style="background-color: hsl(254, 80%, 27%);"><div class="cssplt-heatmap-cell-inner">7.890</div><div class="cssplt-heatmap-tooltip">M4 / D5: 7.890</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D6" data-value="23.9900" style="background-color: hsl(215, 80%, 39%);"><div class="cssplt-heatmap-cell-inner">23.990</div><div class="cssplt-heatmap-tooltip">M4 / D6: 23.990</div></div>
-  </div>
-  <div class="cssplt-heatmap-row" data-tag="cheap" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M5</div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D1" data-value="33.3200" style="background-color: hsl(192, 80%, 45%);"><div class="cssplt-heatmap-cell-inner">33.320</div><div class="cssplt-heatmap-tooltip">M5 / D1: 33.320</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D2" data-value="87.3100" style="background-color: hsl(60, 80%, 85%);"><div class="cssplt-heatmap-cell-inner">87.310</div><div class="cssplt-heatmap-tooltip">M5 / D2: 87.310</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D3" data-value="27.2000" style="background-color: hsl(207, 80%, 41%);"><div class="cssplt-heatmap-cell-inner">27.200</div><div class="cssplt-heatmap-tooltip">M5 / D3: 27.200</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D4" data-value="57.6100" style="background-color: hsl(133, 80%, 63%);"><div class="cssplt-heatmap-cell-inner">57.610</div><div class="cssplt-heatmap-tooltip">M5 / D4: 57.610</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D5" data-value="24.7400" style="background-color: hsl(213, 80%, 39%);"><div class="cssplt-heatmap-cell-inner">24.740</div><div class="cssplt-heatmap-tooltip">M5 / D5: 24.740</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D6" data-value="13.1800" style="background-color: hsl(241, 80%, 31%);"><div class="cssplt-heatmap-cell-inner">13.180</div><div class="cssplt-heatmap-tooltip">M5 / D6: 13.180</div></div>
-  </div>
-  <div class="cssplt-heatmap-row" data-tag="balanced" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M6</div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D1" data-value="61.4700" style="background-color: hsl(123, 80%, 66%);"><div class="cssplt-heatmap-cell-inner">61.470</div><div class="cssplt-heatmap-tooltip">M6 / D1: 61.470</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D2" data-value="10.7200" style="background-color: hsl(247, 80%, 29%);"><div class="cssplt-heatmap-cell-inner">10.720</div><div class="cssplt-heatmap-tooltip">M6 / D2: 10.720</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D3" data-value="52.6200" style="background-color: hsl(145, 80%, 60%);"><div class="cssplt-heatmap-cell-inner">52.620</div><div class="cssplt-heatmap-tooltip">M6 / D3: 52.620</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D4" data-value="6.0300" style="background-color: hsl(259, 80%, 25%);"><div class="cssplt-heatmap-cell-inner">6.030</div><div class="cssplt-heatmap-tooltip">M6 / D4: 6.030</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D5" data-value="53.3300" style="background-color: hsl(143, 80%, 60%);"><div class="cssplt-heatmap-cell-inner">53.330</div><div class="cssplt-heatmap-tooltip">M6 / D5: 53.330</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D6" data-value="15.0400" style="background-color: hsl(237, 80%, 32%);"><div class="cssplt-heatmap-cell-inner">15.040</div><div class="cssplt-heatmap-tooltip">M6 / D6: 15.040</div></div>
-  </div>
+  <div class="cssplt-heatmap-legend"><span class="cssplt-heatmap-legend-max">87.31</span><div class="cssplt-heatmap-legend-bar" style="background: linear-gradient(to top, #440154 0%, #470f62 12%, #482273 25%, #423e85 37%, #30688d 50%, #1e998a 62%, #67cc5c 75%, #bfdf24 87%, #fde724 100%);"></div><span class="cssplt-heatmap-legend-min">5.58</span></div>
 </div></div>
-<div class="cssplt-heatmap-view" data-metric-view="cost"><div class="cssplt-heatmap" data-heatmap-id="heatmap-cost" data-metric="cost">
-  <div class="cssplt-heatmap-row cssplt-heatmap-row--header" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--corner"></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--col-header">D1</div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--col-header">D2</div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--col-header">D3</div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--col-header">D4</div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--col-header">D5</div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--col-header">D6</div>
+<div class="cssplt-heatmap-view" data-metric-view="cost"><div class="cssplt-heatmap-wrapper">
+  <div class="cssplt-heatmap" data-heatmap-id="heatmap-cost" data-metric="cost">
+    <div class="cssplt-heatmap-row cssplt-heatmap-row--header" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--corner"></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--col-header">D1</div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--col-header">D2</div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--col-header">D3</div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--col-header">D4</div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--col-header">D5</div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--col-header">D6</div>
+    </div>
+    <div class="cssplt-heatmap-row" data-tag="fast" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M1</div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D1" data-value="2.9800" style="background-color: #482172; color: #ffffff"><div class="cssplt-heatmap-cell-inner">2.980</div><div class="cssplt-heatmap-tooltip">M1 / D1: 2.980</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D2" data-value="6.5900" style="background-color: #34a97c"><div class="cssplt-heatmap-cell-inner">6.590</div><div class="cssplt-heatmap-tooltip">M1 / D2: 6.590</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D3" data-value="4.3000" style="background-color: #3f4586; color: #ffffff"><div class="cssplt-heatmap-cell-inner">4.300</div><div class="cssplt-heatmap-tooltip">M1 / D3: 4.300</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D4" data-value="5.0500" style="background-color: #32638c; color: #ffffff"><div class="cssplt-heatmap-cell-inner">5.050</div><div class="cssplt-heatmap-tooltip">M1 / D4: 5.050</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D5" data-value="6.3500" style="background-color: #249d86"><div class="cssplt-heatmap-cell-inner">6.350</div><div class="cssplt-heatmap-tooltip">M1 / D5: 6.350</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D6" data-value="5.8000" style="background-color: #26848b; color: #ffffff"><div class="cssplt-heatmap-cell-inner">5.800</div><div class="cssplt-heatmap-tooltip">M1 / D6: 5.800</div></div>
+    </div>
+    <div class="cssplt-heatmap-row" data-tag="none" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M2</div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D1" data-value="7.7500" style="background-color: #89d346"><div class="cssplt-heatmap-cell-inner">7.750</div><div class="cssplt-heatmap-tooltip">M2 / D1: 7.750</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D2" data-value="1.9000" style="background-color: #460e61; color: #ffffff"><div class="cssplt-heatmap-cell-inner">1.900</div><div class="cssplt-heatmap-tooltip">M2 / D2: 1.900</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D3" data-value="1.3300" style="background-color: #450659; color: #ffffff"><div class="cssplt-heatmap-cell-inner">1.330</div><div class="cssplt-heatmap-tooltip">M2 / D3: 1.330</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D4" data-value="5.9300" style="background-color: #248a8b"><div class="cssplt-heatmap-cell-inner">5.930</div><div class="cssplt-heatmap-tooltip">M2 / D4: 5.930</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D5" data-value="5.3300" style="background-color: #2d6e8d; color: #ffffff"><div class="cssplt-heatmap-cell-inner">5.330</div><div class="cssplt-heatmap-tooltip">M2 / D5: 5.330</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D6" data-value="5.4700" style="background-color: #2b758c; color: #ffffff"><div class="cssplt-heatmap-cell-inner">5.470</div><div class="cssplt-heatmap-tooltip">M2 / D6: 5.470</div></div>
+    </div>
+    <div class="cssplt-heatmap-row" data-tag="robust" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M3</div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D1" data-value="8.2600" style="background-color: #b3dc2c"><div class="cssplt-heatmap-cell-inner">8.260</div><div class="cssplt-heatmap-tooltip">M3 / D1: 8.260</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D2" data-value="0.9100" style="background-color: #440154; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.910</div><div class="cssplt-heatmap-tooltip">M3 / D2: 0.910</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D3" data-value="1.2200" style="background-color: #440558; color: #ffffff"><div class="cssplt-heatmap-cell-inner">1.220</div><div class="cssplt-heatmap-tooltip">M3 / D3: 1.220</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D4" data-value="3.0000" style="background-color: #482172; color: #ffffff"><div class="cssplt-heatmap-cell-inner">3.000</div><div class="cssplt-heatmap-tooltip">M3 / D4: 3.000</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D5" data-value="3.8300" style="background-color: #443780; color: #ffffff"><div class="cssplt-heatmap-cell-inner">3.830</div><div class="cssplt-heatmap-tooltip">M3 / D5: 3.830</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D6" data-value="8.9300" style="background-color: #dde224"><div class="cssplt-heatmap-cell-inner">8.930</div><div class="cssplt-heatmap-tooltip">M3 / D6: 8.930</div></div>
+    </div>
+    <div class="cssplt-heatmap-row" data-tag="accurate" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M4</div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D1" data-value="2.0400" style="background-color: #471063; color: #ffffff"><div class="cssplt-heatmap-cell-inner">2.040</div><div class="cssplt-heatmap-tooltip">M4 / D1: 2.040</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D2" data-value="3.9200" style="background-color: #433981; color: #ffffff"><div class="cssplt-heatmap-cell-inner">3.920</div><div class="cssplt-heatmap-tooltip">M4 / D2: 3.920</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D3" data-value="5.5100" style="background-color: #2a778c; color: #ffffff"><div class="cssplt-heatmap-cell-inner">5.510</div><div class="cssplt-heatmap-tooltip">M4 / D3: 5.510</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D4" data-value="7.4800" style="background-color: #72ce55"><div class="cssplt-heatmap-cell-inner">7.480</div><div class="cssplt-heatmap-tooltip">M4 / D4: 7.480</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D5" data-value="3.3400" style="background-color: #462a78; color: #ffffff"><div class="cssplt-heatmap-cell-inner">3.340</div><div class="cssplt-heatmap-tooltip">M4 / D5: 3.340</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D6" data-value="8.9900" style="background-color: #e1e324"><div class="cssplt-heatmap-cell-inner">8.990</div><div class="cssplt-heatmap-tooltip">M4 / D6: 8.990</div></div>
+    </div>
+    <div class="cssplt-heatmap-row" data-tag="cheap" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M5</div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D1" data-value="6.4000" style="background-color: #27a084"><div class="cssplt-heatmap-cell-inner">6.400</div><div class="cssplt-heatmap-tooltip">M5 / D1: 6.400</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D2" data-value="4.6300" style="background-color: #395289; color: #ffffff"><div class="cssplt-heatmap-cell-inner">4.630</div><div class="cssplt-heatmap-tooltip">M5 / D2: 4.630</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D3" data-value="5.5500" style="background-color: #2a798c; color: #ffffff"><div class="cssplt-heatmap-cell-inner">5.550</div><div class="cssplt-heatmap-tooltip">M5 / D3: 5.550</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D4" data-value="8.5800" style="background-color: #c9e024"><div class="cssplt-heatmap-cell-inner">8.580</div><div class="cssplt-heatmap-tooltip">M5 / D4: 8.580</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D5" data-value="9.4800" style="background-color: #fde724"><div class="cssplt-heatmap-cell-inner">9.480</div><div class="cssplt-heatmap-tooltip">M5 / D5: 9.480</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D6" data-value="0.9200" style="background-color: #440154; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.920</div><div class="cssplt-heatmap-tooltip">M5 / D6: 0.920</div></div>
+    </div>
+    <div class="cssplt-heatmap-row" data-tag="balanced" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M6</div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D1" data-value="7.6300" style="background-color: #7fd14d"><div class="cssplt-heatmap-cell-inner">7.630</div><div class="cssplt-heatmap-tooltip">M6 / D1: 7.630</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D2" data-value="3.9300" style="background-color: #433982; color: #ffffff"><div class="cssplt-heatmap-cell-inner">3.930</div><div class="cssplt-heatmap-tooltip">M6 / D2: 3.930</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D3" data-value="9.2400" style="background-color: #efe524"><div class="cssplt-heatmap-cell-inner">9.240</div><div class="cssplt-heatmap-tooltip">M6 / D3: 9.240</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D4" data-value="6.9900" style="background-color: #4fbb6b"><div class="cssplt-heatmap-cell-inner">6.990</div><div class="cssplt-heatmap-tooltip">M6 / D4: 6.990</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D5" data-value="2.9000" style="background-color: #471f71; color: #ffffff"><div class="cssplt-heatmap-cell-inner">2.900</div><div class="cssplt-heatmap-tooltip">M6 / D5: 2.900</div></div>
+      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D6" data-value="4.4100" style="background-color: #3d4a87; color: #ffffff"><div class="cssplt-heatmap-cell-inner">4.410</div><div class="cssplt-heatmap-tooltip">M6 / D6: 4.410</div></div>
+    </div>
   </div>
-  <div class="cssplt-heatmap-row" data-tag="fast" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M1</div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D1" data-value="2.9800" style="background-color: hsl(212, 80%, 39%);"><div class="cssplt-heatmap-cell-inner">2.980</div><div class="cssplt-heatmap-tooltip">M1 / D1: 2.980</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D2" data-value="6.5900" style="background-color: hsl(127, 80%, 65%);"><div class="cssplt-heatmap-cell-inner">6.590</div><div class="cssplt-heatmap-tooltip">M1 / D2: 6.590</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D3" data-value="4.3000" style="background-color: hsl(181, 80%, 49%);"><div class="cssplt-heatmap-cell-inner">4.300</div><div class="cssplt-heatmap-tooltip">M1 / D3: 4.300</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D4" data-value="5.0500" style="background-color: hsl(163, 80%, 54%);"><div class="cssplt-heatmap-cell-inner">5.050</div><div class="cssplt-heatmap-tooltip">M1 / D4: 5.050</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D5" data-value="6.3500" style="background-color: hsl(133, 80%, 63%);"><div class="cssplt-heatmap-cell-inner">6.350</div><div class="cssplt-heatmap-tooltip">M1 / D5: 6.350</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D6" data-value="5.8000" style="background-color: hsl(146, 80%, 59%);"><div class="cssplt-heatmap-cell-inner">5.800</div><div class="cssplt-heatmap-tooltip">M1 / D6: 5.800</div></div>
-  </div>
-  <div class="cssplt-heatmap-row" data-tag="none" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M2</div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D1" data-value="7.7500" style="background-color: hsl(100, 80%, 73%);"><div class="cssplt-heatmap-cell-inner">7.750</div><div class="cssplt-heatmap-tooltip">M2 / D1: 7.750</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D2" data-value="1.9000" style="background-color: hsl(237, 80%, 32%);"><div class="cssplt-heatmap-cell-inner">1.900</div><div class="cssplt-heatmap-tooltip">M2 / D2: 1.900</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D3" data-value="1.3300" style="background-color: hsl(250, 80%, 28%);"><div class="cssplt-heatmap-cell-inner">1.330</div><div class="cssplt-heatmap-tooltip">M2 / D3: 1.330</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D4" data-value="5.9300" style="background-color: hsl(143, 80%, 60%);"><div class="cssplt-heatmap-cell-inner">5.930</div><div class="cssplt-heatmap-tooltip">M2 / D4: 5.930</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D5" data-value="5.3300" style="background-color: hsl(157, 80%, 56%);"><div class="cssplt-heatmap-cell-inner">5.330</div><div class="cssplt-heatmap-tooltip">M2 / D5: 5.330</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D6" data-value="5.4700" style="background-color: hsl(154, 80%, 57%);"><div class="cssplt-heatmap-cell-inner">5.470</div><div class="cssplt-heatmap-tooltip">M2 / D6: 5.470</div></div>
-  </div>
-  <div class="cssplt-heatmap-row" data-tag="robust" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M3</div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D1" data-value="8.2600" style="background-color: hsl(88, 80%, 76%);"><div class="cssplt-heatmap-cell-inner">8.260</div><div class="cssplt-heatmap-tooltip">M3 / D1: 8.260</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D2" data-value="0.9100" style="background-color: hsl(260, 80%, 25%);"><div class="cssplt-heatmap-cell-inner">0.910</div><div class="cssplt-heatmap-tooltip">M3 / D2: 0.910</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D3" data-value="1.2200" style="background-color: hsl(253, 80%, 27%);"><div class="cssplt-heatmap-cell-inner">1.220</div><div class="cssplt-heatmap-tooltip">M3 / D3: 1.220</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D4" data-value="3.0000" style="background-color: hsl(211, 80%, 40%);"><div class="cssplt-heatmap-cell-inner">3.000</div><div class="cssplt-heatmap-tooltip">M3 / D4: 3.000</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D5" data-value="3.8300" style="background-color: hsl(192, 80%, 45%);"><div class="cssplt-heatmap-cell-inner">3.830</div><div class="cssplt-heatmap-tooltip">M3 / D5: 3.830</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D6" data-value="8.9300" style="background-color: hsl(73, 80%, 81%);"><div class="cssplt-heatmap-cell-inner">8.930</div><div class="cssplt-heatmap-tooltip">M3 / D6: 8.930</div></div>
-  </div>
-  <div class="cssplt-heatmap-row" data-tag="accurate" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M4</div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D1" data-value="2.0400" style="background-color: hsl(234, 80%, 33%);"><div class="cssplt-heatmap-cell-inner">2.040</div><div class="cssplt-heatmap-tooltip">M4 / D1: 2.040</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D2" data-value="3.9200" style="background-color: hsl(190, 80%, 46%);"><div class="cssplt-heatmap-cell-inner">3.920</div><div class="cssplt-heatmap-tooltip">M4 / D2: 3.920</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D3" data-value="5.5100" style="background-color: hsl(153, 80%, 57%);"><div class="cssplt-heatmap-cell-inner">5.510</div><div class="cssplt-heatmap-tooltip">M4 / D3: 5.510</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D4" data-value="7.4800" style="background-color: hsl(107, 80%, 71%);"><div class="cssplt-heatmap-cell-inner">7.480</div><div class="cssplt-heatmap-tooltip">M4 / D4: 7.480</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D5" data-value="3.3400" style="background-color: hsl(203, 80%, 42%);"><div class="cssplt-heatmap-cell-inner">3.340</div><div class="cssplt-heatmap-tooltip">M4 / D5: 3.340</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D6" data-value="8.9900" style="background-color: hsl(71, 80%, 82%);"><div class="cssplt-heatmap-cell-inner">8.990</div><div class="cssplt-heatmap-tooltip">M4 / D6: 8.990</div></div>
-  </div>
-  <div class="cssplt-heatmap-row" data-tag="cheap" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M5</div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D1" data-value="6.4000" style="background-color: hsl(132, 80%, 63%);"><div class="cssplt-heatmap-cell-inner">6.400</div><div class="cssplt-heatmap-tooltip">M5 / D1: 6.400</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D2" data-value="4.6300" style="background-color: hsl(173, 80%, 51%);"><div class="cssplt-heatmap-cell-inner">4.630</div><div class="cssplt-heatmap-tooltip">M5 / D2: 4.630</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D3" data-value="5.5500" style="background-color: hsl(152, 80%, 57%);"><div class="cssplt-heatmap-cell-inner">5.550</div><div class="cssplt-heatmap-tooltip">M5 / D3: 5.550</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D4" data-value="8.5800" style="background-color: hsl(81, 80%, 79%);"><div class="cssplt-heatmap-cell-inner">8.580</div><div class="cssplt-heatmap-tooltip">M5 / D4: 8.580</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D5" data-value="9.4800" style="background-color: hsl(60, 80%, 85%);"><div class="cssplt-heatmap-cell-inner">9.480</div><div class="cssplt-heatmap-tooltip">M5 / D5: 9.480</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D6" data-value="0.9200" style="background-color: hsl(260, 80%, 25%);"><div class="cssplt-heatmap-cell-inner">0.920</div><div class="cssplt-heatmap-tooltip">M5 / D6: 0.920</div></div>
-  </div>
-  <div class="cssplt-heatmap-row" data-tag="balanced" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M6</div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D1" data-value="7.6300" style="background-color: hsl(103, 80%, 72%);"><div class="cssplt-heatmap-cell-inner">7.630</div><div class="cssplt-heatmap-tooltip">M6 / D1: 7.630</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D2" data-value="3.9300" style="background-color: hsl(190, 80%, 46%);"><div class="cssplt-heatmap-cell-inner">3.930</div><div class="cssplt-heatmap-tooltip">M6 / D2: 3.930</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D3" data-value="9.2400" style="background-color: hsl(66, 80%, 83%);"><div class="cssplt-heatmap-cell-inner">9.240</div><div class="cssplt-heatmap-tooltip">M6 / D3: 9.240</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D4" data-value="6.9900" style="background-color: hsl(118, 80%, 68%);"><div class="cssplt-heatmap-cell-inner">6.990</div><div class="cssplt-heatmap-tooltip">M6 / D4: 6.990</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D5" data-value="2.9000" style="background-color: hsl(214, 80%, 39%);"><div class="cssplt-heatmap-cell-inner">2.900</div><div class="cssplt-heatmap-tooltip">M6 / D5: 2.900</div></div>
-    <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D6" data-value="4.4100" style="background-color: hsl(178, 80%, 50%);"><div class="cssplt-heatmap-cell-inner">4.410</div><div class="cssplt-heatmap-tooltip">M6 / D6: 4.410</div></div>
-  </div>
+  <div class="cssplt-heatmap-legend"><span class="cssplt-heatmap-legend-max">9.48</span><div class="cssplt-heatmap-legend-bar" style="background: linear-gradient(to top, #440154 0%, #470f62 12%, #482273 25%, #423e85 37%, #30688d 50%, #1e998a 62%, #67cc5c 75%, #bfdf24 87%, #fde724 100%);"></div><span class="cssplt-heatmap-legend-min">0.91</span></div>
 </div></div></div>
+      </div>
+    </div>
+    <div class="cssplt-metrics-column">
+        <div class="cssplt-control cssplt-control--radio" data-var-key="metric">
+          <input type="radio" class="cssplt-input cssplt-input--radio" id="cssplt-metric-accuracy" name="metric" value="accuracy" data-var-key="metric" data-var-value="accuracy" checked="checked">
+          <label class="cssplt-pill" for="cssplt-metric-accuracy">accuracy</label>
+          <input type="radio" class="cssplt-input cssplt-input--radio" id="cssplt-metric-latency" name="metric" value="latency" data-var-key="metric" data-var-value="latency">
+          <label class="cssplt-pill" for="cssplt-metric-latency">latency</label>
+          <input type="radio" class="cssplt-input cssplt-input--radio" id="cssplt-metric-cost" name="metric" value="cost" data-var-key="metric" data-var-value="cost">
+          <label class="cssplt-pill" for="cssplt-metric-cost">cost</label>
+        </div>
+    </div>
   </div>
 </div>
 </body>

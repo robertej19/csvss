@@ -305,3 +305,11 @@ class StateRegistry:
         """Return concatenated HTML for all registered controls."""
         return "\n".join(var.html() for var in self._vars)
 
+    def render_radios_html(self) -> str:
+        """Return HTML for all RadioVar controls only."""
+        return "\n".join(var.html() for var in self._vars if isinstance(var, RadioVar))
+
+    def render_multis_html(self) -> str:
+        """Return HTML for all MultiCheckVar controls only."""
+        return "\n".join(var.html() for var in self._vars if isinstance(var, MultiCheckVar))
+
