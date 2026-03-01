@@ -1,0 +1,2 @@
+# Dependencies for cssplt (also in pyproject.toml)
+pandas>=1.0

@@ -1,37 +1,187 @@
-model,dataset,accuracy,latency,cost,tag
-M1,D1,0.8069,7.25,2.98,fast
-M1,D2,0.6071,71.28,6.59,fast
-M1,D3,0.9282,12.82,4.3,fast
-M1,D4,0.5143,24.68,5.05,fast
-M1,D5,0.5127,22.9,6.35,fast
-M1,D6,0.7616,24.84,5.8,fast
-M2,D1,0.8885,5.58,7.75,none
-M2,D2,0.8351,35.62,1.9,none
-M2,D3,0.9595,35.29,1.33,none
-M2,D4,0.5464,81.27,5.93,none
-M2,D5,0.8874,70.68,5.33,none
-M2,D6,0.9671,39.07,5.47,none
-M3,D1,0.8981,60.67,8.26,robust
-M3,D2,0.7771,68.41,0.91,robust
-M3,D3,0.6094,31.04,1.22,robust
-M3,D4,0.6117,14.09,3.0,robust
-M3,D5,0.8051,37.83,3.83,robust
-M3,D6,0.6006,29.03,8.93,robust
-M4,D1,0.8111,59.82,2.04,accurate
-M4,D2,0.85,19.71,3.92,accurate
-M4,D3,0.975,62.6,5.51,accurate
-M4,D4,0.8286,80.86,7.48,accurate
-M4,D5,0.6099,7.89,3.34,accurate
-M4,D6,0.6285,23.99,8.99,accurate
-M5,D1,0.9207,33.32,6.4,cheap
-M5,D2,0.6899,87.31,4.63,cheap
-M5,D3,0.6271,27.2,5.55,cheap
-M5,D4,0.6261,57.61,8.58,cheap
-M5,D5,0.6917,24.74,9.48,cheap
-M5,D6,0.7446,13.18,0.92,cheap
-M6,D1,0.5526,61.47,7.63,balanced
-M6,D2,0.7026,10.72,3.93,balanced
-M6,D3,0.9781,52.62,9.24,balanced
-M6,D4,0.9132,6.03,6.99,balanced
-M6,D5,0.8272,53.33,2.9,balanced
-M6,D6,0.8077,15.04,4.41,balanced
+model,dataset,accuracy,latency,cost,tag,notes
+M1,D1,0.8069,7.25,2.98,fast,"Lectus donec augue ut est amet consequat in amet ex duis est.
+
+Sit esse ultrices velit quis est esse commodo sed et qui sunt cupidatat voluptate adipiscing."
+M1,D2,0.7205,16.23,8.8,fast,Dolore arcu eu sunt nisi eiusmod consectetur ullamcorper dolor scelerisque ultrices qui sit in nostrud proident lorem et massa tempor dictum vestibulum dolor purus velit.
+M1,D3,0.9442,66.93,2.48,fast,"Duis consectetur pariatur voluptate ea pharetra vitae pariatur at.
+
+Eu varius minim ad mattis rhoncus mattis laborum tincidunt sunt viverra ad turpis ullamcorper eu veniam quis massa feugiat officia.
+
+Dictumst eget eu ipsum feugiat massa vestibulum voluptate dictum magna praesent sit vel vitae voluptate in ullamco arcu ultrices eu dictum vivamus."
+M1,D4,0.5734,73.63,5.35,fast,"Feugiat turpis magna sunt dolor eget irure irure.
+
+Ut blandit eiusmod velit sed enim quis est voluptate vitae.
+
+Nunc at ullamcorper sapien ac mollit lorem culpa ut sit dolor do sit pellentesque tincidunt ipsum molestie do eiusmod amet sint.
+
+Irure lorem commodo enim varius dignissim gravida tincidunt eget nisi et praesent laborum purus sed donec dolor et mollit occaecat eu dolor nisi magna.
+
+Laboris purus vitae tempor egestas scelerisque et duis rhoncus dolor labore ullamcorper aute anim blandit eu ut nostrud lorem officia at."
+M1,D5,0.8769,30.67,6.77,fast,"Quis eu eget cras rhoncus mattis sed tincidunt in scelerisque quis turpis incididunt laboris lobortis donec aute aliqua eu dolor lobortis augue est.
+
+Pariatur reprehenderit lorem pariatur voluptate enim varius amet at varius ipsum augue elit et vestibulum in enim non eiusmod dolor cillum tristique rhoncus fugiat.
+
+Ipsum purus eu consectetur vel enim aliqua dolore pellentesque velit vivamus ac ex arcu voluptate turpis lectus nisl labore laborum esse lorem ullamcorper dictum.
+
+Nostrud tristique molestie elit magna pharetra sapien veniam consectetur in pellentesque praesent adipiscing sunt varius eget.
+
+Ut ea dolor dolore morbi auctor anim augue quis."
+M1,D6,0.9463,82.81,9.29,fast,"Sit lectus sint varius eget eu egestas voluptate tincidunt dolore vitae scelerisque consequat purus amet fugiat massa duis sit aliquip sint.
+
+Nunc esse varius mollit dolor vestibulum vel magna eget ullamco."
+M2,D1,0.962,28.89,1.48,none,"Sed nulla vivamus hac officia dignissim in molestie lorem at vestibulum feugiat vestibulum lorem sunt eiusmod consectetur sint nulla.
+
+Feugiat eu nulla anim mollit eu ut est vel donec ut.
+
+Anim in fugiat ea tincidunt vivamus excepteur tristique donec hac ornare turpis lectus at cillum consectetur augue.
+
+Purus ullamcorper lorem duis ex sit dolor quis nisi tempor."
+M2,D2,0.6989,61.68,2.25,none,"Mollit veniam sapien augue eu eu morbi consequat eget faucibus purus pellentesque bibendum aliqua enim purus dictumst elit pariatur ullamcorper magna purus augue.
+
+Accumsan est augue mattis quis reprehenderit dolor dictum sed platea eget velit incididunt cillum velit pariatur rhoncus ad aute faucibus molestie.
+
+Id sint purus do accumsan officia ullamcorper pharetra sit auctor.
+
+Quis pharetra eu officia augue in vestibulum lectus massa ut turpis velit blandit officia lorem massa feugiat nisl bibendum lorem."
+M2,D3,0.7564,86.62,5.83,none,Varius ad purus elit qui commodo excepteur velit qui ullamcorper.
+M2,D4,0.8993,27.7,1.24,none,Sed vel consequat eiusmod turpis adipiscing amet dolor in augue irure gravida magna pharetra purus in in vivamus nunc feugiat morbi nostrud nulla cras at.
+M2,D5,0.7764,86.72,3.88,none,"Lobortis accumsan irure faucibus fugiat massa eget massa ullamcorper adipiscing.
+
+Laborum in in cupidatat nisi viverra dolore turpis dictum accumsan molestie praesent lectus nunc velit egestas vestibulum blandit praesent lectus voluptate nisi accumsan ut auctor."
+M2,D6,0.6171,46.82,5.99,none,"Amet nisi laboris commodo massa cupidatat auctor et esse ipsum pharetra ut feugiat turpis velit sapien varius turpis.
+
+Labore consequat sapien fugiat cras gravida dictumst laborum.
+
+Sint et velit in aliqua aliquip aliqua vestibulum velit laboris commodo blandit sed lorem platea cillum et aliquip duis ullamco dolor vestibulum velit eget pellentesque.
+
+Dictum ullamcorper dolore ipsum cillum quis cupidatat nunc in eu magna eiusmod."
+M3,D1,0.736,56.93,6.68,robust,"Egestas vel ut dolor elit id lobortis augue morbi qui lectus eu.
+
+Fugiat augue at vestibulum pharetra ea ea consectetur quis ullamco tempor lorem sit lobortis dolore aute molestie et sit sapien at."
+M3,D2,0.8782,61.26,6.45,robust,"Magna duis veniam voluptate minim do ornare lobortis viverra bibendum tristique gravida fugiat mollit velit rhoncus tristique feugiat eu lectus vivamus.
+
+Labore nunc in dignissim vel viverra lorem velit."
+M3,D3,0.5193,73.06,4.73,robust,"Laboris tincidunt dictum turpis labore non sint lorem scelerisque sint faucibus cillum pharetra egestas est sit.
+
+In aliqua ullamcorper eu viverra lorem ultrices purus sed habitasse eget cursus tristique sed voluptate enim cillum auctor.
+
+Aliqua eget vivamus irure quis est pellentesque labore sed arcu amet aliqua accumsan cursus ac hac velit in lorem dolor est qui bibendum.
+
+Mattis ad eiusmod ullamcorper scelerisque cupidatat tincidunt voluptate lorem sed in cras at eu magna blandit sint sed culpa varius ultrices dolor irure qui."
+M3,D4,0.9109,41.97,3.36,robust,"Officia consectetur viverra dolor cursus consectetur in lobortis ultrices vitae tristique dictumst amet feugiat anim at quis gravida eget occaecat.
+
+Duis nisi nisi eu qui pariatur feugiat velit vitae consectetur eiusmod arcu bibendum viverra mattis praesent et arcu vitae magna.
+
+Ut elit massa dolore culpa minim dictumst ullamcorper ornare exercitation incididunt ultrices augue irure arcu minim amet.
+
+Amet lorem ut purus cillum est tempor pharetra sed eu nunc sapien amet fugiat viverra scelerisque."
+M3,D5,0.5512,39.32,3.73,robust,"Sit accumsan deserunt ipsum eu morbi eget arcu mattis accumsan ut morbi duis eget consequat nisi in.
+
+Arcu ut varius nulla tristique cras lectus labore eu mattis ullamco enim.
+
+Vitae in in velit nostrud arcu pharetra nunc eu ultrices eget gravida tempor ullamcorper duis donec donec deserunt nisl pellentesque labore deserunt voluptate ut in."
+M3,D6,0.8595,28.59,3.93,robust,"Donec gravida augue pharetra sint at duis dictum purus et duis.
+
+Ad pharetra fugiat turpis et eu ad sit lorem vestibulum pharetra.
+
+Tincidunt sed eu at in augue vel esse sapien commodo magna aute sunt dolor in ut varius do esse eget vel."
+M4,D1,0.8956,13.25,2.41,accurate,"Elit occaecat sed tincidunt ea accumsan pellentesque tincidunt.
+
+Sint veniam ut lorem scelerisque minim enim in ullamco consectetur amet dolor ornare irure excepteur.
+
+Voluptate ut est magna do magna sunt lobortis sit consequat at sed lectus.
+
+Fugiat varius amet viverra nisi laborum dolore ac magna ut excepteur veniam ut eget tincidunt ac qui feugiat eu in praesent ornare magna at.
+
+Feugiat commodo sit duis occaecat sit id labore laborum consectetur culpa veniam bibendum eiusmod accumsan labore et vestibulum egestas pellentesque tincidunt elit sint ut proident."
+M4,D2,0.8194,72.53,8.31,accurate,Feugiat non cras commodo at consequat dolore nisl in velit dignissim eget nisl lorem purus at varius.
+M4,D3,0.5126,88.62,7.97,accurate,"Laboris et nulla cupidatat lorem ultrices ullamcorper mollit.
+
+Vestibulum eget labore dictumst culpa sit quis nulla excepteur vel feugiat auctor.
+
+Quis augue donec velit consectetur blandit tristique velit ullamcorper magna praesent cillum."
+M4,D4,0.8257,48.8,6.5,accurate,Deserunt feugiat ipsum fugiat ea ad in sint ipsum mattis ullamco qui et in in.
+M4,D5,0.887,11.49,8.26,accurate,Dolor bibendum eu dignissim dignissim molestie est magna sit excepteur eget augue accumsan bibendum ut nisl irure tincidunt platea deserunt nulla.
+M4,D6,0.663,34.98,2.01,accurate,"Dictumst aliquip morbi non turpis varius veniam dolore in ullamco veniam.
+
+Ullamco ullamcorper cursus ullamcorper velit sit at ullamcorper dictum eget.
+
+Veniam eiusmod tristique fugiat velit sed hac nulla sit sed accumsan tempor eu scelerisque at hac purus pellentesque.
+
+Sit egestas duis excepteur quis veniam do dolore ut.
+
+Dolor ut varius adipiscing molestie sed platea at sunt bibendum officia ullamcorper donec sed arcu occaecat sint elit."
+M5,D1,0.6856,27.68,8.16,cheap,"Occaecat cras minim non nunc faucibus deserunt lobortis vel nulla culpa ornare.
+
+Lorem accumsan vestibulum massa dictumst varius laborum sunt sunt laboris commodo pharetra.
+
+Nisi viverra quis eu tincidunt hac rhoncus vestibulum dictumst consectetur vitae augue feugiat quis laboris faucibus eget ut feugiat adipiscing sunt feugiat eget.
+
+Ullamcorper tincidunt aute irure nunc tincidunt lectus aliquip donec ullamcorper tristique ullamcorper morbi in est nostrud ex.
+
+Vitae sed quis in varius molestie habitasse ut ut nostrud sit habitasse."
+M5,D2,0.8989,13.25,8.69,cheap,"Varius id deserunt culpa officia incididunt duis pariatur et ac occaecat minim consectetur bibendum gravida accumsan velit gravida at.
+
+Dolor commodo veniam vel vivamus laborum morbi irure ut irure.
+
+Do in cursus vestibulum arcu dignissim feugiat dolore lorem proident dignissim nisi lorem platea sunt vel rhoncus tincidunt hac sit vitae adipiscing.
+
+Dolor in dolor ornare cupidatat lectus arcu ullamcorper lectus sint adipiscing est egestas ullamco morbi purus faucibus arcu egestas do."
+M5,D3,0.8726,46.19,3.14,cheap,Eu pariatur nulla mollit purus gravida consectetur varius cillum eu elit at velit massa.
+M5,D4,0.7097,41.0,4.46,cheap,"Eget cursus cursus at platea massa sed incididunt feugiat viverra est excepteur incididunt consectetur fugiat vivamus laborum sapien.
+
+Magna sed arcu at praesent dictum ornare sed lorem anim habitasse mattis quis amet nisi donec tristique ut aute.
+
+Sunt vel consectetur veniam sit in magna tempor ad in pariatur esse turpis amet nisi habitasse arcu aliqua ullamcorper.
+
+Commodo at faucibus viverra ex ad tempor exercitation ac viverra egestas nunc dolor lorem molestie est dolore eu quis molestie et ullamco."
+M5,D5,0.6735,25.18,9.37,cheap,"Ornare amet pellentesque in eget pellentesque at ut nulla viverra feugiat dictumst sed viverra tempor.
+
+Varius sit massa cupidatat vitae morbi dictum laboris nunc praesent arcu sed ut veniam nostrud excepteur molestie cupidatat."
+M5,D6,0.9516,85.54,8.11,cheap,"Dictum est ut fugiat vestibulum in exercitation vel quis at feugiat vivamus nisl elit.
+
+Incididunt pharetra ullamcorper voluptate ea dignissim augue amet.
+
+Dolore turpis blandit eget massa eu tempor do tristique blandit ex vivamus nulla feugiat lectus eu lorem enim in elit pariatur purus voluptate dolor et."
+M6,D1,0.6393,39.57,6.04,balanced,"Egestas varius feugiat nisi quis viverra purus auctor cursus labore deserunt amet irure.
+
+Elit esse feugiat nisl lorem cillum ipsum dolore enim voluptate in mollit elit elit elit sunt dolore officia sit."
+M6,D2,0.7639,79.28,6.11,balanced,"Enim et culpa dolor elit in minim feugiat mollit adipiscing adipiscing.
+
+Eget platea veniam augue ad varius pariatur deserunt augue nisl lobortis hac hac turpis elit quis dolor sint.
+
+Lorem tincidunt massa sed sapien amet quis nunc tincidunt morbi cras.
+
+Tincidunt exercitation arcu augue nisl veniam massa amet pharetra.
+
+Nisi tristique est id ex in at gravida nisi sed molestie."
+M6,D3,0.749,55.48,9.48,balanced,"Culpa turpis amet vestibulum est donec ultrices massa eget voluptate blandit turpis esse eu vel dolor ullamcorper et sapien turpis quis elit varius feugiat.
+
+Ut donec qui lorem purus vel eget dolore cillum ac non magna reprehenderit quis ex rhoncus varius.
+
+Ad augue tincidunt irure lorem dictumst dictum sed id ac et ullamcorper lorem est at anim.
+
+Quis ex nunc excepteur varius lectus ut dignissim vestibulum feugiat vel arcu ullamco auctor ullamco bibendum viverra deserunt cursus vel nunc at vitae."
+M6,D4,0.5044,56.12,1.47,balanced,"Sit varius platea eu enim in velit egestas sint lectus duis feugiat dolor occaecat eu donec aliquip.
+
+Accumsan habitasse ut lorem laboris ad excepteur dolor reprehenderit aute ullamcorper vel fugiat feugiat ipsum duis faucibus do aliqua fugiat.
+
+Sapien at eu ullamcorper sapien dictum vel in consequat turpis quis sit sed culpa et arcu velit eget viverra velit."
+M6,D5,0.8266,58.62,7.59,balanced,"Dictumst sunt bibendum magna accumsan ut ex vestibulum nostrud scelerisque tristique massa ac turpis ut magna sed enim id elit elit lorem.
+
+Feugiat deserunt purus mattis cras elit cupidatat do viverra varius eiusmod varius amet anim sed sed lorem.
+
+Culpa augue magna bibendum culpa incididunt nunc vitae enim eu aliqua sed deserunt ut lorem in ullamcorper lorem purus feugiat laborum.
+
+Viverra dolor non esse vel sed magna egestas est sed auctor dolor ea et consectetur feugiat et elit vestibulum mollit.
+
+Rhoncus ullamcorper morbi ad sed aute arcu dignissim cras ullamcorper purus aute vitae dolor platea."
+M6,D6,0.6985,29.76,5.51,balanced,"Eget laborum cursus eget vel lorem tincidunt pariatur id veniam culpa ullamcorper gravida.
+
+Eu molestie eget arcu elit nunc pellentesque enim irure ex varius bibendum nisi labore sed.
+
+Sed culpa vivamus adipiscing tempor eget tincidunt lorem commodo ea lectus fugiat lectus commodo.
+
+Nunc aliqua viverra quis irure vivamus ex arcu pellentesque ullamcorper qui vestibulum sunt reprehenderit.
+
+Auctor purus eget feugiat velit pariatur ex nulla elit eu vestibulum dolor pellentesque tincidunt feugiat eu aliquip duis ullamcorper dolor est pharetra occaecat sed."

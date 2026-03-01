@@ -66,6 +66,8 @@ if __name__ == "__main__":
         row="model",
         col="dataset",
         metric="accuracy",
+        show_values=False,
+        show_legend=True,
     )
     heat_html, heat_css = heat_artist.render_html_views(
         metric_var_key="metric",
@@ -80,8 +82,3 @@ if __name__ == "__main__":
     out = Path(__file__).resolve().parent / "demo_linked.html"
     fig.write_html(str(out))
     print(f"\nWrote {out}")
-
-    print("\n=== cssplt selector helpers ===")
-    print("metric=accuracy:", metric.checked_selector("accuracy"))
-    print("tags none (no selection):", tags.subset_selector([]))
-    print("tags {fast}:", tags.subset_selector(["fast"]))

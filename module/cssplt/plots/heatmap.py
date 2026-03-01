@@ -83,6 +83,8 @@ class HeatmapArtist:
 
     Optional ``decimals``: number of decimal places for cell values (default 3).
     Optional ``show_values``: if False, cell values are hidden (tooltips still show).
+    Optional ``notes_col``: when set and present in ``df``, per-cell notes are shown in the tooltip.
+    Optional ``show_legend``: if False, the colorbar legend (min/max bar) is hidden.
     """
 
     df: pd.DataFrame
@@ -91,8 +93,10 @@ class HeatmapArtist:
     metric: str = "accuracy"
     heatmap_id: str = "heatmap"
     tag_col: str | None = None
+    notes_col: str | None = "notes"
     decimals: int | None = 3
     show_values: bool = True
+    show_legend: bool = True
 
     def render_html(self) -> str:
         """Return HTML for the heatmap grid."""
@@ -113,6 +117,14 @@ class HeatmapArtist:
                 match = self.df[self.df[self.row].astype(str) == r]
                 if not match.empty:
                     row_to_tag[r] = str(match[self.tag_col].iloc[0])
+
+        # (row_key, col_key) -> notes for tooltip
+        notes_map: dict[Tuple[str, str], str] = {}
+        if self.notes_col and self.notes_col in self.df.columns:
+            for _, r in self.df.iterrows():
+                rk, ck = str(r[self.row]), str(r[self.col])
+                val = r[self.notes_col]
+                notes_map[(rk, ck)] = "" if pd.isna(val) else str(val).strip()
 
         vmin = float(pivot.min().min())
         vmax = float(pivot.max().max())
@@ -146,8 +158,14 @@ class HeatmapArtist:
 
         n_cols = len(col_labels) + 1  # plus row-header column
         gradient_stops = _viridis_gradient_stops()
+        lock_name = f"heatmap-lock-{esc(self.heatmap_id)}"
+        lock_none_id = f"{lock_name}-none".replace(" ", "_")
         lines: list[str] = []
         lines.append('<div class="cssplt-heatmap-wrapper">')
+        lines.append(
+            f'  <input type="radio" name="{lock_name}" value="none" '
+            f'id="{lock_none_id}" checked class="cssplt-input cssplt-heatmap-lock-none">'
+        )
         lines.append(
             f'  <div class="cssplt-heatmap" data-heatmap-id="{esc(self.heatmap_id)}" '
             f'data-metric="{esc(self.metric)}">'
@@ -180,37 +198,52 @@ class HeatmapArtist:
                 '      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">'
                 f"{esc(r_label)}</div>"
             )
-            # Value cells.
+            # Value cells: label + hidden radio for click-to-lock; tooltip shows when locked.
             for c_label in col_labels:
                 value = float(row_values[c_label])
                 color = color_for(value)
-                tooltip = f"{r_label} / {c_label}: {value:.3f}"
+                value_line = f"{r_label} / {c_label}: {value:.3f}"
+                notes = notes_map.get((r_label, c_label), "").strip()
+                tooltip_inner = f'<span class="cssplt-heatmap-tooltip-value">{esc(value_line)}</span>'
+                if notes:
+                    tooltip_inner += f'<div class="cssplt-heatmap-tooltip-notes">{esc(notes)}</div>'
                 cell_text = fmt_cell(value) if self.show_values else ""
                 style_parts = [f"background-color: {color}"]
                 if _is_dark_bg(color):
                     style_parts.append("color: #ffffff")
                 style_str = "; ".join(style_parts)
+                cell_value = f"{r_label}_{c_label}".replace(" ", "_")
+                cell_id = f"{lock_name}-{cell_value}".replace(" ", "_")
                 lines.append(
-                    '      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value"'
+                    f'      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value"'
+                    f' for="{esc(cell_id)}"'
                     f' data-row="{esc(r_label)}"'
                     f' data-col="{esc(c_label)}"'
                     f' data-value="{value:.4f}"'
                     f' style="{style_str}">'
+                    f'<input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" '
+                    f'name="{lock_name}" value="{esc(cell_value)}" id="{esc(cell_id)}">'
                     f'<div class="cssplt-heatmap-cell-inner">{esc(cell_text)}</div>'
-                    f'<div class="cssplt-heatmap-tooltip">{esc(tooltip)}</div>'
-                    "</div>"
+                    f'<div class="cssplt-heatmap-tooltip">{tooltip_inner}</div>'
+                    "</label>"
                 )
             lines.append("    </div>")
 
         lines.append("  </div>")
-        # Legend on the right: bar with max/min labels.
+        # Legend on the right: bar with max/min labels (optional).
+        if self.show_legend:
+            lines.append(
+                f'  <div class="cssplt-heatmap-legend">'
+                f'<span class="cssplt-heatmap-legend-max">{esc(fmt_val(vmax))}</span>'
+                f'<div class="cssplt-heatmap-legend-bar" '
+                f'style="background: linear-gradient(to top, {gradient_stops});"></div>'
+                f'<span class="cssplt-heatmap-legend-min">{esc(fmt_val(vmin))}</span>'
+                f"</div>"
+            )
+        # Overlay: click to unlock (selects "none" radio).
         lines.append(
-            f'  <div class="cssplt-heatmap-legend">'
-            f'<span class="cssplt-heatmap-legend-max">{esc(fmt_val(vmax))}</span>'
-            f'<div class="cssplt-heatmap-legend-bar" '
-            f'style="background: linear-gradient(to top, {gradient_stops});"></div>'
-            f'<span class="cssplt-heatmap-legend-min">{esc(fmt_val(vmin))}</span>'
-            f"</div>"
+            f'  <label for="{esc(lock_none_id)}" class="cssplt-heatmap-overlay" '
+            f'aria-label="Close tooltip"></label>'
         )
         lines.append("</div>")
         return "\n".join(lines)

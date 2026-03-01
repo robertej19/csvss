@@ -283,10 +283,11 @@ body {{
 }}
 
 .cssplt-heatmap-wrapper {{
+  position: relative;
   display: flex;
   align-items: stretch;
   justify-content: center;
-  gap: clamp(0.75rem, 2vw, 1.25rem);
+  gap: 0;
   width: fit-content;
   max-width: 100%;
   margin: 0 auto;
@@ -312,6 +313,7 @@ body {{
   align-items: center;
   gap: 0.35rem;
   flex-shrink: 0;
+  margin-left: clamp(1rem, 2.5vw, 1.5rem);
   font-size: 0.7rem;
   color: {muted};
   line-height: 1.2;
@@ -351,7 +353,6 @@ body {{
 }}
 
 .cssplt-heatmap-cell--value {{
-  position: relative;
   cursor: default;
   color: #111;
 }}
@@ -361,27 +362,75 @@ body {{
   z-index: 1;
 }}
 
+/* Popout: top aligned with bottom of heatmap wrapper, centered, single scroll, small gap. */
 .cssplt-heatmap-tooltip {{
   position: absolute;
+  top: 100%;
   left: 50%;
-  bottom: 100%;
-  transform: translate(-50%, -0.5rem);
+  transform: translateX(-50%);
+  margin-top: 0.5rem;
+  width: max-content;
+  max-width: min(320px, 90vw);
+  max-height: 30vh;
   padding: 0.5rem 0.85rem;
   border-radius: 6px;
   background: #111827;
   color: #ffffff;
   font-size: 0.9rem;
   font-weight: 500;
-  white-space: nowrap;
+  white-space: normal;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 120ms ease-out;
+  transition: opacity 80ms ease-out 100ms;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 9999;
+  overflow-y: auto;
 }}
 
 .cssplt-heatmap-cell--value:hover .cssplt-heatmap-tooltip {{
   opacity: 1;
+  pointer-events: auto;
+  transition-delay: 0s;
+}}
+
+.cssplt-heatmap-tooltip-value {{
+  position: sticky;
+  top: -0.5rem;
+  display: block;
+  margin: -0.5rem -0.85rem 0 -0.85rem;
+  padding: 0.5rem 0.85rem 0.5rem 0.85rem;
+  background: #111827;
+  z-index: 1;
+}}
+
+.cssplt-heatmap-tooltip-notes {{
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
+  white-space: pre-line;
+  font-weight: 400;
+  font-size: 0.85rem;
+}}
+
+/* Click-to-lock: show tooltip when cell radio is checked */
+.cssplt-heatmap-cell--value:has(input.cssplt-heatmap-lock-cell:checked) .cssplt-heatmap-tooltip {{
+  opacity: 1;
+  pointer-events: auto;
+  transition-delay: 0s;
+}}
+
+/* Overlay: gray out rest of screen when a cell is locked; click overlay to unlock */
+.cssplt-heatmap-overlay {{
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 9998;
+  cursor: pointer;
+}}
+
+.cssplt-heatmap-wrapper:has(input.cssplt-heatmap-lock-cell:checked) .cssplt-heatmap-overlay {{
+  display: block;
 }}{extra_css_block}
 </style>
 </head>

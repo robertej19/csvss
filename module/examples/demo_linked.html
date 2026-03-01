@@ -191,10 +191,11 @@ body {
 }
 
 .cssplt-heatmap-wrapper {
+  position: relative;
   display: flex;
   align-items: stretch;
   justify-content: center;
-  gap: clamp(0.75rem, 2vw, 1.25rem);
+  gap: 0;
   width: fit-content;
   max-width: 100%;
   margin: 0 auto;
@@ -220,6 +221,7 @@ body {
   align-items: center;
   gap: 0.35rem;
   flex-shrink: 0;
+  margin-left: clamp(1rem, 2.5vw, 1.5rem);
   font-size: 0.7rem;
   color: #6b7280;
   line-height: 1.2;
@@ -259,7 +261,6 @@ body {
 }
 
 .cssplt-heatmap-cell--value {
-  position: relative;
   cursor: default;
   color: #111;
 }
@@ -269,27 +270,75 @@ body {
   z-index: 1;
 }
 
+/* Popout: top aligned with bottom of heatmap wrapper, centered, single scroll, small gap. */
 .cssplt-heatmap-tooltip {
   position: absolute;
+  top: 100%;
   left: 50%;
-  bottom: 100%;
-  transform: translate(-50%, -0.5rem);
+  transform: translateX(-50%);
+  margin-top: 0.5rem;
+  width: max-content;
+  max-width: min(320px, 90vw);
+  max-height: 30vh;
   padding: 0.5rem 0.85rem;
   border-radius: 6px;
   background: #111827;
   color: #ffffff;
   font-size: 0.9rem;
   font-weight: 500;
-  white-space: nowrap;
+  white-space: normal;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 120ms ease-out;
+  transition: opacity 80ms ease-out 100ms;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 9999;
+  overflow-y: auto;
 }
 
 .cssplt-heatmap-cell--value:hover .cssplt-heatmap-tooltip {
   opacity: 1;
+  pointer-events: auto;
+  transition-delay: 0s;
+}
+
+.cssplt-heatmap-tooltip-value {
+  position: sticky;
+  top: -0.5rem;
+  display: block;
+  margin: -0.5rem -0.85rem 0 -0.85rem;
+  padding: 0.5rem 0.85rem 0.5rem 0.85rem;
+  background: #111827;
+  z-index: 1;
+}
+
+.cssplt-heatmap-tooltip-notes {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
+  white-space: pre-line;
+  font-weight: 400;
+  font-size: 0.85rem;
+}
+
+/* Click-to-lock: show tooltip when cell radio is checked */
+.cssplt-heatmap-cell--value:has(input.cssplt-heatmap-lock-cell:checked) .cssplt-heatmap-tooltip {
+  opacity: 1;
+  pointer-events: auto;
+  transition-delay: 0s;
+}
+
+/* Overlay: gray out rest of screen when a cell is locked; click overlay to unlock */
+.cssplt-heatmap-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 9998;
+  cursor: pointer;
+}
+
+.cssplt-heatmap-wrapper:has(input.cssplt-heatmap-lock-cell:checked) .cssplt-heatmap-overlay {
+  display: block;
 }
 
 .cssplt-heatmap-view { display: none; }
@@ -328,6 +377,7 @@ body {
     <div class="cssplt-center">
       <div class="cssplt-axes-grid">
         <div class="cssplt-axes-box" data-axes-index="1"><div class="cssplt-heatmap-view" data-metric-view="accuracy"><div class="cssplt-heatmap-wrapper">
+  <input type="radio" name="heatmap-lock-heatmap-accuracy" value="none" id="heatmap-lock-heatmap-accuracy-none" checked class="cssplt-input cssplt-heatmap-lock-none">
   <div class="cssplt-heatmap" data-heatmap-id="heatmap-accuracy" data-metric="accuracy">
     <div class="cssplt-heatmap-row cssplt-heatmap-row--header" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
       <div class="cssplt-heatmap-cell cssplt-heatmap-cell--corner"></div>
@@ -340,62 +390,214 @@ body {
     </div>
     <div class="cssplt-heatmap-row" data-tag="fast" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
       <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M1</div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D1" data-value="0.8069" style="background-color: #229c87"><div class="cssplt-heatmap-cell-inner">0.807</div><div class="cssplt-heatmap-tooltip">M1 / D1: 0.807</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D2" data-value="0.6071" style="background-color: #471b6d; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.607</div><div class="cssplt-heatmap-tooltip">M1 / D2: 0.607</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D3" data-value="0.9282" style="background-color: #c8e024"><div class="cssplt-heatmap-cell-inner">0.928</div><div class="cssplt-heatmap-tooltip">M1 / D3: 0.928</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D4" data-value="0.5143" style="background-color: #440154; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.514</div><div class="cssplt-heatmap-tooltip">M1 / D4: 0.514</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D5" data-value="0.5127" style="background-color: #440154; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.513</div><div class="cssplt-heatmap-tooltip">M1 / D5: 0.513</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D6" data-value="0.7616" style="background-color: #2b768c; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.762</div><div class="cssplt-heatmap-tooltip">M1 / D6: 0.762</div></div>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-accuracy-M1_D1" data-row="M1" data-col="D1" data-value="0.8069" style="background-color: #33a87c"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-accuracy" value="M1_D1" id="heatmap-lock-heatmap-accuracy-M1_D1"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M1 / D1: 0.807</span><div class="cssplt-heatmap-tooltip-notes">Lectus donec augue ut est amet consequat in amet ex duis est.
+
+Sit esse ultrices velit quis est esse commodo sed et qui sunt cupidatat voluptate adipiscing.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-accuracy-M1_D2" data-row="M1" data-col="D2" data-value="0.7205" style="background-color: #345f8b; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-accuracy" value="M1_D2" id="heatmap-lock-heatmap-accuracy-M1_D2"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M1 / D2: 0.721</span><div class="cssplt-heatmap-tooltip-notes">Dolore arcu eu sunt nisi eiusmod consectetur ullamcorper dolor scelerisque ultrices qui sit in nostrud proident lorem et massa tempor dictum vestibulum dolor purus velit.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-accuracy-M1_D3" data-row="M1" data-col="D3" data-value="0.9442" style="background-color: #eae424"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-accuracy" value="M1_D3" id="heatmap-lock-heatmap-accuracy-M1_D3"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M1 / D3: 0.944</span><div class="cssplt-heatmap-tooltip-notes">Duis consectetur pariatur voluptate ea pharetra vitae pariatur at.
+
+Eu varius minim ad mattis rhoncus mattis laborum tincidunt sunt viverra ad turpis ullamcorper eu veniam quis massa feugiat officia.
+
+Dictumst eget eu ipsum feugiat massa vestibulum voluptate dictum magna praesent sit vel vitae voluptate in ullamco arcu ultrices eu dictum vivamus.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-accuracy-M1_D4" data-row="M1" data-col="D4" data-value="0.5734" style="background-color: #471366; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-accuracy" value="M1_D4" id="heatmap-lock-heatmap-accuracy-M1_D4"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M1 / D4: 0.573</span><div class="cssplt-heatmap-tooltip-notes">Feugiat turpis magna sunt dolor eget irure irure.
+
+Ut blandit eiusmod velit sed enim quis est voluptate vitae.
+
+Nunc at ullamcorper sapien ac mollit lorem culpa ut sit dolor do sit pellentesque tincidunt ipsum molestie do eiusmod amet sint.
+
+Irure lorem commodo enim varius dignissim gravida tincidunt eget nisi et praesent laborum purus sed donec dolor et mollit occaecat eu dolor nisi magna.
+
+Laboris purus vitae tempor egestas scelerisque et duis rhoncus dolor labore ullamcorper aute anim blandit eu ut nostrud lorem officia at.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-accuracy-M1_D5" data-row="M1" data-col="D5" data-value="0.8769" style="background-color: #94d53f"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-accuracy" value="M1_D5" id="heatmap-lock-heatmap-accuracy-M1_D5"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M1 / D5: 0.877</span><div class="cssplt-heatmap-tooltip-notes">Quis eu eget cras rhoncus mattis sed tincidunt in scelerisque quis turpis incididunt laboris lobortis donec aute aliqua eu dolor lobortis augue est.
+
+Pariatur reprehenderit lorem pariatur voluptate enim varius amet at varius ipsum augue elit et vestibulum in enim non eiusmod dolor cillum tristique rhoncus fugiat.
+
+Ipsum purus eu consectetur vel enim aliqua dolore pellentesque velit vivamus ac ex arcu voluptate turpis lectus nisl labore laborum esse lorem ullamcorper dictum.
+
+Nostrud tristique molestie elit magna pharetra sapien veniam consectetur in pellentesque praesent adipiscing sunt varius eget.
+
+Ut ea dolor dolore morbi auctor anim augue quis.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-accuracy-M1_D6" data-row="M1" data-col="D6" data-value="0.9463" style="background-color: #ece424"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-accuracy" value="M1_D6" id="heatmap-lock-heatmap-accuracy-M1_D6"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M1 / D6: 0.946</span><div class="cssplt-heatmap-tooltip-notes">Sit lectus sint varius eget eu egestas voluptate tincidunt dolore vitae scelerisque consequat purus amet fugiat massa duis sit aliquip sint.
+
+Nunc esse varius mollit dolor vestibulum vel magna eget ullamco.</div></div></label>
     </div>
     <div class="cssplt-heatmap-row" data-tag="none" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
       <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M2</div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D1" data-value="0.8885" style="background-color: #8fd442"><div class="cssplt-heatmap-cell-inner">0.888</div><div class="cssplt-heatmap-tooltip">M2 / D1: 0.888</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D2" data-value="0.8351" style="background-color: #45b571"><div class="cssplt-heatmap-cell-inner">0.835</div><div class="cssplt-heatmap-tooltip">M2 / D2: 0.835</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D3" data-value="0.9595" style="background-color: #e9e424"><div class="cssplt-heatmap-cell-inner">0.960</div><div class="cssplt-heatmap-tooltip">M2 / D3: 0.960</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D4" data-value="0.5464" style="background-color: #45095c; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.546</div><div class="cssplt-heatmap-tooltip">M2 / D4: 0.546</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D5" data-value="0.8874" style="background-color: #8ed443"><div class="cssplt-heatmap-cell-inner">0.887</div><div class="cssplt-heatmap-tooltip">M2 / D5: 0.887</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D6" data-value="0.9671" style="background-color: #f1e524"><div class="cssplt-heatmap-cell-inner">0.967</div><div class="cssplt-heatmap-tooltip">M2 / D6: 0.967</div></div>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-accuracy-M2_D1" data-row="M2" data-col="D1" data-value="0.9620" style="background-color: #fde724"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-accuracy" value="M2_D1" id="heatmap-lock-heatmap-accuracy-M2_D1"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M2 / D1: 0.962</span><div class="cssplt-heatmap-tooltip-notes">Sed nulla vivamus hac officia dignissim in molestie lorem at vestibulum feugiat vestibulum lorem sunt eiusmod consectetur sint nulla.
+
+Feugiat eu nulla anim mollit eu ut est vel donec ut.
+
+Anim in fugiat ea tincidunt vivamus excepteur tristique donec hac ornare turpis lectus at cillum consectetur augue.
+
+Purus ullamcorper lorem duis ex sit dolor quis nisi tempor.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-accuracy-M2_D2" data-row="M2" data-col="D2" data-value="0.6989" style="background-color: #3b4f88; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-accuracy" value="M2_D2" id="heatmap-lock-heatmap-accuracy-M2_D2"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M2 / D2: 0.699</span><div class="cssplt-heatmap-tooltip-notes">Mollit veniam sapien augue eu eu morbi consequat eget faucibus purus pellentesque bibendum aliqua enim purus dictumst elit pariatur ullamcorper magna purus augue.
+
+Accumsan est augue mattis quis reprehenderit dolor dictum sed platea eget velit incididunt cillum velit pariatur rhoncus ad aute faucibus molestie.
+
+Id sint purus do accumsan officia ullamcorper pharetra sit auctor.
+
+Quis pharetra eu officia augue in vestibulum lectus massa ut turpis velit blandit officia lorem massa feugiat nisl bibendum lorem.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-accuracy-M2_D3" data-row="M2" data-col="D3" data-value="0.7564" style="background-color: #297c8c; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-accuracy" value="M2_D3" id="heatmap-lock-heatmap-accuracy-M2_D3"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M2 / D3: 0.756</span><div class="cssplt-heatmap-tooltip-notes">Varius ad purus elit qui commodo excepteur velit qui ullamcorper.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-accuracy-M2_D4" data-row="M2" data-col="D4" data-value="0.8993" style="background-color: #b7dd29"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-accuracy" value="M2_D4" id="heatmap-lock-heatmap-accuracy-M2_D4"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M2 / D4: 0.899</span><div class="cssplt-heatmap-tooltip-notes">Sed vel consequat eiusmod turpis adipiscing amet dolor in augue irure gravida magna pharetra purus in in vivamus nunc feugiat morbi nostrud nulla cras at.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-accuracy-M2_D5" data-row="M2" data-col="D5" data-value="0.7764" style="background-color: #228d8a"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-accuracy" value="M2_D5" id="heatmap-lock-heatmap-accuracy-M2_D5"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M2 / D5: 0.776</span><div class="cssplt-heatmap-tooltip-notes">Lobortis accumsan irure faucibus fugiat massa eget massa ullamcorper adipiscing.
+
+Laborum in in cupidatat nisi viverra dolore turpis dictum accumsan molestie praesent lectus nunc velit egestas vestibulum blandit praesent lectus voluptate nisi accumsan ut auctor.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-accuracy-M2_D6" data-row="M2" data-col="D6" data-value="0.6171" style="background-color: #482273; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-accuracy" value="M2_D6" id="heatmap-lock-heatmap-accuracy-M2_D6"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M2 / D6: 0.617</span><div class="cssplt-heatmap-tooltip-notes">Amet nisi laboris commodo massa cupidatat auctor et esse ipsum pharetra ut feugiat turpis velit sapien varius turpis.
+
+Labore consequat sapien fugiat cras gravida dictumst laborum.
+
+Sint et velit in aliqua aliquip aliqua vestibulum velit laboris commodo blandit sed lorem platea cillum et aliquip duis ullamco dolor vestibulum velit eget pellentesque.
+
+Dictum ullamcorper dolore ipsum cillum quis cupidatat nunc in eu magna eiusmod.</div></div></label>
     </div>
     <div class="cssplt-heatmap-row" data-tag="robust" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
       <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M3</div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D1" data-value="0.8981" style="background-color: #9ed739"><div class="cssplt-heatmap-cell-inner">0.898</div><div class="cssplt-heatmap-tooltip">M3 / D1: 0.898</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D2" data-value="0.7771" style="background-color: #26838b; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.777</div><div class="cssplt-heatmap-tooltip">M3 / D2: 0.777</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D3" data-value="0.6094" style="background-color: #471c6d; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.609</div><div class="cssplt-heatmap-tooltip">M3 / D3: 0.609</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D4" data-value="0.6117" style="background-color: #471d6e; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.612</div><div class="cssplt-heatmap-tooltip">M3 / D4: 0.612</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D5" data-value="0.8051" style="background-color: #209b88"><div class="cssplt-heatmap-cell-inner">0.805</div><div class="cssplt-heatmap-tooltip">M3 / D5: 0.805</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D6" data-value="0.6006" style="background-color: #47196b; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.601</div><div class="cssplt-heatmap-tooltip">M3 / D6: 0.601</div></div>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-accuracy-M3_D1" data-row="M3" data-col="D1" data-value="0.7360" style="background-color: #2f6b8d; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-accuracy" value="M3_D1" id="heatmap-lock-heatmap-accuracy-M3_D1"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M3 / D1: 0.736</span><div class="cssplt-heatmap-tooltip-notes">Egestas vel ut dolor elit id lobortis augue morbi qui lectus eu.
+
+Fugiat augue at vestibulum pharetra ea ea consectetur quis ullamco tempor lorem sit lobortis dolore aute molestie et sit sapien at.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-accuracy-M3_D2" data-row="M3" data-col="D2" data-value="0.8782" style="background-color: #96d63e"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-accuracy" value="M3_D2" id="heatmap-lock-heatmap-accuracy-M3_D2"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M3 / D2: 0.878</span><div class="cssplt-heatmap-tooltip-notes">Magna duis veniam voluptate minim do ornare lobortis viverra bibendum tristique gravida fugiat mollit velit rhoncus tristique feugiat eu lectus vivamus.
+
+Labore nunc in dignissim vel viverra lorem velit.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-accuracy-M3_D3" data-row="M3" data-col="D3" data-value="0.5193" style="background-color: #440557; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-accuracy" value="M3_D3" id="heatmap-lock-heatmap-accuracy-M3_D3"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M3 / D3: 0.519</span><div class="cssplt-heatmap-tooltip-notes">Laboris tincidunt dictum turpis labore non sint lorem scelerisque sint faucibus cillum pharetra egestas est sit.
+
+In aliqua ullamcorper eu viverra lorem ultrices purus sed habitasse eget cursus tristique sed voluptate enim cillum auctor.
+
+Aliqua eget vivamus irure quis est pellentesque labore sed arcu amet aliqua accumsan cursus ac hac velit in lorem dolor est qui bibendum.
+
+Mattis ad eiusmod ullamcorper scelerisque cupidatat tincidunt voluptate lorem sed in cras at eu magna blandit sint sed culpa varius ultrices dolor irure qui.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-accuracy-M3_D4" data-row="M3" data-col="D4" data-value="0.9109" style="background-color: #c6df24"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-accuracy" value="M3_D4" id="heatmap-lock-heatmap-accuracy-M3_D4"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M3 / D4: 0.911</span><div class="cssplt-heatmap-tooltip-notes">Officia consectetur viverra dolor cursus consectetur in lobortis ultrices vitae tristique dictumst amet feugiat anim at quis gravida eget occaecat.
+
+Duis nisi nisi eu qui pariatur feugiat velit vitae consectetur eiusmod arcu bibendum viverra mattis praesent et arcu vitae magna.
+
+Ut elit massa dolore culpa minim dictumst ullamcorper ornare exercitation incididunt ultrices augue irure arcu minim amet.
+
+Amet lorem ut purus cillum est tempor pharetra sed eu nunc sapien amet fugiat viverra scelerisque.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-accuracy-M3_D5" data-row="M3" data-col="D5" data-value="0.5512" style="background-color: #460d5f; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-accuracy" value="M3_D5" id="heatmap-lock-heatmap-accuracy-M3_D5"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M3 / D5: 0.551</span><div class="cssplt-heatmap-tooltip-notes">Sit accumsan deserunt ipsum eu morbi eget arcu mattis accumsan ut morbi duis eget consequat nisi in.
+
+Arcu ut varius nulla tristique cras lectus labore eu mattis ullamco enim.
+
+Vitae in in velit nostrud arcu pharetra nunc eu ultrices eget gravida tempor ullamcorper duis donec donec deserunt nisl pellentesque labore deserunt voluptate ut in.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-accuracy-M3_D6" data-row="M3" data-col="D6" data-value="0.8595" style="background-color: #79d050"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-accuracy" value="M3_D6" id="heatmap-lock-heatmap-accuracy-M3_D6"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M3 / D6: 0.860</span><div class="cssplt-heatmap-tooltip-notes">Donec gravida augue pharetra sint at duis dictum purus et duis.
+
+Ad pharetra fugiat turpis et eu ad sit lorem vestibulum pharetra.
+
+Tincidunt sed eu at in augue vel esse sapien commodo magna aute sunt dolor in ut varius do esse eget vel.</div></div></label>
     </div>
     <div class="cssplt-heatmap-row" data-tag="accurate" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
       <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M4</div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D1" data-value="0.8111" style="background-color: #27a084"><div class="cssplt-heatmap-cell-inner">0.811</div><div class="cssplt-heatmap-tooltip">M4 / D1: 0.811</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D2" data-value="0.8500" style="background-color: #58c165"><div class="cssplt-heatmap-cell-inner">0.850</div><div class="cssplt-heatmap-tooltip">M4 / D2: 0.850</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D3" data-value="0.9750" style="background-color: #f9e624"><div class="cssplt-heatmap-cell-inner">0.975</div><div class="cssplt-heatmap-tooltip">M4 / D3: 0.975</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D4" data-value="0.8286" style="background-color: #3daf76"><div class="cssplt-heatmap-cell-inner">0.829</div><div class="cssplt-heatmap-tooltip">M4 / D4: 0.829</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D5" data-value="0.6099" style="background-color: #471c6e; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.610</div><div class="cssplt-heatmap-tooltip">M4 / D5: 0.610</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D6" data-value="0.6285" style="background-color: #482273; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.628</div><div class="cssplt-heatmap-tooltip">M4 / D6: 0.628</div></div>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-accuracy-M4_D1" data-row="M4" data-col="D1" data-value="0.8956" style="background-color: #b1dc2d"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-accuracy" value="M4_D1" id="heatmap-lock-heatmap-accuracy-M4_D1"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M4 / D1: 0.896</span><div class="cssplt-heatmap-tooltip-notes">Elit occaecat sed tincidunt ea accumsan pellentesque tincidunt.
+
+Sint veniam ut lorem scelerisque minim enim in ullamco consectetur amet dolor ornare irure excepteur.
+
+Voluptate ut est magna do magna sunt lobortis sit consequat at sed lectus.
+
+Fugiat varius amet viverra nisi laborum dolore ac magna ut excepteur veniam ut eget tincidunt ac qui feugiat eu in praesent ornare magna at.
+
+Feugiat commodo sit duis occaecat sit id labore laborum consectetur culpa veniam bibendum eiusmod accumsan labore et vestibulum egestas pellentesque tincidunt elit sint ut proident.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-accuracy-M4_D2" data-row="M4" data-col="D2" data-value="0.8194" style="background-color: #43b372"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-accuracy" value="M4_D2" id="heatmap-lock-heatmap-accuracy-M4_D2"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M4 / D2: 0.819</span><div class="cssplt-heatmap-tooltip-notes">Feugiat non cras commodo at consequat dolore nisl in velit dignissim eget nisl lorem purus at varius.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-accuracy-M4_D3" data-row="M4" data-col="D3" data-value="0.5126" style="background-color: #440356; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-accuracy" value="M4_D3" id="heatmap-lock-heatmap-accuracy-M4_D3"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M4 / D3: 0.513</span><div class="cssplt-heatmap-tooltip-notes">Laboris et nulla cupidatat lorem ultrices ullamcorper mollit.
+
+Vestibulum eget labore dictumst culpa sit quis nulla excepteur vel feugiat auctor.
+
+Quis augue donec velit consectetur blandit tristique velit ullamcorper magna praesent cillum.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-accuracy-M4_D4" data-row="M4" data-col="D4" data-value="0.8257" style="background-color: #4bb86d"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-accuracy" value="M4_D4" id="heatmap-lock-heatmap-accuracy-M4_D4"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M4 / D4: 0.826</span><div class="cssplt-heatmap-tooltip-notes">Deserunt feugiat ipsum fugiat ea ad in sint ipsum mattis ullamco qui et in in.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-accuracy-M4_D5" data-row="M4" data-col="D5" data-value="0.8870" style="background-color: #a4d935"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-accuracy" value="M4_D5" id="heatmap-lock-heatmap-accuracy-M4_D5"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M4 / D5: 0.887</span><div class="cssplt-heatmap-tooltip-notes">Dolor bibendum eu dignissim dignissim molestie est magna sit excepteur eget augue accumsan bibendum ut nisl irure tincidunt platea deserunt nulla.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-accuracy-M4_D6" data-row="M4" data-col="D6" data-value="0.6630" style="background-color: #433881; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-accuracy" value="M4_D6" id="heatmap-lock-heatmap-accuracy-M4_D6"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M4 / D6: 0.663</span><div class="cssplt-heatmap-tooltip-notes">Dictumst aliquip morbi non turpis varius veniam dolore in ullamco veniam.
+
+Ullamco ullamcorper cursus ullamcorper velit sit at ullamcorper dictum eget.
+
+Veniam eiusmod tristique fugiat velit sed hac nulla sit sed accumsan tempor eu scelerisque at hac purus pellentesque.
+
+Sit egestas duis excepteur quis veniam do dolore ut.
+
+Dolor ut varius adipiscing molestie sed platea at sunt bibendum officia ullamcorper donec sed arcu occaecat sint elit.</div></div></label>
     </div>
     <div class="cssplt-heatmap-row" data-tag="cheap" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
       <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M5</div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D1" data-value="0.9207" style="background-color: #c0df24"><div class="cssplt-heatmap-cell-inner">0.921</div><div class="cssplt-heatmap-tooltip">M5 / D1: 0.921</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D2" data-value="0.6899" style="background-color: #414085; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.690</div><div class="cssplt-heatmap-tooltip">M5 / D2: 0.690</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D3" data-value="0.6271" style="background-color: #482273; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.627</div><div class="cssplt-heatmap-tooltip">M5 / D3: 0.627</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D4" data-value="0.6261" style="background-color: #482172; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.626</div><div class="cssplt-heatmap-tooltip">M5 / D4: 0.626</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D5" data-value="0.6917" style="background-color: #414285; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.692</div><div class="cssplt-heatmap-tooltip">M5 / D5: 0.692</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D6" data-value="0.7446" style="background-color: #30688d; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.745</div><div class="cssplt-heatmap-tooltip">M5 / D6: 0.745</div></div>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-accuracy-M5_D1" data-row="M5" data-col="D1" data-value="0.6856" style="background-color: #3f4586; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-accuracy" value="M5_D1" id="heatmap-lock-heatmap-accuracy-M5_D1"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M5 / D1: 0.686</span><div class="cssplt-heatmap-tooltip-notes">Occaecat cras minim non nunc faucibus deserunt lobortis vel nulla culpa ornare.
+
+Lorem accumsan vestibulum massa dictumst varius laborum sunt sunt laboris commodo pharetra.
+
+Nisi viverra quis eu tincidunt hac rhoncus vestibulum dictumst consectetur vitae augue feugiat quis laboris faucibus eget ut feugiat adipiscing sunt feugiat eget.
+
+Ullamcorper tincidunt aute irure nunc tincidunt lectus aliquip donec ullamcorper tristique ullamcorper morbi in est nostrud ex.
+
+Vitae sed quis in varius molestie habitasse ut ut nostrud sit habitasse.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-accuracy-M5_D2" data-row="M5" data-col="D2" data-value="0.8989" style="background-color: #b6dd2a"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-accuracy" value="M5_D2" id="heatmap-lock-heatmap-accuracy-M5_D2"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M5 / D2: 0.899</span><div class="cssplt-heatmap-tooltip-notes">Varius id deserunt culpa officia incididunt duis pariatur et ac occaecat minim consectetur bibendum gravida accumsan velit gravida at.
+
+Dolor commodo veniam vel vivamus laborum morbi irure ut irure.
+
+Do in cursus vestibulum arcu dignissim feugiat dolore lorem proident dignissim nisi lorem platea sunt vel rhoncus tincidunt hac sit vitae adipiscing.
+
+Dolor in dolor ornare cupidatat lectus arcu ullamcorper lectus sint adipiscing est egestas ullamco morbi purus faucibus arcu egestas do.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-accuracy-M5_D3" data-row="M5" data-col="D3" data-value="0.8726" style="background-color: #8dd444"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-accuracy" value="M5_D3" id="heatmap-lock-heatmap-accuracy-M5_D3"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M5 / D3: 0.873</span><div class="cssplt-heatmap-tooltip-notes">Eu pariatur nulla mollit purus gravida consectetur varius cillum eu elit at velit massa.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-accuracy-M5_D4" data-row="M5" data-col="D4" data-value="0.7097" style="background-color: #37578a; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-accuracy" value="M5_D4" id="heatmap-lock-heatmap-accuracy-M5_D4"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M5 / D4: 0.710</span><div class="cssplt-heatmap-tooltip-notes">Eget cursus cursus at platea massa sed incididunt feugiat viverra est excepteur incididunt consectetur fugiat vivamus laborum sapien.
+
+Magna sed arcu at praesent dictum ornare sed lorem anim habitasse mattis quis amet nisi donec tristique ut aute.
+
+Sunt vel consectetur veniam sit in magna tempor ad in pariatur esse turpis amet nisi habitasse arcu aliqua ullamcorper.
+
+Commodo at faucibus viverra ex ad tempor exercitation ac viverra egestas nunc dolor lorem molestie est dolore eu quis molestie et ullamco.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-accuracy-M5_D5" data-row="M5" data-col="D5" data-value="0.6735" style="background-color: #423d84; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-accuracy" value="M5_D5" id="heatmap-lock-heatmap-accuracy-M5_D5"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M5 / D5: 0.673</span><div class="cssplt-heatmap-tooltip-notes">Ornare amet pellentesque in eget pellentesque at ut nulla viverra feugiat dictumst sed viverra tempor.
+
+Varius sit massa cupidatat vitae morbi dictum laboris nunc praesent arcu sed ut veniam nostrud excepteur molestie cupidatat.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-accuracy-M5_D6" data-row="M5" data-col="D6" data-value="0.9516" style="background-color: #f2e524"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-accuracy" value="M5_D6" id="heatmap-lock-heatmap-accuracy-M5_D6"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M5 / D6: 0.952</span><div class="cssplt-heatmap-tooltip-notes">Dictum est ut fugiat vestibulum in exercitation vel quis at feugiat vivamus nisl elit.
+
+Incididunt pharetra ullamcorper voluptate ea dignissim augue amet.
+
+Dolore turpis blandit eget massa eu tempor do tristique blandit ex vivamus nulla feugiat lectus eu lorem enim in elit pariatur purus voluptate dolor et.</div></div></label>
     </div>
     <div class="cssplt-heatmap-row" data-tag="balanced" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
       <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M6</div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D1" data-value="0.5526" style="background-color: #460b5e; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.553</div><div class="cssplt-heatmap-tooltip">M6 / D1: 0.553</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D2" data-value="0.7026" style="background-color: #3d4a87; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.703</div><div class="cssplt-heatmap-tooltip">M6 / D2: 0.703</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D3" data-value="0.9781" style="background-color: #fde724"><div class="cssplt-heatmap-cell-inner">0.978</div><div class="cssplt-heatmap-tooltip">M6 / D3: 0.978</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D4" data-value="0.9132" style="background-color: #b5dc2a"><div class="cssplt-heatmap-cell-inner">0.913</div><div class="cssplt-heatmap-tooltip">M6 / D4: 0.913</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D5" data-value="0.8272" style="background-color: #3bae77"><div class="cssplt-heatmap-cell-inner">0.827</div><div class="cssplt-heatmap-tooltip">M6 / D5: 0.827</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D6" data-value="0.8077" style="background-color: #239d86"><div class="cssplt-heatmap-cell-inner">0.808</div><div class="cssplt-heatmap-tooltip">M6 / D6: 0.808</div></div>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-accuracy-M6_D1" data-row="M6" data-col="D1" data-value="0.6393" style="background-color: #462c79; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-accuracy" value="M6_D1" id="heatmap-lock-heatmap-accuracy-M6_D1"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M6 / D1: 0.639</span><div class="cssplt-heatmap-tooltip-notes">Egestas varius feugiat nisi quis viverra purus auctor cursus labore deserunt amet irure.
+
+Elit esse feugiat nisl lorem cillum ipsum dolore enim voluptate in mollit elit elit elit sunt dolore officia sit.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-accuracy-M6_D2" data-row="M6" data-col="D2" data-value="0.7639" style="background-color: #26838b; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-accuracy" value="M6_D2" id="heatmap-lock-heatmap-accuracy-M6_D2"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M6 / D2: 0.764</span><div class="cssplt-heatmap-tooltip-notes">Enim et culpa dolor elit in minim feugiat mollit adipiscing adipiscing.
+
+Eget platea veniam augue ad varius pariatur deserunt augue nisl lobortis hac hac turpis elit quis dolor sint.
+
+Lorem tincidunt massa sed sapien amet quis nunc tincidunt morbi cras.
+
+Tincidunt exercitation arcu augue nisl veniam massa amet pharetra.
+
+Nisi tristique est id ex in at gravida nisi sed molestie.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-accuracy-M6_D3" data-row="M6" data-col="D3" data-value="0.7490" style="background-color: #2b768c; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-accuracy" value="M6_D3" id="heatmap-lock-heatmap-accuracy-M6_D3"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M6 / D3: 0.749</span><div class="cssplt-heatmap-tooltip-notes">Culpa turpis amet vestibulum est donec ultrices massa eget voluptate blandit turpis esse eu vel dolor ullamcorper et sapien turpis quis elit varius feugiat.
+
+Ut donec qui lorem purus vel eget dolore cillum ac non magna reprehenderit quis ex rhoncus varius.
+
+Ad augue tincidunt irure lorem dictumst dictum sed id ac et ullamcorper lorem est at anim.
+
+Quis ex nunc excepteur varius lectus ut dignissim vestibulum feugiat vel arcu ullamco auctor ullamco bibendum viverra deserunt cursus vel nunc at vitae.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-accuracy-M6_D4" data-row="M6" data-col="D4" data-value="0.5044" style="background-color: #440154; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-accuracy" value="M6_D4" id="heatmap-lock-heatmap-accuracy-M6_D4"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M6 / D4: 0.504</span><div class="cssplt-heatmap-tooltip-notes">Sit varius platea eu enim in velit egestas sint lectus duis feugiat dolor occaecat eu donec aliquip.
+
+Accumsan habitasse ut lorem laboris ad excepteur dolor reprehenderit aute ullamcorper vel fugiat feugiat ipsum duis faucibus do aliqua fugiat.
+
+Sapien at eu ullamcorper sapien dictum vel in consequat turpis quis sit sed culpa et arcu velit eget viverra velit.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-accuracy-M6_D5" data-row="M6" data-col="D5" data-value="0.8266" style="background-color: #4cb96d"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-accuracy" value="M6_D5" id="heatmap-lock-heatmap-accuracy-M6_D5"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M6 / D5: 0.827</span><div class="cssplt-heatmap-tooltip-notes">Dictumst sunt bibendum magna accumsan ut ex vestibulum nostrud scelerisque tristique massa ac turpis ut magna sed enim id elit elit lorem.
+
+Feugiat deserunt purus mattis cras elit cupidatat do viverra varius eiusmod varius amet anim sed sed lorem.
+
+Culpa augue magna bibendum culpa incididunt nunc vitae enim eu aliqua sed deserunt ut lorem in ullamcorper lorem purus feugiat laborum.
+
+Viverra dolor non esse vel sed magna egestas est sed auctor dolor ea et consectetur feugiat et elit vestibulum mollit.
+
+Rhoncus ullamcorper morbi ad sed aute arcu dignissim cras ullamcorper purus aute vitae dolor platea.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-accuracy-M6_D6" data-row="M6" data-col="D6" data-value="0.6985" style="background-color: #3b4f88; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-accuracy" value="M6_D6" id="heatmap-lock-heatmap-accuracy-M6_D6"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M6 / D6: 0.699</span><div class="cssplt-heatmap-tooltip-notes">Eget laborum cursus eget vel lorem tincidunt pariatur id veniam culpa ullamcorper gravida.
+
+Eu molestie eget arcu elit nunc pellentesque enim irure ex varius bibendum nisi labore sed.
+
+Sed culpa vivamus adipiscing tempor eget tincidunt lorem commodo ea lectus fugiat lectus commodo.
+
+Nunc aliqua viverra quis irure vivamus ex arcu pellentesque ullamcorper qui vestibulum sunt reprehenderit.
+
+Auctor purus eget feugiat velit pariatur ex nulla elit eu vestibulum dolor pellentesque tincidunt feugiat eu aliquip duis ullamcorper dolor est pharetra occaecat sed.</div></div></label>
     </div>
   </div>
-  <div class="cssplt-heatmap-legend"><span class="cssplt-heatmap-legend-max">0.978</span><div class="cssplt-heatmap-legend-bar" style="background: linear-gradient(to top, #440154 0%, #470f62 12%, #482273 25%, #423e85 37%, #30688d 50%, #1e998a 62%, #67cc5c 75%, #bfdf24 87%, #fde724 100%);"></div><span class="cssplt-heatmap-legend-min">0.513</span></div>
+  <div class="cssplt-heatmap-legend"><span class="cssplt-heatmap-legend-max">0.962</span><div class="cssplt-heatmap-legend-bar" style="background: linear-gradient(to top, #440154 0%, #470f62 12%, #482273 25%, #423e85 37%, #30688d 50%, #1e998a 62%, #67cc5c 75%, #bfdf24 87%, #fde724 100%);"></div><span class="cssplt-heatmap-legend-min">0.504</span></div>
+  <label for="heatmap-lock-heatmap-accuracy-none" class="cssplt-heatmap-overlay" aria-label="Close tooltip"></label>
 </div></div>
 <div class="cssplt-heatmap-view" data-metric-view="latency"><div class="cssplt-heatmap-wrapper">
+  <input type="radio" name="heatmap-lock-heatmap-latency" value="none" id="heatmap-lock-heatmap-latency-none" checked class="cssplt-input cssplt-heatmap-lock-none">
   <div class="cssplt-heatmap" data-heatmap-id="heatmap-latency" data-metric="latency">
     <div class="cssplt-heatmap-row cssplt-heatmap-row--header" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
       <div class="cssplt-heatmap-cell cssplt-heatmap-cell--corner"></div>
@@ -408,62 +610,214 @@ body {
     </div>
     <div class="cssplt-heatmap-row" data-tag="fast" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
       <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M1</div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D1" data-value="7.2500" style="background-color: #440356; color: #ffffff"><div class="cssplt-heatmap-cell-inner">7.250</div><div class="cssplt-heatmap-tooltip">M1 / D1: 7.250</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D2" data-value="71.2800" style="background-color: #8dd444"><div class="cssplt-heatmap-cell-inner">71.280</div><div class="cssplt-heatmap-tooltip">M1 / D2: 71.280</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D3" data-value="12.8200" style="background-color: #460b5e; color: #ffffff"><div class="cssplt-heatmap-cell-inner">12.820</div><div class="cssplt-heatmap-tooltip">M1 / D3: 12.820</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D4" data-value="24.6800" style="background-color: #472071; color: #ffffff"><div class="cssplt-heatmap-cell-inner">24.680</div><div class="cssplt-heatmap-tooltip">M1 / D4: 24.680</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D5" data-value="22.9000" style="background-color: #471c6e; color: #ffffff"><div class="cssplt-heatmap-cell-inner">22.900</div><div class="cssplt-heatmap-tooltip">M1 / D5: 22.900</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D6" data-value="24.8400" style="background-color: #482071; color: #ffffff"><div class="cssplt-heatmap-cell-inner">24.840</div><div class="cssplt-heatmap-tooltip">M1 / D6: 24.840</div></div>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-latency-M1_D1" data-row="M1" data-col="D1" data-value="7.2500" style="background-color: #440154; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-latency" value="M1_D1" id="heatmap-lock-heatmap-latency-M1_D1"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M1 / D1: 7.250</span><div class="cssplt-heatmap-tooltip-notes">Lectus donec augue ut est amet consequat in amet ex duis est.
+
+Sit esse ultrices velit quis est esse commodo sed et qui sunt cupidatat voluptate adipiscing.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-latency-M1_D2" data-row="M1" data-col="D2" data-value="16.2300" style="background-color: #460e60; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-latency" value="M1_D2" id="heatmap-lock-heatmap-latency-M1_D2"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M1 / D2: 16.230</span><div class="cssplt-heatmap-tooltip-notes">Dolore arcu eu sunt nisi eiusmod consectetur ullamcorper dolor scelerisque ultrices qui sit in nostrud proident lorem et massa tempor dictum vestibulum dolor purus velit.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-latency-M1_D3" data-row="M1" data-col="D3" data-value="66.9300" style="background-color: #5dc562"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-latency" value="M1_D3" id="heatmap-lock-heatmap-latency-M1_D3"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M1 / D3: 66.930</span><div class="cssplt-heatmap-tooltip-notes">Duis consectetur pariatur voluptate ea pharetra vitae pariatur at.
+
+Eu varius minim ad mattis rhoncus mattis laborum tincidunt sunt viverra ad turpis ullamcorper eu veniam quis massa feugiat officia.
+
+Dictumst eget eu ipsum feugiat massa vestibulum voluptate dictum magna praesent sit vel vitae voluptate in ullamco arcu ultrices eu dictum vivamus.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-latency-M1_D4" data-row="M1" data-col="D4" data-value="73.6300" style="background-color: #95d63f"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-latency" value="M1_D4" id="heatmap-lock-heatmap-latency-M1_D4"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M1 / D4: 73.630</span><div class="cssplt-heatmap-tooltip-notes">Feugiat turpis magna sunt dolor eget irure irure.
+
+Ut blandit eiusmod velit sed enim quis est voluptate vitae.
+
+Nunc at ullamcorper sapien ac mollit lorem culpa ut sit dolor do sit pellentesque tincidunt ipsum molestie do eiusmod amet sint.
+
+Irure lorem commodo enim varius dignissim gravida tincidunt eget nisi et praesent laborum purus sed donec dolor et mollit occaecat eu dolor nisi magna.
+
+Laboris purus vitae tempor egestas scelerisque et duis rhoncus dolor labore ullamcorper aute anim blandit eu ut nostrud lorem officia at.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-latency-M1_D5" data-row="M1" data-col="D5" data-value="30.6700" style="background-color: #462b78; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-latency" value="M1_D5" id="heatmap-lock-heatmap-latency-M1_D5"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M1 / D5: 30.670</span><div class="cssplt-heatmap-tooltip-notes">Quis eu eget cras rhoncus mattis sed tincidunt in scelerisque quis turpis incididunt laboris lobortis donec aute aliqua eu dolor lobortis augue est.
+
+Pariatur reprehenderit lorem pariatur voluptate enim varius amet at varius ipsum augue elit et vestibulum in enim non eiusmod dolor cillum tristique rhoncus fugiat.
+
+Ipsum purus eu consectetur vel enim aliqua dolore pellentesque velit vivamus ac ex arcu voluptate turpis lectus nisl labore laborum esse lorem ullamcorper dictum.
+
+Nostrud tristique molestie elit magna pharetra sapien veniam consectetur in pellentesque praesent adipiscing sunt varius eget.
+
+Ut ea dolor dolore morbi auctor anim augue quis.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-latency-M1_D6" data-row="M1" data-col="D6" data-value="82.8100" style="background-color: #dae224"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-latency" value="M1_D6" id="heatmap-lock-heatmap-latency-M1_D6"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M1 / D6: 82.810</span><div class="cssplt-heatmap-tooltip-notes">Sit lectus sint varius eget eu egestas voluptate tincidunt dolore vitae scelerisque consequat purus amet fugiat massa duis sit aliquip sint.
+
+Nunc esse varius mollit dolor vestibulum vel magna eget ullamco.</div></div></label>
     </div>
     <div class="cssplt-heatmap-row" data-tag="none" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
       <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M2</div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D1" data-value="5.5800" style="background-color: #440154; color: #ffffff"><div class="cssplt-heatmap-cell-inner">5.580</div><div class="cssplt-heatmap-tooltip">M2 / D1: 5.580</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D2" data-value="35.6200" style="background-color: #423d84; color: #ffffff"><div class="cssplt-heatmap-cell-inner">35.620</div><div class="cssplt-heatmap-tooltip">M2 / D2: 35.620</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D3" data-value="35.2900" style="background-color: #423c83; color: #ffffff"><div class="cssplt-heatmap-cell-inner">35.290</div><div class="cssplt-heatmap-tooltip">M2 / D3: 35.290</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D4" data-value="81.2700" style="background-color: #d8e224"><div class="cssplt-heatmap-cell-inner">81.270</div><div class="cssplt-heatmap-tooltip">M2 / D4: 81.270</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D5" data-value="70.6800" style="background-color: #88d347"><div class="cssplt-heatmap-cell-inner">70.680</div><div class="cssplt-heatmap-tooltip">M2 / D5: 70.680</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D6" data-value="39.0700" style="background-color: #3d4a87; color: #ffffff"><div class="cssplt-heatmap-cell-inner">39.070</div><div class="cssplt-heatmap-tooltip">M2 / D6: 39.070</div></div>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-latency-M2_D1" data-row="M2" data-col="D1" data-value="28.8900" style="background-color: #472675; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-latency" value="M2_D1" id="heatmap-lock-heatmap-latency-M2_D1"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M2 / D1: 28.890</span><div class="cssplt-heatmap-tooltip-notes">Sed nulla vivamus hac officia dignissim in molestie lorem at vestibulum feugiat vestibulum lorem sunt eiusmod consectetur sint nulla.
+
+Feugiat eu nulla anim mollit eu ut est vel donec ut.
+
+Anim in fugiat ea tincidunt vivamus excepteur tristique donec hac ornare turpis lectus at cillum consectetur augue.
+
+Purus ullamcorper lorem duis ex sit dolor quis nisi tempor.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-latency-M2_D2" data-row="M2" data-col="D2" data-value="61.6800" style="background-color: #38ab7a"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-latency" value="M2_D2" id="heatmap-lock-heatmap-latency-M2_D2"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M2 / D2: 61.680</span><div class="cssplt-heatmap-tooltip-notes">Mollit veniam sapien augue eu eu morbi consequat eget faucibus purus pellentesque bibendum aliqua enim purus dictumst elit pariatur ullamcorper magna purus augue.
+
+Accumsan est augue mattis quis reprehenderit dolor dictum sed platea eget velit incididunt cillum velit pariatur rhoncus ad aute faucibus molestie.
+
+Id sint purus do accumsan officia ullamcorper pharetra sit auctor.
+
+Quis pharetra eu officia augue in vestibulum lectus massa ut turpis velit blandit officia lorem massa feugiat nisl bibendum lorem.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-latency-M2_D3" data-row="M2" data-col="D3" data-value="86.6200" style="background-color: #f1e524"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-latency" value="M2_D3" id="heatmap-lock-heatmap-latency-M2_D3"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M2 / D3: 86.620</span><div class="cssplt-heatmap-tooltip-notes">Varius ad purus elit qui commodo excepteur velit qui ullamcorper.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-latency-M2_D4" data-row="M2" data-col="D4" data-value="27.7000" style="background-color: #482273; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-latency" value="M2_D4" id="heatmap-lock-heatmap-latency-M2_D4"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M2 / D4: 27.700</span><div class="cssplt-heatmap-tooltip-notes">Sed vel consequat eiusmod turpis adipiscing amet dolor in augue irure gravida magna pharetra purus in in vivamus nunc feugiat morbi nostrud nulla cras at.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-latency-M2_D5" data-row="M2" data-col="D5" data-value="86.7200" style="background-color: #f1e524"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-latency" value="M2_D5" id="heatmap-lock-heatmap-latency-M2_D5"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M2 / D5: 86.720</span><div class="cssplt-heatmap-tooltip-notes">Lobortis accumsan irure faucibus fugiat massa eget massa ullamcorper adipiscing.
+
+Laborum in in cupidatat nisi viverra dolore turpis dictum accumsan molestie praesent lectus nunc velit egestas vestibulum blandit praesent lectus voluptate nisi accumsan ut auctor.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-latency-M2_D6" data-row="M2" data-col="D6" data-value="46.8200" style="background-color: #32648c; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-latency" value="M2_D6" id="heatmap-lock-heatmap-latency-M2_D6"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M2 / D6: 46.820</span><div class="cssplt-heatmap-tooltip-notes">Amet nisi laboris commodo massa cupidatat auctor et esse ipsum pharetra ut feugiat turpis velit sapien varius turpis.
+
+Labore consequat sapien fugiat cras gravida dictumst laborum.
+
+Sint et velit in aliqua aliquip aliqua vestibulum velit laboris commodo blandit sed lorem platea cillum et aliquip duis ullamco dolor vestibulum velit eget pellentesque.
+
+Dictum ullamcorper dolore ipsum cillum quis cupidatat nunc in eu magna eiusmod.</div></div></label>
     </div>
     <div class="cssplt-heatmap-row" data-tag="robust" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
       <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M3</div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D1" data-value="60.6700" style="background-color: #3aad78"><div class="cssplt-heatmap-cell-inner">60.670</div><div class="cssplt-heatmap-tooltip">M3 / D1: 60.670</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D2" data-value="68.4100" style="background-color: #74ce54"><div class="cssplt-heatmap-cell-inner">68.410</div><div class="cssplt-heatmap-tooltip">M3 / D2: 68.410</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D3" data-value="31.0400" style="background-color: #45307c; color: #ffffff"><div class="cssplt-heatmap-cell-inner">31.040</div><div class="cssplt-heatmap-tooltip">M3 / D3: 31.040</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D4" data-value="14.0900" style="background-color: #460d60; color: #ffffff"><div class="cssplt-heatmap-cell-inner">14.090</div><div class="cssplt-heatmap-tooltip">M3 / D4: 14.090</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D5" data-value="37.8300" style="background-color: #3f4586; color: #ffffff"><div class="cssplt-heatmap-cell-inner">37.830</div><div class="cssplt-heatmap-tooltip">M3 / D5: 37.830</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D6" data-value="29.0300" style="background-color: #462b78; color: #ffffff"><div class="cssplt-heatmap-cell-inner">29.030</div><div class="cssplt-heatmap-tooltip">M3 / D6: 29.030</div></div>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-latency-M3_D1" data-row="M3" data-col="D1" data-value="56.9300" style="background-color: #20948a"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-latency" value="M3_D1" id="heatmap-lock-heatmap-latency-M3_D1"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M3 / D1: 56.930</span><div class="cssplt-heatmap-tooltip-notes">Egestas vel ut dolor elit id lobortis augue morbi qui lectus eu.
+
+Fugiat augue at vestibulum pharetra ea ea consectetur quis ullamco tempor lorem sit lobortis dolore aute molestie et sit sapien at.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-latency-M3_D2" data-row="M3" data-col="D2" data-value="61.2600" style="background-color: #35a97b"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-latency" value="M3_D2" id="heatmap-lock-heatmap-latency-M3_D2"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M3 / D2: 61.260</span><div class="cssplt-heatmap-tooltip-notes">Magna duis veniam voluptate minim do ornare lobortis viverra bibendum tristique gravida fugiat mollit velit rhoncus tristique feugiat eu lectus vivamus.
+
+Labore nunc in dignissim vel viverra lorem velit.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-latency-M3_D3" data-row="M3" data-col="D3" data-value="73.0600" style="background-color: #90d542"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-latency" value="M3_D3" id="heatmap-lock-heatmap-latency-M3_D3"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M3 / D3: 73.060</span><div class="cssplt-heatmap-tooltip-notes">Laboris tincidunt dictum turpis labore non sint lorem scelerisque sint faucibus cillum pharetra egestas est sit.
+
+In aliqua ullamcorper eu viverra lorem ultrices purus sed habitasse eget cursus tristique sed voluptate enim cillum auctor.
+
+Aliqua eget vivamus irure quis est pellentesque labore sed arcu amet aliqua accumsan cursus ac hac velit in lorem dolor est qui bibendum.
+
+Mattis ad eiusmod ullamcorper scelerisque cupidatat tincidunt voluptate lorem sed in cras at eu magna blandit sint sed culpa varius ultrices dolor irure qui.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-latency-M3_D4" data-row="M3" data-col="D4" data-value="41.9700" style="background-color: #3a5088; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-latency" value="M3_D4" id="heatmap-lock-heatmap-latency-M3_D4"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M3 / D4: 41.970</span><div class="cssplt-heatmap-tooltip-notes">Officia consectetur viverra dolor cursus consectetur in lobortis ultrices vitae tristique dictumst amet feugiat anim at quis gravida eget occaecat.
+
+Duis nisi nisi eu qui pariatur feugiat velit vitae consectetur eiusmod arcu bibendum viverra mattis praesent et arcu vitae magna.
+
+Ut elit massa dolore culpa minim dictumst ullamcorper ornare exercitation incididunt ultrices augue irure arcu minim amet.
+
+Amet lorem ut purus cillum est tempor pharetra sed eu nunc sapien amet fugiat viverra scelerisque.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-latency-M3_D5" data-row="M3" data-col="D5" data-value="39.3200" style="background-color: #3f4586; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-latency" value="M3_D5" id="heatmap-lock-heatmap-latency-M3_D5"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M3 / D5: 39.320</span><div class="cssplt-heatmap-tooltip-notes">Sit accumsan deserunt ipsum eu morbi eget arcu mattis accumsan ut morbi duis eget consequat nisi in.
+
+Arcu ut varius nulla tristique cras lectus labore eu mattis ullamco enim.
+
+Vitae in in velit nostrud arcu pharetra nunc eu ultrices eget gravida tempor ullamcorper duis donec donec deserunt nisl pellentesque labore deserunt voluptate ut in.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-latency-M3_D6" data-row="M3" data-col="D6" data-value="28.5900" style="background-color: #472575; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-latency" value="M3_D6" id="heatmap-lock-heatmap-latency-M3_D6"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M3 / D6: 28.590</span><div class="cssplt-heatmap-tooltip-notes">Donec gravida augue pharetra sint at duis dictum purus et duis.
+
+Ad pharetra fugiat turpis et eu ad sit lorem vestibulum pharetra.
+
+Tincidunt sed eu at in augue vel esse sapien commodo magna aute sunt dolor in ut varius do esse eget vel.</div></div></label>
     </div>
     <div class="cssplt-heatmap-row" data-tag="accurate" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
       <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M4</div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D1" data-value="59.8200" style="background-color: #34a97b"><div class="cssplt-heatmap-cell-inner">59.820</div><div class="cssplt-heatmap-tooltip">M4 / D1: 59.820</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D2" data-value="19.7100" style="background-color: #471769; color: #ffffff"><div class="cssplt-heatmap-cell-inner">19.710</div><div class="cssplt-heatmap-tooltip">M4 / D2: 19.710</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D3" data-value="62.6000" style="background-color: #48b76f"><div class="cssplt-heatmap-cell-inner">62.600</div><div class="cssplt-heatmap-tooltip">M4 / D3: 62.600</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D4" data-value="80.8600" style="background-color: #d6e224"><div class="cssplt-heatmap-cell-inner">80.860</div><div class="cssplt-heatmap-tooltip">M4 / D4: 80.860</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D5" data-value="7.8900" style="background-color: #440457; color: #ffffff"><div class="cssplt-heatmap-cell-inner">7.890</div><div class="cssplt-heatmap-tooltip">M4 / D5: 7.890</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D6" data-value="23.9900" style="background-color: #471e70; color: #ffffff"><div class="cssplt-heatmap-cell-inner">23.990</div><div class="cssplt-heatmap-tooltip">M4 / D6: 23.990</div></div>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-latency-M4_D1" data-row="M4" data-col="D1" data-value="13.2500" style="background-color: #45095c; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-latency" value="M4_D1" id="heatmap-lock-heatmap-latency-M4_D1"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M4 / D1: 13.250</span><div class="cssplt-heatmap-tooltip-notes">Elit occaecat sed tincidunt ea accumsan pellentesque tincidunt.
+
+Sint veniam ut lorem scelerisque minim enim in ullamco consectetur amet dolor ornare irure excepteur.
+
+Voluptate ut est magna do magna sunt lobortis sit consequat at sed lectus.
+
+Fugiat varius amet viverra nisi laborum dolore ac magna ut excepteur veniam ut eget tincidunt ac qui feugiat eu in praesent ornare magna at.
+
+Feugiat commodo sit duis occaecat sit id labore laborum consectetur culpa veniam bibendum eiusmod accumsan labore et vestibulum egestas pellentesque tincidunt elit sint ut proident.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-latency-M4_D2" data-row="M4" data-col="D2" data-value="72.5300" style="background-color: #8cd445"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-latency" value="M4_D2" id="heatmap-lock-heatmap-latency-M4_D2"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M4 / D2: 72.530</span><div class="cssplt-heatmap-tooltip-notes">Feugiat non cras commodo at consequat dolore nisl in velit dignissim eget nisl lorem purus at varius.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-latency-M4_D3" data-row="M4" data-col="D3" data-value="88.6200" style="background-color: #fde724"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-latency" value="M4_D3" id="heatmap-lock-heatmap-latency-M4_D3"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M4 / D3: 88.620</span><div class="cssplt-heatmap-tooltip-notes">Laboris et nulla cupidatat lorem ultrices ullamcorper mollit.
+
+Vestibulum eget labore dictumst culpa sit quis nulla excepteur vel feugiat auctor.
+
+Quis augue donec velit consectetur blandit tristique velit ullamcorper magna praesent cillum.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-latency-M4_D4" data-row="M4" data-col="D4" data-value="48.8000" style="background-color: #2e6c8d; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-latency" value="M4_D4" id="heatmap-lock-heatmap-latency-M4_D4"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M4 / D4: 48.800</span><div class="cssplt-heatmap-tooltip-notes">Deserunt feugiat ipsum fugiat ea ad in sint ipsum mattis ullamco qui et in in.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-latency-M4_D5" data-row="M4" data-col="D5" data-value="11.4900" style="background-color: #45075a; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-latency" value="M4_D5" id="heatmap-lock-heatmap-latency-M4_D5"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M4 / D5: 11.490</span><div class="cssplt-heatmap-tooltip-notes">Dolor bibendum eu dignissim dignissim molestie est magna sit excepteur eget augue accumsan bibendum ut nisl irure tincidunt platea deserunt nulla.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-latency-M4_D6" data-row="M4" data-col="D6" data-value="34.9800" style="background-color: #443780; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-latency" value="M4_D6" id="heatmap-lock-heatmap-latency-M4_D6"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M4 / D6: 34.980</span><div class="cssplt-heatmap-tooltip-notes">Dictumst aliquip morbi non turpis varius veniam dolore in ullamco veniam.
+
+Ullamco ullamcorper cursus ullamcorper velit sit at ullamcorper dictum eget.
+
+Veniam eiusmod tristique fugiat velit sed hac nulla sit sed accumsan tempor eu scelerisque at hac purus pellentesque.
+
+Sit egestas duis excepteur quis veniam do dolore ut.
+
+Dolor ut varius adipiscing molestie sed platea at sunt bibendum officia ullamcorper donec sed arcu occaecat sint elit.</div></div></label>
     </div>
     <div class="cssplt-heatmap-row" data-tag="cheap" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
       <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M5</div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D1" data-value="33.3200" style="background-color: #443680; color: #ffffff"><div class="cssplt-heatmap-cell-inner">33.320</div><div class="cssplt-heatmap-tooltip">M5 / D1: 33.320</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D2" data-value="87.3100" style="background-color: #fde724"><div class="cssplt-heatmap-cell-inner">87.310</div><div class="cssplt-heatmap-tooltip">M5 / D2: 87.310</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D3" data-value="27.2000" style="background-color: #472575; color: #ffffff"><div class="cssplt-heatmap-cell-inner">27.200</div><div class="cssplt-heatmap-tooltip">M5 / D3: 27.200</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D4" data-value="57.6100" style="background-color: #259e85"><div class="cssplt-heatmap-cell-inner">57.610</div><div class="cssplt-heatmap-tooltip">M5 / D4: 57.610</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D5" data-value="24.7400" style="background-color: #482071; color: #ffffff"><div class="cssplt-heatmap-cell-inner">24.740</div><div class="cssplt-heatmap-tooltip">M5 / D5: 24.740</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D6" data-value="13.1800" style="background-color: #460c5e; color: #ffffff"><div class="cssplt-heatmap-cell-inner">13.180</div><div class="cssplt-heatmap-tooltip">M5 / D6: 13.180</div></div>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-latency-M5_D1" data-row="M5" data-col="D1" data-value="27.6800" style="background-color: #482273; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-latency" value="M5_D1" id="heatmap-lock-heatmap-latency-M5_D1"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M5 / D1: 27.680</span><div class="cssplt-heatmap-tooltip-notes">Occaecat cras minim non nunc faucibus deserunt lobortis vel nulla culpa ornare.
+
+Lorem accumsan vestibulum massa dictumst varius laborum sunt sunt laboris commodo pharetra.
+
+Nisi viverra quis eu tincidunt hac rhoncus vestibulum dictumst consectetur vitae augue feugiat quis laboris faucibus eget ut feugiat adipiscing sunt feugiat eget.
+
+Ullamcorper tincidunt aute irure nunc tincidunt lectus aliquip donec ullamcorper tristique ullamcorper morbi in est nostrud ex.
+
+Vitae sed quis in varius molestie habitasse ut ut nostrud sit habitasse.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-latency-M5_D2" data-row="M5" data-col="D2" data-value="13.2500" style="background-color: #45095c; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-latency" value="M5_D2" id="heatmap-lock-heatmap-latency-M5_D2"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M5 / D2: 13.250</span><div class="cssplt-heatmap-tooltip-notes">Varius id deserunt culpa officia incididunt duis pariatur et ac occaecat minim consectetur bibendum gravida accumsan velit gravida at.
+
+Dolor commodo veniam vel vivamus laborum morbi irure ut irure.
+
+Do in cursus vestibulum arcu dignissim feugiat dolore lorem proident dignissim nisi lorem platea sunt vel rhoncus tincidunt hac sit vitae adipiscing.
+
+Dolor in dolor ornare cupidatat lectus arcu ullamcorper lectus sint adipiscing est egestas ullamco morbi purus faucibus arcu egestas do.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-latency-M5_D3" data-row="M5" data-col="D3" data-value="46.1900" style="background-color: #33618c; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-latency" value="M5_D3" id="heatmap-lock-heatmap-latency-M5_D3"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M5 / D3: 46.190</span><div class="cssplt-heatmap-tooltip-notes">Eu pariatur nulla mollit purus gravida consectetur varius cillum eu elit at velit massa.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-latency-M5_D4" data-row="M5" data-col="D4" data-value="41.0000" style="background-color: #3c4c88; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-latency" value="M5_D4" id="heatmap-lock-heatmap-latency-M5_D4"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M5 / D4: 41.000</span><div class="cssplt-heatmap-tooltip-notes">Eget cursus cursus at platea massa sed incididunt feugiat viverra est excepteur incididunt consectetur fugiat vivamus laborum sapien.
+
+Magna sed arcu at praesent dictum ornare sed lorem anim habitasse mattis quis amet nisi donec tristique ut aute.
+
+Sunt vel consectetur veniam sit in magna tempor ad in pariatur esse turpis amet nisi habitasse arcu aliqua ullamcorper.
+
+Commodo at faucibus viverra ex ad tempor exercitation ac viverra egestas nunc dolor lorem molestie est dolore eu quis molestie et ullamco.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-latency-M5_D5" data-row="M5" data-col="D5" data-value="25.1800" style="background-color: #471e6f; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-latency" value="M5_D5" id="heatmap-lock-heatmap-latency-M5_D5"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M5 / D5: 25.180</span><div class="cssplt-heatmap-tooltip-notes">Ornare amet pellentesque in eget pellentesque at ut nulla viverra feugiat dictumst sed viverra tempor.
+
+Varius sit massa cupidatat vitae morbi dictum laboris nunc praesent arcu sed ut veniam nostrud excepteur molestie cupidatat.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-latency-M5_D6" data-row="M5" data-col="D6" data-value="85.5400" style="background-color: #eae424"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-latency" value="M5_D6" id="heatmap-lock-heatmap-latency-M5_D6"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M5 / D6: 85.540</span><div class="cssplt-heatmap-tooltip-notes">Dictum est ut fugiat vestibulum in exercitation vel quis at feugiat vivamus nisl elit.
+
+Incididunt pharetra ullamcorper voluptate ea dignissim augue amet.
+
+Dolore turpis blandit eget massa eu tempor do tristique blandit ex vivamus nulla feugiat lectus eu lorem enim in elit pariatur purus voluptate dolor et.</div></div></label>
     </div>
     <div class="cssplt-heatmap-row" data-tag="balanced" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
       <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M6</div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D1" data-value="61.4700" style="background-color: #40b174"><div class="cssplt-heatmap-cell-inner">61.470</div><div class="cssplt-heatmap-tooltip">M6 / D1: 61.470</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D2" data-value="10.7200" style="background-color: #45085b; color: #ffffff"><div class="cssplt-heatmap-cell-inner">10.720</div><div class="cssplt-heatmap-tooltip">M6 / D2: 10.720</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D3" data-value="52.6200" style="background-color: #25868b; color: #ffffff"><div class="cssplt-heatmap-cell-inner">52.620</div><div class="cssplt-heatmap-tooltip">M6 / D3: 52.620</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D4" data-value="6.0300" style="background-color: #440154; color: #ffffff"><div class="cssplt-heatmap-cell-inner">6.030</div><div class="cssplt-heatmap-tooltip">M6 / D4: 6.030</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D5" data-value="53.3300" style="background-color: #24898b"><div class="cssplt-heatmap-cell-inner">53.330</div><div class="cssplt-heatmap-tooltip">M6 / D5: 53.330</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D6" data-value="15.0400" style="background-color: #460e61; color: #ffffff"><div class="cssplt-heatmap-cell-inner">15.040</div><div class="cssplt-heatmap-tooltip">M6 / D6: 15.040</div></div>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-latency-M6_D1" data-row="M6" data-col="D1" data-value="39.5700" style="background-color: #3f4686; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-latency" value="M6_D1" id="heatmap-lock-heatmap-latency-M6_D1"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M6 / D1: 39.570</span><div class="cssplt-heatmap-tooltip-notes">Egestas varius feugiat nisi quis viverra purus auctor cursus labore deserunt amet irure.
+
+Elit esse feugiat nisl lorem cillum ipsum dolore enim voluptate in mollit elit elit elit sunt dolore officia sit.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-latency-M6_D2" data-row="M6" data-col="D2" data-value="79.2800" style="background-color: #c4df24"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-latency" value="M6_D2" id="heatmap-lock-heatmap-latency-M6_D2"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M6 / D2: 79.280</span><div class="cssplt-heatmap-tooltip-notes">Enim et culpa dolor elit in minim feugiat mollit adipiscing adipiscing.
+
+Eget platea veniam augue ad varius pariatur deserunt augue nisl lobortis hac hac turpis elit quis dolor sint.
+
+Lorem tincidunt massa sed sapien amet quis nunc tincidunt morbi cras.
+
+Tincidunt exercitation arcu augue nisl veniam massa amet pharetra.
+
+Nisi tristique est id ex in at gravida nisi sed molestie.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-latency-M6_D3" data-row="M6" data-col="D3" data-value="55.4800" style="background-color: #238d8b"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-latency" value="M6_D3" id="heatmap-lock-heatmap-latency-M6_D3"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M6 / D3: 55.480</span><div class="cssplt-heatmap-tooltip-notes">Culpa turpis amet vestibulum est donec ultrices massa eget voluptate blandit turpis esse eu vel dolor ullamcorper et sapien turpis quis elit varius feugiat.
+
+Ut donec qui lorem purus vel eget dolore cillum ac non magna reprehenderit quis ex rhoncus varius.
+
+Ad augue tincidunt irure lorem dictumst dictum sed id ac et ullamcorper lorem est at anim.
+
+Quis ex nunc excepteur varius lectus ut dignissim vestibulum feugiat vel arcu ullamco auctor ullamco bibendum viverra deserunt cursus vel nunc at vitae.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-latency-M6_D4" data-row="M6" data-col="D4" data-value="56.1200" style="background-color: #21908a"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-latency" value="M6_D4" id="heatmap-lock-heatmap-latency-M6_D4"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M6 / D4: 56.120</span><div class="cssplt-heatmap-tooltip-notes">Sit varius platea eu enim in velit egestas sint lectus duis feugiat dolor occaecat eu donec aliquip.
+
+Accumsan habitasse ut lorem laboris ad excepteur dolor reprehenderit aute ullamcorper vel fugiat feugiat ipsum duis faucibus do aliqua fugiat.
+
+Sapien at eu ullamcorper sapien dictum vel in consequat turpis quis sit sed culpa et arcu velit eget viverra velit.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-latency-M6_D5" data-row="M6" data-col="D5" data-value="58.6200" style="background-color: #229c87"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-latency" value="M6_D5" id="heatmap-lock-heatmap-latency-M6_D5"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M6 / D5: 58.620</span><div class="cssplt-heatmap-tooltip-notes">Dictumst sunt bibendum magna accumsan ut ex vestibulum nostrud scelerisque tristique massa ac turpis ut magna sed enim id elit elit lorem.
+
+Feugiat deserunt purus mattis cras elit cupidatat do viverra varius eiusmod varius amet anim sed sed lorem.
+
+Culpa augue magna bibendum culpa incididunt nunc vitae enim eu aliqua sed deserunt ut lorem in ullamcorper lorem purus feugiat laborum.
+
+Viverra dolor non esse vel sed magna egestas est sed auctor dolor ea et consectetur feugiat et elit vestibulum mollit.
+
+Rhoncus ullamcorper morbi ad sed aute arcu dignissim cras ullamcorper purus aute vitae dolor platea.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-latency-M6_D6" data-row="M6" data-col="D6" data-value="29.7600" style="background-color: #462877; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-latency" value="M6_D6" id="heatmap-lock-heatmap-latency-M6_D6"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M6 / D6: 29.760</span><div class="cssplt-heatmap-tooltip-notes">Eget laborum cursus eget vel lorem tincidunt pariatur id veniam culpa ullamcorper gravida.
+
+Eu molestie eget arcu elit nunc pellentesque enim irure ex varius bibendum nisi labore sed.
+
+Sed culpa vivamus adipiscing tempor eget tincidunt lorem commodo ea lectus fugiat lectus commodo.
+
+Nunc aliqua viverra quis irure vivamus ex arcu pellentesque ullamcorper qui vestibulum sunt reprehenderit.
+
+Auctor purus eget feugiat velit pariatur ex nulla elit eu vestibulum dolor pellentesque tincidunt feugiat eu aliquip duis ullamcorper dolor est pharetra occaecat sed.</div></div></label>
     </div>
   </div>
-  <div class="cssplt-heatmap-legend"><span class="cssplt-heatmap-legend-max">87.31</span><div class="cssplt-heatmap-legend-bar" style="background: linear-gradient(to top, #440154 0%, #470f62 12%, #482273 25%, #423e85 37%, #30688d 50%, #1e998a 62%, #67cc5c 75%, #bfdf24 87%, #fde724 100%);"></div><span class="cssplt-heatmap-legend-min">5.58</span></div>
+  <div class="cssplt-heatmap-legend"><span class="cssplt-heatmap-legend-max">88.62</span><div class="cssplt-heatmap-legend-bar" style="background: linear-gradient(to top, #440154 0%, #470f62 12%, #482273 25%, #423e85 37%, #30688d 50%, #1e998a 62%, #67cc5c 75%, #bfdf24 87%, #fde724 100%);"></div><span class="cssplt-heatmap-legend-min">7.25</span></div>
+  <label for="heatmap-lock-heatmap-latency-none" class="cssplt-heatmap-overlay" aria-label="Close tooltip"></label>
 </div></div>
 <div class="cssplt-heatmap-view" data-metric-view="cost"><div class="cssplt-heatmap-wrapper">
+  <input type="radio" name="heatmap-lock-heatmap-cost" value="none" id="heatmap-lock-heatmap-cost-none" checked class="cssplt-input cssplt-heatmap-lock-none">
   <div class="cssplt-heatmap" data-heatmap-id="heatmap-cost" data-metric="cost">
     <div class="cssplt-heatmap-row cssplt-heatmap-row--header" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
       <div class="cssplt-heatmap-cell cssplt-heatmap-cell--corner"></div>
@@ -476,60 +830,211 @@ body {
     </div>
     <div class="cssplt-heatmap-row" data-tag="fast" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
       <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M1</div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D1" data-value="2.9800" style="background-color: #482172; color: #ffffff"><div class="cssplt-heatmap-cell-inner">2.980</div><div class="cssplt-heatmap-tooltip">M1 / D1: 2.980</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D2" data-value="6.5900" style="background-color: #34a97c"><div class="cssplt-heatmap-cell-inner">6.590</div><div class="cssplt-heatmap-tooltip">M1 / D2: 6.590</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D3" data-value="4.3000" style="background-color: #3f4586; color: #ffffff"><div class="cssplt-heatmap-cell-inner">4.300</div><div class="cssplt-heatmap-tooltip">M1 / D3: 4.300</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D4" data-value="5.0500" style="background-color: #32638c; color: #ffffff"><div class="cssplt-heatmap-cell-inner">5.050</div><div class="cssplt-heatmap-tooltip">M1 / D4: 5.050</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D5" data-value="6.3500" style="background-color: #249d86"><div class="cssplt-heatmap-cell-inner">6.350</div><div class="cssplt-heatmap-tooltip">M1 / D5: 6.350</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M1" data-col="D6" data-value="5.8000" style="background-color: #26848b; color: #ffffff"><div class="cssplt-heatmap-cell-inner">5.800</div><div class="cssplt-heatmap-tooltip">M1 / D6: 5.800</div></div>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-cost-M1_D1" data-row="M1" data-col="D1" data-value="2.9800" style="background-color: #471c6e; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-cost" value="M1_D1" id="heatmap-lock-heatmap-cost-M1_D1"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M1 / D1: 2.980</span><div class="cssplt-heatmap-tooltip-notes">Lectus donec augue ut est amet consequat in amet ex duis est.
+
+Sit esse ultrices velit quis est esse commodo sed et qui sunt cupidatat voluptate adipiscing.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-cost-M1_D2" data-row="M1" data-col="D2" data-value="8.8000" style="background-color: #d4e124"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-cost" value="M1_D2" id="heatmap-lock-heatmap-cost-M1_D2"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M1 / D2: 8.800</span><div class="cssplt-heatmap-tooltip-notes">Dolore arcu eu sunt nisi eiusmod consectetur ullamcorper dolor scelerisque ultrices qui sit in nostrud proident lorem et massa tempor dictum vestibulum dolor purus velit.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-cost-M1_D3" data-row="M1" data-col="D3" data-value="2.4800" style="background-color: #471366; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-cost" value="M1_D3" id="heatmap-lock-heatmap-cost-M1_D3"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M1 / D3: 2.480</span><div class="cssplt-heatmap-tooltip-notes">Duis consectetur pariatur voluptate ea pharetra vitae pariatur at.
+
+Eu varius minim ad mattis rhoncus mattis laborum tincidunt sunt viverra ad turpis ullamcorper eu veniam quis massa feugiat officia.
+
+Dictumst eget eu ipsum feugiat massa vestibulum voluptate dictum magna praesent sit vel vitae voluptate in ullamco arcu ultrices eu dictum vivamus.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-cost-M1_D4" data-row="M1" data-col="D4" data-value="5.3500" style="background-color: #30688d; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-cost" value="M1_D4" id="heatmap-lock-heatmap-cost-M1_D4"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M1 / D4: 5.350</span><div class="cssplt-heatmap-tooltip-notes">Feugiat turpis magna sunt dolor eget irure irure.
+
+Ut blandit eiusmod velit sed enim quis est voluptate vitae.
+
+Nunc at ullamcorper sapien ac mollit lorem culpa ut sit dolor do sit pellentesque tincidunt ipsum molestie do eiusmod amet sint.
+
+Irure lorem commodo enim varius dignissim gravida tincidunt eget nisi et praesent laborum purus sed donec dolor et mollit occaecat eu dolor nisi magna.
+
+Laboris purus vitae tempor egestas scelerisque et duis rhoncus dolor labore ullamcorper aute anim blandit eu ut nostrud lorem officia at.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-cost-M1_D5" data-row="M1" data-col="D5" data-value="6.7700" style="background-color: #39ac79"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-cost" value="M1_D5" id="heatmap-lock-heatmap-cost-M1_D5"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M1 / D5: 6.770</span><div class="cssplt-heatmap-tooltip-notes">Quis eu eget cras rhoncus mattis sed tincidunt in scelerisque quis turpis incididunt laboris lobortis donec aute aliqua eu dolor lobortis augue est.
+
+Pariatur reprehenderit lorem pariatur voluptate enim varius amet at varius ipsum augue elit et vestibulum in enim non eiusmod dolor cillum tristique rhoncus fugiat.
+
+Ipsum purus eu consectetur vel enim aliqua dolore pellentesque velit vivamus ac ex arcu voluptate turpis lectus nisl labore laborum esse lorem ullamcorper dictum.
+
+Nostrud tristique molestie elit magna pharetra sapien veniam consectetur in pellentesque praesent adipiscing sunt varius eget.
+
+Ut ea dolor dolore morbi auctor anim augue quis.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-cost-M1_D6" data-row="M1" data-col="D6" data-value="9.2900" style="background-color: #f1e524"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-cost" value="M1_D6" id="heatmap-lock-heatmap-cost-M1_D6"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M1 / D6: 9.290</span><div class="cssplt-heatmap-tooltip-notes">Sit lectus sint varius eget eu egestas voluptate tincidunt dolore vitae scelerisque consequat purus amet fugiat massa duis sit aliquip sint.
+
+Nunc esse varius mollit dolor vestibulum vel magna eget ullamco.</div></div></label>
     </div>
     <div class="cssplt-heatmap-row" data-tag="none" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
       <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M2</div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D1" data-value="7.7500" style="background-color: #89d346"><div class="cssplt-heatmap-cell-inner">7.750</div><div class="cssplt-heatmap-tooltip">M2 / D1: 7.750</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D2" data-value="1.9000" style="background-color: #460e61; color: #ffffff"><div class="cssplt-heatmap-cell-inner">1.900</div><div class="cssplt-heatmap-tooltip">M2 / D2: 1.900</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D3" data-value="1.3300" style="background-color: #450659; color: #ffffff"><div class="cssplt-heatmap-cell-inner">1.330</div><div class="cssplt-heatmap-tooltip">M2 / D3: 1.330</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D4" data-value="5.9300" style="background-color: #248a8b"><div class="cssplt-heatmap-cell-inner">5.930</div><div class="cssplt-heatmap-tooltip">M2 / D4: 5.930</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D5" data-value="5.3300" style="background-color: #2d6e8d; color: #ffffff"><div class="cssplt-heatmap-cell-inner">5.330</div><div class="cssplt-heatmap-tooltip">M2 / D5: 5.330</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M2" data-col="D6" data-value="5.4700" style="background-color: #2b758c; color: #ffffff"><div class="cssplt-heatmap-cell-inner">5.470</div><div class="cssplt-heatmap-tooltip">M2 / D6: 5.470</div></div>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-cost-M2_D1" data-row="M2" data-col="D1" data-value="1.4800" style="background-color: #440457; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-cost" value="M2_D1" id="heatmap-lock-heatmap-cost-M2_D1"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M2 / D1: 1.480</span><div class="cssplt-heatmap-tooltip-notes">Sed nulla vivamus hac officia dignissim in molestie lorem at vestibulum feugiat vestibulum lorem sunt eiusmod consectetur sint nulla.
+
+Feugiat eu nulla anim mollit eu ut est vel donec ut.
+
+Anim in fugiat ea tincidunt vivamus excepteur tristique donec hac ornare turpis lectus at cillum consectetur augue.
+
+Purus ullamcorper lorem duis ex sit dolor quis nisi tempor.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-cost-M2_D2" data-row="M2" data-col="D2" data-value="2.2500" style="background-color: #470f62; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-cost" value="M2_D2" id="heatmap-lock-heatmap-cost-M2_D2"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M2 / D2: 2.250</span><div class="cssplt-heatmap-tooltip-notes">Mollit veniam sapien augue eu eu morbi consequat eget faucibus purus pellentesque bibendum aliqua enim purus dictumst elit pariatur ullamcorper magna purus augue.
+
+Accumsan est augue mattis quis reprehenderit dolor dictum sed platea eget velit incididunt cillum velit pariatur rhoncus ad aute faucibus molestie.
+
+Id sint purus do accumsan officia ullamcorper pharetra sit auctor.
+
+Quis pharetra eu officia augue in vestibulum lectus massa ut turpis velit blandit officia lorem massa feugiat nisl bibendum lorem.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-cost-M2_D3" data-row="M2" data-col="D3" data-value="5.8300" style="background-color: #287f8c; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-cost" value="M2_D3" id="heatmap-lock-heatmap-cost-M2_D3"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M2 / D3: 5.830</span><div class="cssplt-heatmap-tooltip-notes">Varius ad purus elit qui commodo excepteur velit qui ullamcorper.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-cost-M2_D4" data-row="M2" data-col="D4" data-value="1.2400" style="background-color: #440154; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-cost" value="M2_D4" id="heatmap-lock-heatmap-cost-M2_D4"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M2 / D4: 1.240</span><div class="cssplt-heatmap-tooltip-notes">Sed vel consequat eiusmod turpis adipiscing amet dolor in augue irure gravida magna pharetra purus in in vivamus nunc feugiat morbi nostrud nulla cras at.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-cost-M2_D5" data-row="M2" data-col="D5" data-value="3.8800" style="background-color: #44327d; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-cost" value="M2_D5" id="heatmap-lock-heatmap-cost-M2_D5"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M2 / D5: 3.880</span><div class="cssplt-heatmap-tooltip-notes">Lobortis accumsan irure faucibus fugiat massa eget massa ullamcorper adipiscing.
+
+Laborum in in cupidatat nisi viverra dolore turpis dictum accumsan molestie praesent lectus nunc velit egestas vestibulum blandit praesent lectus voluptate nisi accumsan ut auctor.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-cost-M2_D6" data-row="M2" data-col="D6" data-value="5.9900" style="background-color: #25868b; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-cost" value="M2_D6" id="heatmap-lock-heatmap-cost-M2_D6"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M2 / D6: 5.990</span><div class="cssplt-heatmap-tooltip-notes">Amet nisi laboris commodo massa cupidatat auctor et esse ipsum pharetra ut feugiat turpis velit sapien varius turpis.
+
+Labore consequat sapien fugiat cras gravida dictumst laborum.
+
+Sint et velit in aliqua aliquip aliqua vestibulum velit laboris commodo blandit sed lorem platea cillum et aliquip duis ullamco dolor vestibulum velit eget pellentesque.
+
+Dictum ullamcorper dolore ipsum cillum quis cupidatat nunc in eu magna eiusmod.</div></div></label>
     </div>
     <div class="cssplt-heatmap-row" data-tag="robust" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
       <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M3</div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D1" data-value="8.2600" style="background-color: #b3dc2c"><div class="cssplt-heatmap-cell-inner">8.260</div><div class="cssplt-heatmap-tooltip">M3 / D1: 8.260</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D2" data-value="0.9100" style="background-color: #440154; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.910</div><div class="cssplt-heatmap-tooltip">M3 / D2: 0.910</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D3" data-value="1.2200" style="background-color: #440558; color: #ffffff"><div class="cssplt-heatmap-cell-inner">1.220</div><div class="cssplt-heatmap-tooltip">M3 / D3: 1.220</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D4" data-value="3.0000" style="background-color: #482172; color: #ffffff"><div class="cssplt-heatmap-cell-inner">3.000</div><div class="cssplt-heatmap-tooltip">M3 / D4: 3.000</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D5" data-value="3.8300" style="background-color: #443780; color: #ffffff"><div class="cssplt-heatmap-cell-inner">3.830</div><div class="cssplt-heatmap-tooltip">M3 / D5: 3.830</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M3" data-col="D6" data-value="8.9300" style="background-color: #dde224"><div class="cssplt-heatmap-cell-inner">8.930</div><div class="cssplt-heatmap-tooltip">M3 / D6: 8.930</div></div>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-cost-M3_D1" data-row="M3" data-col="D1" data-value="6.6800" style="background-color: #32a87d"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-cost" value="M3_D1" id="heatmap-lock-heatmap-cost-M3_D1"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M3 / D1: 6.680</span><div class="cssplt-heatmap-tooltip-notes">Egestas vel ut dolor elit id lobortis augue morbi qui lectus eu.
+
+Fugiat augue at vestibulum pharetra ea ea consectetur quis ullamco tempor lorem sit lobortis dolore aute molestie et sit sapien at.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-cost-M3_D2" data-row="M3" data-col="D2" data-value="6.4500" style="background-color: #229c87"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-cost" value="M3_D2" id="heatmap-lock-heatmap-cost-M3_D2"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M3 / D2: 6.450</span><div class="cssplt-heatmap-tooltip-notes">Magna duis veniam voluptate minim do ornare lobortis viverra bibendum tristique gravida fugiat mollit velit rhoncus tristique feugiat eu lectus vivamus.
+
+Labore nunc in dignissim vel viverra lorem velit.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-cost-M3_D3" data-row="M3" data-col="D3" data-value="4.7300" style="background-color: #3b4f88; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-cost" value="M3_D3" id="heatmap-lock-heatmap-cost-M3_D3"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M3 / D3: 4.730</span><div class="cssplt-heatmap-tooltip-notes">Laboris tincidunt dictum turpis labore non sint lorem scelerisque sint faucibus cillum pharetra egestas est sit.
+
+In aliqua ullamcorper eu viverra lorem ultrices purus sed habitasse eget cursus tristique sed voluptate enim cillum auctor.
+
+Aliqua eget vivamus irure quis est pellentesque labore sed arcu amet aliqua accumsan cursus ac hac velit in lorem dolor est qui bibendum.
+
+Mattis ad eiusmod ullamcorper scelerisque cupidatat tincidunt voluptate lorem sed in cras at eu magna blandit sint sed culpa varius ultrices dolor irure qui.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-cost-M3_D4" data-row="M3" data-col="D4" data-value="3.3600" style="background-color: #472474; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-cost" value="M3_D4" id="heatmap-lock-heatmap-cost-M3_D4"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M3 / D4: 3.360</span><div class="cssplt-heatmap-tooltip-notes">Officia consectetur viverra dolor cursus consectetur in lobortis ultrices vitae tristique dictumst amet feugiat anim at quis gravida eget occaecat.
+
+Duis nisi nisi eu qui pariatur feugiat velit vitae consectetur eiusmod arcu bibendum viverra mattis praesent et arcu vitae magna.
+
+Ut elit massa dolore culpa minim dictumst ullamcorper ornare exercitation incididunt ultrices augue irure arcu minim amet.
+
+Amet lorem ut purus cillum est tempor pharetra sed eu nunc sapien amet fugiat viverra scelerisque.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-cost-M3_D5" data-row="M3" data-col="D5" data-value="3.7300" style="background-color: #452e7b; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-cost" value="M3_D5" id="heatmap-lock-heatmap-cost-M3_D5"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M3 / D5: 3.730</span><div class="cssplt-heatmap-tooltip-notes">Sit accumsan deserunt ipsum eu morbi eget arcu mattis accumsan ut morbi duis eget consequat nisi in.
+
+Arcu ut varius nulla tristique cras lectus labore eu mattis ullamco enim.
+
+Vitae in in velit nostrud arcu pharetra nunc eu ultrices eget gravida tempor ullamcorper duis donec donec deserunt nisl pellentesque labore deserunt voluptate ut in.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-cost-M3_D6" data-row="M3" data-col="D6" data-value="3.9300" style="background-color: #44337e; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-cost" value="M3_D6" id="heatmap-lock-heatmap-cost-M3_D6"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M3 / D6: 3.930</span><div class="cssplt-heatmap-tooltip-notes">Donec gravida augue pharetra sint at duis dictum purus et duis.
+
+Ad pharetra fugiat turpis et eu ad sit lorem vestibulum pharetra.
+
+Tincidunt sed eu at in augue vel esse sapien commodo magna aute sunt dolor in ut varius do esse eget vel.</div></div></label>
     </div>
     <div class="cssplt-heatmap-row" data-tag="accurate" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
       <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M4</div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D1" data-value="2.0400" style="background-color: #471063; color: #ffffff"><div class="cssplt-heatmap-cell-inner">2.040</div><div class="cssplt-heatmap-tooltip">M4 / D1: 2.040</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D2" data-value="3.9200" style="background-color: #433981; color: #ffffff"><div class="cssplt-heatmap-cell-inner">3.920</div><div class="cssplt-heatmap-tooltip">M4 / D2: 3.920</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D3" data-value="5.5100" style="background-color: #2a778c; color: #ffffff"><div class="cssplt-heatmap-cell-inner">5.510</div><div class="cssplt-heatmap-tooltip">M4 / D3: 5.510</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D4" data-value="7.4800" style="background-color: #72ce55"><div class="cssplt-heatmap-cell-inner">7.480</div><div class="cssplt-heatmap-tooltip">M4 / D4: 7.480</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D5" data-value="3.3400" style="background-color: #462a78; color: #ffffff"><div class="cssplt-heatmap-cell-inner">3.340</div><div class="cssplt-heatmap-tooltip">M4 / D5: 3.340</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M4" data-col="D6" data-value="8.9900" style="background-color: #e1e324"><div class="cssplt-heatmap-cell-inner">8.990</div><div class="cssplt-heatmap-tooltip">M4 / D6: 8.990</div></div>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-cost-M4_D1" data-row="M4" data-col="D1" data-value="2.4100" style="background-color: #471264; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-cost" value="M4_D1" id="heatmap-lock-heatmap-cost-M4_D1"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M4 / D1: 2.410</span><div class="cssplt-heatmap-tooltip-notes">Elit occaecat sed tincidunt ea accumsan pellentesque tincidunt.
+
+Sint veniam ut lorem scelerisque minim enim in ullamco consectetur amet dolor ornare irure excepteur.
+
+Voluptate ut est magna do magna sunt lobortis sit consequat at sed lectus.
+
+Fugiat varius amet viverra nisi laborum dolore ac magna ut excepteur veniam ut eget tincidunt ac qui feugiat eu in praesent ornare magna at.
+
+Feugiat commodo sit duis occaecat sit id labore laborum consectetur culpa veniam bibendum eiusmod accumsan labore et vestibulum egestas pellentesque tincidunt elit sint ut proident.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-cost-M4_D2" data-row="M4" data-col="D2" data-value="8.3100" style="background-color: #b3dc2c"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-cost" value="M4_D2" id="heatmap-lock-heatmap-cost-M4_D2"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M4 / D2: 8.310</span><div class="cssplt-heatmap-tooltip-notes">Feugiat non cras commodo at consequat dolore nisl in velit dignissim eget nisl lorem purus at varius.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-cost-M4_D3" data-row="M4" data-col="D3" data-value="7.9700" style="background-color: #96d63e"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-cost" value="M4_D3" id="heatmap-lock-heatmap-cost-M4_D3"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M4 / D3: 7.970</span><div class="cssplt-heatmap-tooltip-notes">Laboris et nulla cupidatat lorem ultrices ullamcorper mollit.
+
+Vestibulum eget labore dictumst culpa sit quis nulla excepteur vel feugiat auctor.
+
+Quis augue donec velit consectetur blandit tristique velit ullamcorper magna praesent cillum.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-cost-M4_D4" data-row="M4" data-col="D4" data-value="6.5000" style="background-color: #269f85"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-cost" value="M4_D4" id="heatmap-lock-heatmap-cost-M4_D4"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M4 / D4: 6.500</span><div class="cssplt-heatmap-tooltip-notes">Deserunt feugiat ipsum fugiat ea ad in sint ipsum mattis ullamco qui et in in.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-cost-M4_D5" data-row="M4" data-col="D5" data-value="8.2600" style="background-color: #afdb2e"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-cost" value="M4_D5" id="heatmap-lock-heatmap-cost-M4_D5"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M4 / D5: 8.260</span><div class="cssplt-heatmap-tooltip-notes">Dolor bibendum eu dignissim dignissim molestie est magna sit excepteur eget augue accumsan bibendum ut nisl irure tincidunt platea deserunt nulla.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-cost-M4_D6" data-row="M4" data-col="D6" data-value="2.0100" style="background-color: #460c5e; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-cost" value="M4_D6" id="heatmap-lock-heatmap-cost-M4_D6"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M4 / D6: 2.010</span><div class="cssplt-heatmap-tooltip-notes">Dictumst aliquip morbi non turpis varius veniam dolore in ullamco veniam.
+
+Ullamco ullamcorper cursus ullamcorper velit sit at ullamcorper dictum eget.
+
+Veniam eiusmod tristique fugiat velit sed hac nulla sit sed accumsan tempor eu scelerisque at hac purus pellentesque.
+
+Sit egestas duis excepteur quis veniam do dolore ut.
+
+Dolor ut varius adipiscing molestie sed platea at sunt bibendum officia ullamcorper donec sed arcu occaecat sint elit.</div></div></label>
     </div>
     <div class="cssplt-heatmap-row" data-tag="cheap" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
       <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M5</div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D1" data-value="6.4000" style="background-color: #27a084"><div class="cssplt-heatmap-cell-inner">6.400</div><div class="cssplt-heatmap-tooltip">M5 / D1: 6.400</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D2" data-value="4.6300" style="background-color: #395289; color: #ffffff"><div class="cssplt-heatmap-cell-inner">4.630</div><div class="cssplt-heatmap-tooltip">M5 / D2: 4.630</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D3" data-value="5.5500" style="background-color: #2a798c; color: #ffffff"><div class="cssplt-heatmap-cell-inner">5.550</div><div class="cssplt-heatmap-tooltip">M5 / D3: 5.550</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D4" data-value="8.5800" style="background-color: #c9e024"><div class="cssplt-heatmap-cell-inner">8.580</div><div class="cssplt-heatmap-tooltip">M5 / D4: 8.580</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D5" data-value="9.4800" style="background-color: #fde724"><div class="cssplt-heatmap-cell-inner">9.480</div><div class="cssplt-heatmap-tooltip">M5 / D5: 9.480</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M5" data-col="D6" data-value="0.9200" style="background-color: #440154; color: #ffffff"><div class="cssplt-heatmap-cell-inner">0.920</div><div class="cssplt-heatmap-tooltip">M5 / D6: 0.920</div></div>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-cost-M5_D1" data-row="M5" data-col="D1" data-value="8.1600" style="background-color: #a6d934"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-cost" value="M5_D1" id="heatmap-lock-heatmap-cost-M5_D1"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M5 / D1: 8.160</span><div class="cssplt-heatmap-tooltip-notes">Occaecat cras minim non nunc faucibus deserunt lobortis vel nulla culpa ornare.
+
+Lorem accumsan vestibulum massa dictumst varius laborum sunt sunt laboris commodo pharetra.
+
+Nisi viverra quis eu tincidunt hac rhoncus vestibulum dictumst consectetur vitae augue feugiat quis laboris faucibus eget ut feugiat adipiscing sunt feugiat eget.
+
+Ullamcorper tincidunt aute irure nunc tincidunt lectus aliquip donec ullamcorper tristique ullamcorper morbi in est nostrud ex.
+
+Vitae sed quis in varius molestie habitasse ut ut nostrud sit habitasse.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-cost-M5_D2" data-row="M5" data-col="D2" data-value="8.6900" style="background-color: #cee024"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-cost" value="M5_D2" id="heatmap-lock-heatmap-cost-M5_D2"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M5 / D2: 8.690</span><div class="cssplt-heatmap-tooltip-notes">Varius id deserunt culpa officia incididunt duis pariatur et ac occaecat minim consectetur bibendum gravida accumsan velit gravida at.
+
+Dolor commodo veniam vel vivamus laborum morbi irure ut irure.
+
+Do in cursus vestibulum arcu dignissim feugiat dolore lorem proident dignissim nisi lorem platea sunt vel rhoncus tincidunt hac sit vitae adipiscing.
+
+Dolor in dolor ornare cupidatat lectus arcu ullamcorper lectus sint adipiscing est egestas ullamco morbi purus faucibus arcu egestas do.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-cost-M5_D3" data-row="M5" data-col="D3" data-value="3.1400" style="background-color: #471f70; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-cost" value="M5_D3" id="heatmap-lock-heatmap-cost-M5_D3"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M5 / D3: 3.140</span><div class="cssplt-heatmap-tooltip-notes">Eu pariatur nulla mollit purus gravida consectetur varius cillum eu elit at velit massa.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-cost-M5_D4" data-row="M5" data-col="D4" data-value="4.4600" style="background-color: #404486; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-cost" value="M5_D4" id="heatmap-lock-heatmap-cost-M5_D4"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M5 / D4: 4.460</span><div class="cssplt-heatmap-tooltip-notes">Eget cursus cursus at platea massa sed incididunt feugiat viverra est excepteur incididunt consectetur fugiat vivamus laborum sapien.
+
+Magna sed arcu at praesent dictum ornare sed lorem anim habitasse mattis quis amet nisi donec tristique ut aute.
+
+Sunt vel consectetur veniam sit in magna tempor ad in pariatur esse turpis amet nisi habitasse arcu aliqua ullamcorper.
+
+Commodo at faucibus viverra ex ad tempor exercitation ac viverra egestas nunc dolor lorem molestie est dolore eu quis molestie et ullamco.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-cost-M5_D5" data-row="M5" data-col="D5" data-value="9.3700" style="background-color: #f6e624"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-cost" value="M5_D5" id="heatmap-lock-heatmap-cost-M5_D5"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M5 / D5: 9.370</span><div class="cssplt-heatmap-tooltip-notes">Ornare amet pellentesque in eget pellentesque at ut nulla viverra feugiat dictumst sed viverra tempor.
+
+Varius sit massa cupidatat vitae morbi dictum laboris nunc praesent arcu sed ut veniam nostrud excepteur molestie cupidatat.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-cost-M5_D6" data-row="M5" data-col="D6" data-value="8.1100" style="background-color: #a2d836"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-cost" value="M5_D6" id="heatmap-lock-heatmap-cost-M5_D6"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M5 / D6: 8.110</span><div class="cssplt-heatmap-tooltip-notes">Dictum est ut fugiat vestibulum in exercitation vel quis at feugiat vivamus nisl elit.
+
+Incididunt pharetra ullamcorper voluptate ea dignissim augue amet.
+
+Dolore turpis blandit eget massa eu tempor do tristique blandit ex vivamus nulla feugiat lectus eu lorem enim in elit pariatur purus voluptate dolor et.</div></div></label>
     </div>
     <div class="cssplt-heatmap-row" data-tag="balanced" style="grid-template-columns: repeat(7, minmax(0, 1fr));">
       <div class="cssplt-heatmap-cell cssplt-heatmap-cell--row-header">M6</div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D1" data-value="7.6300" style="background-color: #7fd14d"><div class="cssplt-heatmap-cell-inner">7.630</div><div class="cssplt-heatmap-tooltip">M6 / D1: 7.630</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D2" data-value="3.9300" style="background-color: #433982; color: #ffffff"><div class="cssplt-heatmap-cell-inner">3.930</div><div class="cssplt-heatmap-tooltip">M6 / D2: 3.930</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D3" data-value="9.2400" style="background-color: #efe524"><div class="cssplt-heatmap-cell-inner">9.240</div><div class="cssplt-heatmap-tooltip">M6 / D3: 9.240</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D4" data-value="6.9900" style="background-color: #4fbb6b"><div class="cssplt-heatmap-cell-inner">6.990</div><div class="cssplt-heatmap-tooltip">M6 / D4: 6.990</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D5" data-value="2.9000" style="background-color: #471f71; color: #ffffff"><div class="cssplt-heatmap-cell-inner">2.900</div><div class="cssplt-heatmap-tooltip">M6 / D5: 2.900</div></div>
-      <div class="cssplt-heatmap-cell cssplt-heatmap-cell--value" data-row="M6" data-col="D6" data-value="4.4100" style="background-color: #3d4a87; color: #ffffff"><div class="cssplt-heatmap-cell-inner">4.410</div><div class="cssplt-heatmap-tooltip">M6 / D6: 4.410</div></div>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-cost-M6_D1" data-row="M6" data-col="D1" data-value="6.0400" style="background-color: #24898b"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-cost" value="M6_D1" id="heatmap-lock-heatmap-cost-M6_D1"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M6 / D1: 6.040</span><div class="cssplt-heatmap-tooltip-notes">Egestas varius feugiat nisi quis viverra purus auctor cursus labore deserunt amet irure.
+
+Elit esse feugiat nisl lorem cillum ipsum dolore enim voluptate in mollit elit elit elit sunt dolore officia sit.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-cost-M6_D2" data-row="M6" data-col="D2" data-value="6.1100" style="background-color: #238c8b"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-cost" value="M6_D2" id="heatmap-lock-heatmap-cost-M6_D2"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M6 / D2: 6.110</span><div class="cssplt-heatmap-tooltip-notes">Enim et culpa dolor elit in minim feugiat mollit adipiscing adipiscing.
+
+Eget platea veniam augue ad varius pariatur deserunt augue nisl lobortis hac hac turpis elit quis dolor sint.
+
+Lorem tincidunt massa sed sapien amet quis nunc tincidunt morbi cras.
+
+Tincidunt exercitation arcu augue nisl veniam massa amet pharetra.
+
+Nisi tristique est id ex in at gravida nisi sed molestie.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-cost-M6_D3" data-row="M6" data-col="D3" data-value="9.4800" style="background-color: #fde724"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-cost" value="M6_D3" id="heatmap-lock-heatmap-cost-M6_D3"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M6 / D3: 9.480</span><div class="cssplt-heatmap-tooltip-notes">Culpa turpis amet vestibulum est donec ultrices massa eget voluptate blandit turpis esse eu vel dolor ullamcorper et sapien turpis quis elit varius feugiat.
+
+Ut donec qui lorem purus vel eget dolore cillum ac non magna reprehenderit quis ex rhoncus varius.
+
+Ad augue tincidunt irure lorem dictumst dictum sed id ac et ullamcorper lorem est at anim.
+
+Quis ex nunc excepteur varius lectus ut dignissim vestibulum feugiat vel arcu ullamco auctor ullamco bibendum viverra deserunt cursus vel nunc at vitae.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-cost-M6_D4" data-row="M6" data-col="D4" data-value="1.4700" style="background-color: #440457; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-cost" value="M6_D4" id="heatmap-lock-heatmap-cost-M6_D4"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M6 / D4: 1.470</span><div class="cssplt-heatmap-tooltip-notes">Sit varius platea eu enim in velit egestas sint lectus duis feugiat dolor occaecat eu donec aliquip.
+
+Accumsan habitasse ut lorem laboris ad excepteur dolor reprehenderit aute ullamcorper vel fugiat feugiat ipsum duis faucibus do aliqua fugiat.
+
+Sapien at eu ullamcorper sapien dictum vel in consequat turpis quis sit sed culpa et arcu velit eget viverra velit.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-cost-M6_D5" data-row="M6" data-col="D5" data-value="7.5900" style="background-color: #75cf53"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-cost" value="M6_D5" id="heatmap-lock-heatmap-cost-M6_D5"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M6 / D5: 7.590</span><div class="cssplt-heatmap-tooltip-notes">Dictumst sunt bibendum magna accumsan ut ex vestibulum nostrud scelerisque tristique massa ac turpis ut magna sed enim id elit elit lorem.
+
+Feugiat deserunt purus mattis cras elit cupidatat do viverra varius eiusmod varius amet anim sed sed lorem.
+
+Culpa augue magna bibendum culpa incididunt nunc vitae enim eu aliqua sed deserunt ut lorem in ullamcorper lorem purus feugiat laborum.
+
+Viverra dolor non esse vel sed magna egestas est sed auctor dolor ea et consectetur feugiat et elit vestibulum mollit.
+
+Rhoncus ullamcorper morbi ad sed aute arcu dignissim cras ullamcorper purus aute vitae dolor platea.</div></div></label>
+      <label class="cssplt-heatmap-cell cssplt-heatmap-cell--value" for="heatmap-lock-heatmap-cost-M6_D6" data-row="M6" data-col="D6" data-value="5.5100" style="background-color: #2d6f8d; color: #ffffff"><input type="radio" class="cssplt-input cssplt-heatmap-lock-cell" name="heatmap-lock-heatmap-cost" value="M6_D6" id="heatmap-lock-heatmap-cost-M6_D6"><div class="cssplt-heatmap-cell-inner"></div><div class="cssplt-heatmap-tooltip"><span class="cssplt-heatmap-tooltip-value">M6 / D6: 5.510</span><div class="cssplt-heatmap-tooltip-notes">Eget laborum cursus eget vel lorem tincidunt pariatur id veniam culpa ullamcorper gravida.
+
+Eu molestie eget arcu elit nunc pellentesque enim irure ex varius bibendum nisi labore sed.
+
+Sed culpa vivamus adipiscing tempor eget tincidunt lorem commodo ea lectus fugiat lectus commodo.
+
+Nunc aliqua viverra quis irure vivamus ex arcu pellentesque ullamcorper qui vestibulum sunt reprehenderit.
+
+Auctor purus eget feugiat velit pariatur ex nulla elit eu vestibulum dolor pellentesque tincidunt feugiat eu aliquip duis ullamcorper dolor est pharetra occaecat sed.</div></div></label>
     </div>
   </div>
-  <div class="cssplt-heatmap-legend"><span class="cssplt-heatmap-legend-max">9.48</span><div class="cssplt-heatmap-legend-bar" style="background: linear-gradient(to top, #440154 0%, #470f62 12%, #482273 25%, #423e85 37%, #30688d 50%, #1e998a 62%, #67cc5c 75%, #bfdf24 87%, #fde724 100%);"></div><span class="cssplt-heatmap-legend-min">0.91</span></div>
+  <div class="cssplt-heatmap-legend"><span class="cssplt-heatmap-legend-max">9.48</span><div class="cssplt-heatmap-legend-bar" style="background: linear-gradient(to top, #440154 0%, #470f62 12%, #482273 25%, #423e85 37%, #30688d 50%, #1e998a 62%, #67cc5c 75%, #bfdf24 87%, #fde724 100%);"></div><span class="cssplt-heatmap-legend-min">1.24</span></div>
+  <label for="heatmap-lock-heatmap-cost-none" class="cssplt-heatmap-overlay" aria-label="Close tooltip"></label>
 </div></div></div>
       </div>
     </div>
